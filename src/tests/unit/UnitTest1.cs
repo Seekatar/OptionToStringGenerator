@@ -12,7 +12,7 @@ public class EnumGeneratorSnapshotTests
         var source = """
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToStringAttribute]
+                        [OptionsToString]
                         public class MyAppOptions
                         {
                             public string Name { get; set; } = "hi mom";
@@ -23,7 +23,7 @@ public class EnumGeneratorSnapshotTests
                             [OutputMask(PrefixLen=3)]
                             public string Certificate { get; set; } = "abc1233435667";
 
-                            [OutputLengthOnly)]
+                            [OutputLengthOnly]
                             public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
 
                             [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]

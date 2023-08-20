@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{99912C0D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unit", "tests\unit\unit.csproj", "{F9000378-51E2-458F-997D-DD7CE9668311}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration", "tests\integration\integration.csproj", "{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,8 +48,21 @@ Global
 		{F9000378-51E2-458F-997D-DD7CE9668311}.Release|x64.Build.0 = Release|Any CPU
 		{F9000378-51E2-458F-997D-DD7CE9668311}.Release|x86.ActiveCfg = Release|Any CPU
 		{F9000378-51E2-458F-997D-DD7CE9668311}.Release|x86.Build.0 = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|x64.Build.0 = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Debug|x86.Build.0 = Debug|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|x64.ActiveCfg = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|x64.Build.0 = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|x86.ActiveCfg = Release|Any CPU
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F9000378-51E2-458F-997D-DD7CE9668311} = {99912C0D-6045-4C1B-A246-94CF7B504B90}
+		{63ADC5FF-5C3A-48F8-824C-0A3D07BE5FB7} = {99912C0D-6045-4C1B-A246-94CF7B504B90}
 	EndGlobalSection
 EndGlobal

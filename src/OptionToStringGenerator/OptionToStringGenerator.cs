@@ -165,7 +165,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     {
                         public static partial class ClassExtensions
                         {
-                            string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
+                            static string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
                             {
                                 if ( o is null ) return "<null>";
 
@@ -181,7 +181,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                 } 
 
                                 if (regex is not null) {
-                                    var r = new System.Text.RegularExpressions.Regex(regex);
+                                    var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
                                     var s = o.ToString();
                                     var m = r.Match(s);
                                     while (m.Success) {
@@ -249,7 +249,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                             {
                                 if (n.Key == "Regex" && n.Value.Value is not null)
                                 {
-                                    formatParameters += ",regex:" + n.Value.Value;
+                                    formatParameters += ",regex:\"" + n.Value.Value + "\"";
                                 }
                                 else if (n.Key == "IgnoreCase" && n.Value.Value is not null)
                                 {

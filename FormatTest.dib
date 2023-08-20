@@ -23,7 +23,7 @@ string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? reg
     } 
 
     if (regex is not null) {
-        var r = new System.Text.RegularExpressions.Regex(regex);
+        var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
         var s = o.ToString();
         var m = r.Match(s);
         while (m.Success) {
@@ -48,11 +48,13 @@ WriteLine(Format("Hello"));
 WriteLine(Format("Hello", prefixLen:0));
 WriteLine(Format("Hello", prefixLen:2));
 WriteLine(Format("Hello", prefixLen:10));
-WriteLine(Format("Hello", prefixLen:4,));
-WriteLine(Format("Hello", prefixLen:5,));
-WriteLine(Format("Hello", prefixLen:6,));
+WriteLine(Format("Hello", prefixLen:4));
+WriteLine(Format("Hello", prefixLen:5));
+WriteLine(Format("Hello", prefixLen:6));
 WriteLine(Format("Hello", lengthOnly:true));
 WriteLine(Format(3));
 WriteLine(Format(DateTime.Now));
 WriteLine(Format(null));
-WriteLine(Format(regex:"Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;", regex:"Id=([^;]+).*Password=(.*)") );
+WriteLine(Format("Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;", regex:"Id=([^;]+).*Password=(.*)") );
+WriteLine(Format("Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;", regex:"Id=([^;]+).*Password=(.*)") );
+WriteLine(Format("Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;", regex:"Id=([^;]+).*Password=(.*)",ignoreCase:true) );
