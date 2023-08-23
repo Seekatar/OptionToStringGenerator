@@ -19,7 +19,7 @@ namespace Seekatar.ClassGenerators
             } 
 
             if (regex is not null) {
-                var r = new System.Text.RegularExpressions.Regex(regex);
+                var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
                 var s = o.ToString();
                 var m = r.Match(s);
                 while (m.Success) {

@@ -12,4 +12,5 @@
 
 ## Links
 
-- [Andrew Lock's blog on generators Part 1](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
+- [Andrew Lock's blog series on incremental generators (Part 1)](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
+- [Verify snapshot test tool](https://github.com/VerifyTests/Verify)

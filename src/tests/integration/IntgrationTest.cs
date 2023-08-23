@@ -27,13 +27,14 @@ public class MyAppOptions
 }
 
 
+[UsesVerify]
 public class IntegrationTest
 {
     [Fact]
-    public void Test1()
+    public Task Test()
     {
         var options = new MyAppOptions();
         var s = options.OptionsToString();
-        System.Console.WriteLine(s);
+        return Verify(s);
     }
 }

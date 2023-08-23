@@ -3,7 +3,7 @@ namespace Seekatar.ClassGenerators
 {
     public static partial class ClassExtensions
     {
-        string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
+        static string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
         {
             if ( o is null ) return "<null>";
 
@@ -19,7 +19,7 @@ namespace Seekatar.ClassGenerators
             } 
 
             if (regex is not null) {
-                var r = new System.Text.RegularExpressions.Regex(regex);
+                var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
                 var s = o.ToString();
                 var m = r.Match(s);
                 while (m.Success) {
@@ -47,8 +47,8 @@ namespace Seekatar.ClassGenerators
                       Password                : {Format(o.Password,prefixLen:0)}
                       Certificate             : {Format(o.Certificate,prefixLen:3)}
                       Secret                  : {Format(o.Secret,lengthOnly:true)}
-                      ConnectionString        : {Format(o.ConnectionString,regex:User Id=([^;]+).*Password=([^;]+))}
-                      AnotherConnectionString : {Format(o.AnotherConnectionString,regex:User Id=([^;]+).*Password=([^;]+),ignoreCase:true)}
+                      ConnectionString        : {Format(o.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)")}
+                      AnotherConnectionString : {Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
                     """;
         }
     }

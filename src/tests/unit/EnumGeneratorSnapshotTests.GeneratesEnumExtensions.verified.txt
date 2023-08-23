@@ -1,1 +1,16 @@
-﻿
+﻿{
+  Diagnostics: [
+    {
+      Id: TEST01,
+      Title: Multiple format attributes,
+      Severity: Warning,
+      WarningLevel: 1,
+      Location: : (9,21)-(9,29),
+      Description: ,
+      HelpLink: ,
+      MessageFormat: You can only use one formatting attribute on a property,
+      Message: You can only use one formatting attribute on a property,
+      Category: Usage
+    }
+  ]
+}
