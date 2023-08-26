@@ -245,16 +245,30 @@ public class OptionToStringGenerator : IIncrementalGenerator
                             formatParameters = ",lengthOnly:true";
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
                         {
+                            var regexOk = false;
                             foreach (var n in attribute.NamedArguments)
                             {
                                 if (n.Key == "Regex" && n.Value.Value is not null)
                                 {
                                     formatParameters += ",regex:\"" + n.Value.Value + "\"";
+                                    regexOk = true;
                                 }
                                 else if (n.Key == "IgnoreCase" && n.Value.Value is not null)
                                 {
                                     formatParameters += ",ignoreCase:" + n.Value.Value.ToString().ToLowerInvariant();
                                 }
+                            }
+                            if (!regexOk)
+                            {
+                                var diag = Diagnostic.Create(new DiagnosticDescriptor(
+                                                        id: "TEST01",
+                                                        title: "Missing regex parameter",
+                                                        messageFormat: "You must specify a regex parameter",
+                                                        category: "Usage",
+                                                        defaultSeverity: DiagnosticSeverity.Warning,
+                                                        isEnabledByDefault: true
+                                                     ), member.Locations[0]);
+                                 context.ReportDiagnostic(diag);
                             }
                         }
                     }
@@ -269,11 +283,10 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         category: "Usage",
                         defaultSeverity: DiagnosticSeverity.Warning,
                         isEnabledByDefault: true
-                        ), member.Locations[0]
-                        );
+                        ), member.Locations[0]);
                     context.ReportDiagnostic(diag);
                 }
-                else if (!ignored)
+                if (!ignored)
                     sb.AppendFormat(format, member.Name).Append(member.Name).Append(formatParameters).AppendLine(")}");
             }
 
@@ -281,6 +294,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             sb.Append(""""
                                           """;
                               }
+                      
                       """");
 
         }

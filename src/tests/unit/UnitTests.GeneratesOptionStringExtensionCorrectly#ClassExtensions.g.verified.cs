@@ -51,5 +51,6 @@ namespace Seekatar.ClassGenerators
                       AnotherConnectionString : {Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
                     """;
         }
+
     }
 }

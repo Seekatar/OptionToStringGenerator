@@ -27,6 +27,18 @@ public class MyAppOptions
 }
 
 
+[OptionsToString]
+public class BadOptions
+{
+    // shows warning error
+    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
+    [OutputLengthOnly]
+    public string Name { get; set; } = "hi mom";
+
+    [OutputRegex]
+    public string Name2 { get; set; } = "hi mom";
+}
+
 [UsesVerify]
 public class IntegrationTest
 {
@@ -34,6 +46,14 @@ public class IntegrationTest
     public Task Test()
     {
         var options = new MyAppOptions();
+        var s = options.OptionsToString();
+        return Verify(s);
+    }
+
+    [Fact]
+    public Task BadOptionTest()
+    {
+        var options = new BadOptions();
         var s = options.OptionsToString();
         return Verify(s);
     }

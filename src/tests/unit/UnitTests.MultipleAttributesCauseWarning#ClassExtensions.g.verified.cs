@@ -43,13 +43,10 @@ namespace Seekatar.ClassGenerators
         {
             return $"""
                     MyAppOptions:
-                      Name                    : {Format(o.Name)}
-                      Password                : {Format(o.Password,prefixLen:0)}
-                      Certificate             : {Format(o.Certificate,prefixLen:3)}
-                      Secret                  : {Format(o.Secret,lengthOnly:true)}
-                      ConnectionString        : {Format(o.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)")}
-                      AnotherConnectionString : {Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+                      Name     : {Format(o.Name)}
+                      Password : {Format(o.Password,prefixLen:0,prefixLen:3)}
                     """;
         }
+
     }
 }

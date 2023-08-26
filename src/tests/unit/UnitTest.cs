@@ -3,7 +3,7 @@
 namespace Seekatar.OptionToStringGenerator.Tests;
 
 [UsesVerify] // Adds hooks for Verify into XUnit
-public class EnumGeneratorSnapshotTests
+public class UnitTests
 {
     [Fact]
     public Task GeneratesOptionStringExtensionCorrectly()
@@ -20,6 +20,9 @@ public class EnumGeneratorSnapshotTests
                             [OutputMask]
                             public string Password { get; set; } = "thisisasecret";
 
+                            [OutputIgnore]
+                            public string IgnoreMe { get; set; } = "abc1233435667";
+                     
                             [OutputMask(PrefixLen=3)]
                             public string Certificate { get; set; } = "abc1233435667";
 
@@ -32,8 +35,6 @@ public class EnumGeneratorSnapshotTests
                             [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
                             public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
                      
-                            [OutputIgnore]
-                            public string IgnoreMe { get; set; } = "abc1233435667";
                         }
                      """;
 
@@ -42,7 +43,7 @@ public class EnumGeneratorSnapshotTests
     }
 
     [Fact]
-    public Task GeneratesEnumExtensions()
+    public Task MultipleAttributesCauseWarning()
     {
         // The source code to test
         var source = """
