@@ -30,12 +30,12 @@ public class MyAppOptions
 [OptionsToString]
 public class BadOptions
 {
-    // shows warning error
+    // shows warning about two attributes
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     [OutputLengthOnly]
     public string Name { get; set; } = "hi mom";
 
-    [OutputRegex]
+    // will make an error [OutputRegex]
     public string Name2 { get; set; } = "hi mom";
 }
 

@@ -3,8 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Seekatar.OptionToStringGenerator;
 
@@ -161,6 +159,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
     {
         var sb = new StringBuilder();
         sb.Append("""
+                    #nullable enable
                     namespace Seekatar.ClassGenerators
                     {
                         public static partial class ClassExtensions
@@ -169,10 +168,10 @@ public class OptionToStringGenerator : IIncrementalGenerator
                             {
                                 if ( o is null ) return "<null>";
 
-                                if (lengthOnly) return "Len = " + o.ToString().Length.ToString();
+                                if (lengthOnly) return "Len = " + (o.ToString() ?? "").Length.ToString();
 
                                 if (prefixLen >= 0) {
-                                    var s = o.ToString();
+                                    var s = (o.ToString() ?? "");
                                     if (prefixLen < s.Length) {
                                         return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
                                     } else {
@@ -182,7 +181,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
                                 if (regex is not null) {
                                     var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-                                    var s = o.ToString();
+                                    var s = (o.ToString() ?? "");
                                     var m = r.Match(s);
                                     while (m.Success) {
                                         for ( int i = 1; i < m.Groups.Count; i++ ) {
@@ -199,7 +198,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                 if (o is string) 
                                     return "\"" + o + "\"";
                                 else 
-                                    return o.ToString();
+                                    return (o.ToString() ?? "");
                             }
 
                     """);
@@ -261,11 +260,11 @@ public class OptionToStringGenerator : IIncrementalGenerator
                             if (!regexOk)
                             {
                                 var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                                        id: "TEST01",
+                                                        id: "SEEK001",
                                                         title: "Missing regex parameter",
                                                         messageFormat: "You must specify a regex parameter",
                                                         category: "Usage",
-                                                        defaultSeverity: DiagnosticSeverity.Warning,
+                                                        defaultSeverity: DiagnosticSeverity.Error,
                                                         isEnabledByDefault: true
                                                      ), member.Locations[0]);
                                  context.ReportDiagnostic(diag);
@@ -277,7 +276,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 if (attributeCount > 1)
                 {
                     var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                        id: "TEST01",
+                        id: "SEEK002",
                         title: "Multiple format attributes",
                         messageFormat: "You can only use one formatting attribute on a property",
                         category: "Usage",

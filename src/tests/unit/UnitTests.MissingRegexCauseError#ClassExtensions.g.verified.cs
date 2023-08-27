@@ -45,7 +45,7 @@ namespace Seekatar.ClassGenerators
             return $"""
                     MyAppOptions:
                       Name     : {Format(o.Name)}
-                      Password : {Format(o.Password,prefixLen:0,prefixLen:3)}
+                      Password : {Format(o.Password)}
                     """;
         }
 

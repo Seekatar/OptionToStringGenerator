@@ -64,4 +64,26 @@ public class UnitTests
         return TestHelper.Verify(source);
 
     }
+
+    [Fact]
+    public Task MissingRegexCauseError()
+    {
+        // The source code to test
+        var source = """
+                        using Seekatar.OptionToStringGenerator;
+
+                        [OptionsToStringAttribute]
+                        public class MyAppOptions
+                        {
+                            public string Name { get; set; } = "hi mom";
+
+                            [OutputRegex]
+                            public string Password { get; set; } = "thisisasecret";
+                        }
+                     """;
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify(source);
+
+    }
 }

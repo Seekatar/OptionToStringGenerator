@@ -1,4 +1,5 @@
 ﻿//HintName: ClassExtensions.g.cs
+#nullable enable
 namespace Seekatar.ClassGenerators
 {
     public static partial class ClassExtensions
@@ -7,10 +8,10 @@ namespace Seekatar.ClassGenerators
         {
             if ( o is null ) return "<null>";
 
-            if (lengthOnly) return "Len = " + o.ToString().Length.ToString();
+            if (lengthOnly) return "Len = " + (o.ToString() ?? "").Length.ToString();
 
             if (prefixLen >= 0) {
-                var s = o.ToString();
+                var s = (o.ToString() ?? "");
                 if (prefixLen < s.Length) {
                     return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
                 } else {
@@ -20,7 +21,7 @@ namespace Seekatar.ClassGenerators
 
             if (regex is not null) {
                 var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-                var s = o.ToString();
+                var s = (o.ToString() ?? "");
                 var m = r.Match(s);
                 while (m.Success) {
                     for ( int i = 1; i < m.Groups.Count; i++ ) {
@@ -37,7 +38,7 @@ namespace Seekatar.ClassGenerators
             if (o is string) 
                 return "\"" + o + "\"";
             else 
-                return o.ToString();
+                return (o.ToString() ?? "");
         }
         public static string OptionsToString(this MyAppOptions o)
         {

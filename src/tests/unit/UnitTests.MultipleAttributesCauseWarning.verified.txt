@@ -1,7 +1,7 @@
 ﻿{
   Diagnostics: [
     {
-      Id: TEST01,
+      Id: SEEK002,
       Title: Multiple format attributes,
       Severity: Warning,
       WarningLevel: 1,
