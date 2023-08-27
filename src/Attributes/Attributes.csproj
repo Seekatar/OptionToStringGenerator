@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>Latest</LangVersion>
+    <RootNamespace>Seekatar.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>OptionToString.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+
+</Project>

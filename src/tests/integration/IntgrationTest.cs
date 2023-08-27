@@ -1,6 +1,5 @@
 namespace integration;
 using Seekatar.OptionToStringGenerator;
-using Seekatar.ClassGenerators; 
 
 [OptionsToString]
 public class MyAppOptions
@@ -42,12 +41,14 @@ public class BadOptions
 [UsesVerify]
 public class IntegrationTest
 {
+    const string SnapshotDirectory = "Snapshots";
+
     [Fact]
     public Task Test()
     {
         var options = new MyAppOptions();
         var s = options.OptionsToString();
-        return Verify(s);
+        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -55,6 +56,6 @@ public class IntegrationTest
     {
         var options = new BadOptions();
         var s = options.OptionsToString();
-        return Verify(s);
+        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 }

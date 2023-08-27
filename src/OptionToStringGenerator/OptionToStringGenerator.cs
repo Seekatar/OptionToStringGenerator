@@ -25,11 +25,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Add the marker attribute to the compilation
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "ClassExtensionsAttribute.g.cs",
-            SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
-
         // Do a simple filter for classes
         IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
@@ -108,7 +103,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
     {
         // Create a list to hold our output
         var classToGenerate = new List<ClassToGenerate>();
-        // Get the semantic representation of our marker attribute 
+        // Get the semantic representation of our marker attribute
         INamedTypeSymbol? classAttribute = compilation.GetTypeByMetadataName(FullAttributeName);
 
         if (classAttribute == null)
@@ -155,12 +150,12 @@ public class OptionToStringGenerator : IIncrementalGenerator
         return classToGenerate;
     }
 
-    public static string GenerateExtensionClass(List<ClassToGenerate> classsToGenerate, SourceProductionContext context)
+    public static string GenerateExtensionClass(List<ClassToGenerate> classesToGenerate, SourceProductionContext context)
     {
         var sb = new StringBuilder();
         sb.Append("""
                     #nullable enable
-                    namespace Seekatar.ClassGenerators
+                    namespace Seekatar.OptionToStringGenerator
                     {
                         public static partial class ClassExtensions
                         {
@@ -177,7 +172,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                     } else {
                                         return "\"" + s + "\"";
                                     }
-                                } 
+                                }
 
                                 if (regex is not null) {
                                     var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
@@ -193,16 +188,16 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                         m = m.NextMatch();
                                     }
                                     return s;
-                                } 
+                                }
 
-                                if (o is string) 
+                                if (o is string)
                                     return "\"" + o + "\"";
-                                else 
+                                else
                                     return (o.ToString() ?? "");
                             }
 
                     """);
-        foreach (var classToGenerate in classsToGenerate)
+        foreach (var classToGenerate in classesToGenerate)
         {
             int maxLen = 0;
             foreach (var member in classToGenerate.Values)
@@ -219,7 +214,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                        o)
                               {
                                   return $"""
-                                          
+
                       """");
             sb.Append(classToGenerate.Name).AppendLine(":");
 
@@ -289,11 +284,11 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     sb.AppendFormat(format, member.Name).Append(member.Name).Append(formatParameters).AppendLine(")}");
             }
 
-            // end of method 
+            // end of method
             sb.Append(""""
                                           """;
                               }
-                      
+
                       """");
 
         }

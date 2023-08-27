@@ -1,4 +1,4 @@
-//using VerifyXunit;
+using Shouldly;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
 
@@ -61,7 +61,11 @@ public class UnitTests
                      """;
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+            o[0].Id.ShouldBe("SEEK002");
+        });
 
     }
 
@@ -83,7 +87,11 @@ public class UnitTests
                      """;
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
+            o[0].Id.ShouldBe("SEEK001");
+        });
 
     }
 }

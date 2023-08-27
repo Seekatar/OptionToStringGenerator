@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using VerifyXunit;
 
@@ -16,35 +17,42 @@ public static class ModuleInitializer
 
 public static class TestHelper
 {
-    public static Task Verify(string source)
+    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(string source)
+        where T : IIncrementalGenerator, new()
     {
-        // Parse the provided string into a C# syntax tree
-        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
+        var syntaxTree = CSharpSyntaxTree.ParseText(source);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(_ => !_.IsDynamic && !string.IsNullOrWhiteSpace(_.Location))
+            .Select(_ => MetadataReference.CreateFromFile(_.Location))
+            .Concat(new[] { MetadataReference.CreateFromFile(typeof(T).Assembly.Location) });
+        var compilation = CSharpCompilation.Create(
+            "generator",
+            new[] { syntaxTree },
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        // Create references for assemblies we require
-        // We could add multiple references if required
-        IEnumerable<PortableExecutableReference> references = new[]
+        var originalTreeCount = compilation.SyntaxTrees.Length;
+
+        CSharpGeneratorDriver
+            .Create(new T())
+            .RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
+        var output = string.Join("\n", outputCompilation.SyntaxTrees.Skip(originalTreeCount).Select(t => t.ToString()));
+
+        return (diagnostics, output);
+    }
+
+    public static Task Verify(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null)
+    {
+        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        if (assertDiag != null)
         {
-            MetadataReference.CreateFromFile(typeof(object).Assembly.Location)
-        };
+            assertDiag(diag);
+        }
+        else
+        {
+            Assert.Empty(diag);
+        }
+        return Verifier.Verify(output).UseDirectory("Snapshots");
 
-        // Create a Roslyn compilation for the syntax tree.
-        CSharpCompilation compilation = CSharpCompilation.Create(
-            assemblyName: "Tests",
-            syntaxTrees: new[] { syntaxTree },
-            references);
-
-
-        // Create an instance of our incremental source generator
-        var generator = new OptionToStringGenerator();
-
-        // The GeneratorDriver is used to run our generator against a compilation
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
-
-        // Run the source generator!
-        driver = driver.RunGenerators(compilation);
-
-        // Use verify to snapshot test the source generator output!
-        return Verifier.Verify(driver);
     }
 }

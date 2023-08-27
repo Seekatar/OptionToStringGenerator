@@ -1,6 +1,5 @@
-﻿//HintName: ClassExtensions.g.cs
-#nullable enable
-namespace Seekatar.ClassGenerators
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {

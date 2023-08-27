@@ -37,12 +37,27 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" PrivateAssets="all" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Attributes\Attributes.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Remove="bin\Debug\netstandard2.0\\OptionToStringGenerator.dll" />
   </ItemGroup>
 
-  <!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
+  <!-- csproj magic from https://andrewlock.net/creating-a-source-generator-part-8-solving-the-source-generator-marker-attribute-problem-part2/ -->
+  <!-- This ensures the attribute dll and generator dlls get packed correctly -->
   <ItemGroup>
+    <!-- Pack the generator dll in the analyzers/dotnet/cs path -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+    <!-- Pack the attributes dll in the analyzers/dotnet/cs path -->
+    <None Include="$(OutputPath)\OptionToString.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+    <!-- Pack the attributes dll in the lib\netstandard2.0 path -->
+    <None Include="$(OutputPath)\OptionToString.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
   </ItemGroup>
+
+
 </Project>
