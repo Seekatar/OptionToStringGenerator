@@ -16,7 +16,7 @@ namespace Seekatar.OptionToStringGenerator
                 } else {
                     return "\"" + s + "\"";
                 }
-            } 
+            }
 
             if (regex is not null) {
                 var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
@@ -32,11 +32,11 @@ namespace Seekatar.OptionToStringGenerator
                     m = m.NextMatch();
                 }
                 return s;
-            } 
+            }
 
-            if (o is string) 
+            if (o is string)
                 return "\"" + o + "\"";
-            else 
+            else
                 return (o.ToString() ?? "");
         }
         public static string OptionsToString(this MyAppOptions o)

@@ -216,7 +216,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                   return $"""
 
                       """");
-            sb.Append(classToGenerate.Name).AppendLine(":");
+            sb.Append("                    " + classToGenerate.Name).AppendLine(":");
 
             // each property
             string format = $"                      {{0,-{maxLen}}} : {{{{Format(o.";
