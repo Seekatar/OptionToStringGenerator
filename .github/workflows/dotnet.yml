@@ -76,7 +76,7 @@ jobs:
     - name: Upload to CodeCov
       if: ${{ matrix.os == 'ubuntu-latest'}}
       shell: bash
-      working-directory: tests/unit
+      working-directory: src/tests/unit
       run: |
         export CODECOV_TOKEN="${{ secrets.CODECOV }}"
         bash <(curl -s https://codecov.io/bash)
