@@ -17,6 +17,8 @@ public class UnitTests
                         {
                             public string Name { get; set; } = "hi mom";
 
+                            public string? NullName { get; set; };
+
                             [OutputMask]
                             public string Password { get; set; } = "thisisasecret";
 
@@ -35,6 +37,24 @@ public class UnitTests
                             [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
                             public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
                      
+                        }
+                     """;
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify(source);
+    }
+
+    [Fact]
+    public Task GeneratesOptionStringExtensionCorrectlyForInternalClass()
+    {
+        // The source code to test
+        var source = """
+                        using Seekatar.OptionToStringGenerator;
+
+                        [OptionsToString]
+                        class MyAppOptions
+                        {
+                            public string Name { get; set; } = "hi mom";
                         }
                      """;
 

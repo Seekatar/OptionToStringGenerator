@@ -3,52 +3,17 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        static string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
-        {
-            if ( o is null ) return "<null>";
-
-            if (lengthOnly) return "Len = " + (o.ToString() ?? "").Length.ToString();
-
-            if (prefixLen >= 0) {
-                var s = (o.ToString() ?? "");
-                if (prefixLen < s.Length) {
-                    return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
-                } else {
-                    return "\"" + s + "\"";
-                }
-            }
-
-            if (regex is not null) {
-                var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-                var s = (o.ToString() ?? "");
-                var m = r.Match(s);
-                while (m.Success) {
-                    for ( int i = 1; i < m.Groups.Count; i++ ) {
-                        var cc = m.Groups[i].Captures;
-                        for ( int j = 0; j < cc.Count; j++ ) {
-                            s = s.Replace(cc[j].ToString(), "***");
-                        }
-                    }
-                    m = m.NextMatch();
-                }
-                return s;
-            }
-
-            if (o is string)
-                return "\"" + o + "\"";
-            else
-                return (o.ToString() ?? "");
-        }
         public static string OptionsToString(this MyAppOptions o)
         {
             return $"""
                     MyAppOptions:
-                      Name                    : {Format(o.Name)}
-                      Password                : {Format(o.Password,prefixLen:0)}
-                      Certificate             : {Format(o.Certificate,prefixLen:3)}
-                      Secret                  : {Format(o.Secret,lengthOnly:true)}
-                      ConnectionString        : {Format(o.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)")}
-                      AnotherConnectionString : {Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+                      Name                    : {OptionsToStringAttribute.Format(o.Name)}
+                      NullName                : {OptionsToStringAttribute.Format(o.NullName)}
+                      Password                : {OptionsToStringAttribute.Format(o.Password,prefixLen:0)}
+                      Certificate             : {OptionsToStringAttribute.Format(o.Certificate,prefixLen:3)}
+                      Secret                  : {OptionsToStringAttribute.Format(o.Secret,lengthOnly:true)}
+                      ConnectionString        : {OptionsToStringAttribute.Format(o.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)")}
+                      AnotherConnectionString : {OptionsToStringAttribute.Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
                     """;
         }
 

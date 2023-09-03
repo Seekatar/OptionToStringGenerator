@@ -1,0 +1,10 @@
+﻿integration.MyInternalAppOptions:
+  Name                   : "hi mom"
+  NullName               : <null>
+  AnObject               : MyClass: A name
+  Password               : "*************"
+  Certificate            : "abc**********"
+  Secret                 : Len = 35
+  ConnectionString       : Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;
+  ConnectionStringIgnore : Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;
+  ConnectionStringCase   : ***!

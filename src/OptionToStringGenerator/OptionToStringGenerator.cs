@@ -10,11 +10,13 @@ public readonly struct ClassToGenerate
 {
     public readonly string Name;
     public readonly List<IPropertySymbol> Values;
+    public readonly string Accessibility { get; }
 
-    public ClassToGenerate(string name, List<IPropertySymbol> values)
+    public ClassToGenerate(string name, List<IPropertySymbol> values, string accessibility)
     {
         Name = name;
         Values = values;
+        Accessibility = accessibility;
     }
 }
 
@@ -28,8 +30,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
         // Do a simple filter for classes
         IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (s, _) => IsSyntaxTargetForGeneration(s), // select classes with attributes
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // sect the class with the [ClassExtensions] attribute
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),        // get classes with an attribute, must be fast
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // get a class with the my attribute
             .Where(static m => m is not null)!; // filter out attributed classes that we don't care about
 
         // Combine the selected classes with the `Compilation`
@@ -48,7 +50,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
         // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
-        // loop through all the attributes on the method
+        // loop through all the attributes 
         foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
         {
             foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
@@ -62,7 +64,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                // Is the attribute the [ClassExtensions] attribute?
+                // Is the attribute my attribute?
                 if (fullName == FullAttributeName)
                 {
                     // return the class
@@ -101,8 +103,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
     static List<ClassToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classSyntax, CancellationToken ct)
     {
-        // Create a list to hold our output
         var classToGenerate = new List<ClassToGenerate>();
+
         // Get the semantic representation of our marker attribute
         INamedTypeSymbol? classAttribute = compilation.GetTypeByMetadataName(FullAttributeName);
 
@@ -129,22 +131,25 @@ public class OptionToStringGenerator : IIncrementalGenerator
             // Get the full type name of the class
             // or OuterClass<T>.Color if it was nested in a generic type (for example)
             string className = classSymbol.ToString();
+            string accessibility = classSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
 
             // Get all the members in the class
             ImmutableArray<ISymbol> classMembers = classSymbol.GetMembers();
             var members = new List<IPropertySymbol>(classMembers.Length);
 
-            // Get all the fields from the class, and add their name to the list
+            // Get all the public properties with a get method
             foreach (ISymbol member in classMembers)
             {
-                if (member is IPropertySymbol property && property.GetMethod is not null)
+                if (member is IPropertySymbol property 
+                    && property.GetMethod is not null 
+                    && property.DeclaredAccessibility == Accessibility.Public)
                 {
                     members.Add(property);
                 }
             }
 
             // Create an ClassToGenerate for use in the generation phase
-            classToGenerate.Add(new ClassToGenerate(className, members));
+            classToGenerate.Add(new ClassToGenerate(className, members, accessibility));
         }
 
         return classToGenerate;
@@ -159,42 +164,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     {
                         public static partial class ClassExtensions
                         {
-                            static string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
-                            {
-                                if ( o is null ) return "<null>";
-
-                                if (lengthOnly) return "Len = " + (o.ToString() ?? "").Length.ToString();
-
-                                if (prefixLen >= 0) {
-                                    var s = (o.ToString() ?? "");
-                                    if (prefixLen < s.Length) {
-                                        return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
-                                    } else {
-                                        return "\"" + s + "\"";
-                                    }
-                                }
-
-                                if (regex is not null) {
-                                    var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-                                    var s = (o.ToString() ?? "");
-                                    var m = r.Match(s);
-                                    while (m.Success) {
-                                        for ( int i = 1; i < m.Groups.Count; i++ ) {
-                                            var cc = m.Groups[i].Captures;
-                                            for ( int j = 0; j < cc.Count; j++ ) {
-                                                s = s.Replace(cc[j].ToString(), "***");
-                                            }
-                                        }
-                                        m = m.NextMatch();
-                                    }
-                                    return s;
-                                }
-
-                                if (o is string)
-                                    return "\"" + o + "\"";
-                                else
-                                    return (o.ToString() ?? "");
-                            }
 
                     """);
         foreach (var classToGenerate in classesToGenerate)
@@ -209,7 +178,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // method signature
-            sb.Append("        public static string OptionsToString(this ").Append(classToGenerate.Name).Append(
+            sb.Append($"        {classToGenerate.Accessibility} static string OptionsToString(this ").Append(classToGenerate.Name).Append(
                       """"
                        o)
                               {
@@ -219,7 +188,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             sb.Append("                    " + classToGenerate.Name).AppendLine(":");
 
             // each property
-            string format = $"                      {{0,-{maxLen}}} : {{{{Format(o.";
+            string format = $"                      {{0,-{maxLen}}} : {{{{OptionsToStringAttribute.Format(o.";
             foreach (var member in classToGenerate.Values)
             {
                 bool ignored = false;

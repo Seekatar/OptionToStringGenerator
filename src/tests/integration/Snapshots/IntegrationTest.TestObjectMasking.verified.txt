@@ -1,0 +1,2 @@
+﻿integration.ObjectMasking:
+  AnObject : MyClass: Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;

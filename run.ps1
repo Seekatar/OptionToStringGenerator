@@ -102,12 +102,12 @@ foreach ($currentTask in $Tasks) {
             }
             'testUnit' {
                 executeSB -RelativeDir "src/tests/unit" {
-                    dotnet test
+                    dotnet test --collect:"XPlat Code Coverage"
                 }
             }
             'testIntegration' {
                 executeSB -RelativeDir "src/tests/integration" {
-                    dotnet test
+                    dotnet test --collect:"XPlat Code Coverage"
                 }
             }
             'run' {
@@ -119,6 +119,18 @@ foreach ($currentTask in $Tasks) {
                 executeSB -RelativeDir "src/${appName}" {
                     dotnet watch
                 }
+            }
+            'createLocalNuget' {
+                executeSB -Name 'CreateNuget' {
+                    $localNuget = dotnet nuget list source | Select-String "Local \[Enabled" -Context 0,1
+                    if (!$localNuget) {
+                        if (!$LocalNugetFolder) {
+                            $LocalNugetFolder = (Join-Path $PSScriptRoot 'packages')
+                            $null = New-Item 'packages' -ItemType Directory -ErrorAction Ignore
+                        }
+                        dotnet nuget add source $LocalNugetFolder --name Local
+                    }
+                    }
             }
             'pack' {
                 if ($Version) {
