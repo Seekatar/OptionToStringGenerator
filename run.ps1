@@ -102,12 +102,22 @@ foreach ($currentTask in $Tasks) {
             }
             'testUnit' {
                 executeSB -RelativeDir "src/tests/unit" {
-                    dotnet test --collect:"XPlat Code Coverage"
+                    Remove-Item TestResults -Recurse -Force -ErrorAction Ignore
+                    dotnet test --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+                    Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
+                        "Move-Item $($_.FullName) ."
+                        Move-Item $_.FullName .
+                    }
                 }
             }
             'testIntegration' {
                 executeSB -RelativeDir "src/tests/integration" {
-                    dotnet test --collect:"XPlat Code Coverage"
+                    Remove-Item TestResults -Recurse -Force -ErrorAction Ignore
+                    dotnet test --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
+                    Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
+                        "Move-Item $($_.FullName) ."
+                        Move-Item $_.FullName .
+                    }
                 }
             }
             'run' {
