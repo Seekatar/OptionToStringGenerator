@@ -11,12 +11,14 @@ public readonly struct ClassToGenerate
     public readonly string Name;
     public readonly List<IPropertySymbol> Values;
     public readonly string Accessibility { get; }
+    public readonly Location Location { get; }
 
-    public ClassToGenerate(string name, List<IPropertySymbol> values, string accessibility)
+    public ClassToGenerate(string name, List<IPropertySymbol> values, string accessibility, Location location)
     {
         Name = name;
         Values = values;
         Accessibility = accessibility;
+        Location = location;
     }
 }
 
@@ -149,7 +151,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // Create an ClassToGenerate for use in the generation phase
-            classToGenerate.Add(new ClassToGenerate(className, members, accessibility));
+            classToGenerate.Add(new ClassToGenerate(className, members, accessibility, classSymbol.Locations[0]));
         }
 
         return classToGenerate;
@@ -186,6 +188,20 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
                       """");
             sb.Append("                    " + classToGenerate.Name).AppendLine(":");
+
+            if (!classToGenerate.Values.Any())
+            {
+                var diag = Diagnostic.Create(new DiagnosticDescriptor(
+                                        id: "SEEK003",
+                                        title: "No properties found",
+                                        messageFormat: "No public properties have an Output* attribute",
+                                        category: "Usage",
+                                        defaultSeverity: DiagnosticSeverity.Warning,
+                                        isEnabledByDefault: true
+                                     ), classToGenerate.Location );
+                context.ReportDiagnostic(diag);
+                sb.AppendLine("                      No properties to display");
+            }
 
             // each property
             string format = $"                      {{0,-{maxLen}}} : {{{{OptionsToStringAttribute.Format(o.";

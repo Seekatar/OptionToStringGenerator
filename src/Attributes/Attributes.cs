@@ -15,7 +15,7 @@ public class OptionsToStringAttribute : Attribute
     /// <param name="regex">Regex to mask</param>
     /// <param name="ignoreCase">ignore case on regex</param>
     /// <returns></returns>
-    public static string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
+    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
     {
         if (o is null) return "<null>";
 

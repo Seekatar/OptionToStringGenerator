@@ -23,6 +23,9 @@ class MyInternalAppOptions
     [OutputMask(PrefixLen=3)]
     public string Certificate { get; set; } = "abc1233435667";
 
+    [OutputMask(PrefixLen = 100)]
+    public string CertificateShort { get; set; } = "abc1233435667";
+
     [OutputLengthOnly]
     public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
 
@@ -64,6 +67,11 @@ class ObjectMasking
 }
 
 [OptionsToString]
+class NoOptions
+{
+}
+
+[OptionsToString]
 class BadOptions
 {
     // shows warning about two attributes
@@ -74,10 +82,10 @@ class BadOptions
     // will make an error [OutputRegex]
     public string Name2 { get; set; } = "hi mom";
 
-    private string NotShown1 { get; set; } = "bye mom";
-    protected string NotShown2 { get; set; } = "bye mom";
-    internal string NotShown3 { get; set; } = "bye mom";
-    string NotShown4 { get; set; } = "bye mom";
+    private string NoteShown1 { get; set; } = "bye mom";
+    protected string NoteShown2 { get; set; } = "bye mom";
+    internal string NoteShown3 { get; set; } = "bye mom";
+    string NoteShown4 { get; set; } = "bye mom";
 }
 
 [UsesVerify]
@@ -121,6 +129,14 @@ public class IntegrationTest
     public Task BadOptionTest()
     {
         var options = new BadOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task NoOptionTest()
+    {
+        var options = new NoOptions();
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }

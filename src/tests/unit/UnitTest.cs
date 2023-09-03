@@ -28,6 +28,9 @@ public class UnitTests
                             [OutputMask(PrefixLen=3)]
                             public string Certificate { get; set; } = "abc1233435667";
 
+                            [OutputMask(PrefixLen=30)]
+                            public string CertificateShort { get; set; } = "abc1233435667";
+
                             [OutputLengthOnly]
                             public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
 
@@ -112,6 +115,28 @@ public class UnitTests
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
             o[0].Id.ShouldBe("SEEK001");
         });
-
     }
+
+    [Fact]
+    public Task NoOptions()
+    {
+        // The source code to test
+        var source = """
+                        using Seekatar.OptionToStringGenerator;
+
+                        [OptionsToString]
+                        class NoOptions
+                        {
+                        }
+                     """;
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+            o[0].Id.ShouldBe("SEEK003");
+        });
+    }
+
+
 }
