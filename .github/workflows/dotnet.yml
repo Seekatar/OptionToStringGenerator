@@ -60,14 +60,18 @@ jobs:
       env:
        Version: ${{ env.Version }}
 
-    - name: Test Report
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: DotNET Tests
-        path: "**/test-results.trx"
-        reporter: dotnet-trx
-        fail-on-error: true
+    # https://github.com/dorny/test-reporter/issues/149
+    # permissions:
+    #   id-token: write
+    #   contents: read
+    #   checks: write    # - name: Test Report
+    #   uses: dorny/test-reporter@v1
+    #   if: always()
+    #   with:
+    #     name: DotNET Tests
+    #     path: "**/test-results.trx"
+    #     reporter: dotnet-trx
+    #     fail-on-error: true
 
     - name: Upload to CodeCov
       if: ${{ matrix.os == 'ubuntu-latest'}}
