@@ -57,6 +57,9 @@ jobs:
     - name: Do CI Build and Test
       run: |
         ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:Version
+        "::group::Environment Variables"
+        gci ./ -r | ft -wrap
+        "::endgroup::"
       env:
        Version: ${{ env.Version }}
 
