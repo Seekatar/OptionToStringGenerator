@@ -105,15 +105,21 @@ public class UnitTests
                             public string Name { get; set; } = "hi mom";
 
                             [OutputRegex]
-                            public string Password { get; set; } = "thisisasecret";
+                            public string MissingRegexParam { get; set; } = "thisisasecret";
+
+                            [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+", IgnoreCase = true)]
+                            public string BadRegEx { get; set; } = "hi mom";
+
                         }
                      """;
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
-            o.Count().ShouldBe(1);
+            o.Count().ShouldBe(2);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
             o[0].Id.ShouldBe("SEEK001");
+            o[1].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
+            o[1].Id.ShouldBe("SEEK001");
         });
     }
 

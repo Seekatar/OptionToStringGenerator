@@ -160,6 +160,7 @@ foreach ($currentTask in $Tasks) {
                                 $justVersion = $Version.Split('-')[0]
 
                                 # pack directly to local nuget folder since may not be able to push
+                                # NOTE in Azure/GitHub Package version must be used, locally VersionPrefix
                                 dotnet pack -o ($localNuget.Context.PostContext.Trim()) `
                                             -p:Version=$Version `
                                             -p:PackageVersion=$Version `
