@@ -1,0 +1,2 @@
+﻿integration.MyPrivateAppOptions:
+  Name : "hi mom"

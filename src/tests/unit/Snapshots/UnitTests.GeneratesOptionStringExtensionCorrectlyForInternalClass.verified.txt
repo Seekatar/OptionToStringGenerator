@@ -3,12 +3,11 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this MyAppOptions o)
+        internal static string OptionsToString(this MyAppOptions o)
         {
             return $"""
                     MyAppOptions:
-                      Name     : {OptionsToStringAttribute.Format(o.Name)}
-                      Password : {OptionsToStringAttribute.Format(o.Password)}
+                      Name : {OptionsToStringAttribute.Format(o.Name)}
                     """;
         }
 

@@ -102,12 +102,22 @@ foreach ($currentTask in $Tasks) {
             }
             'testUnit' {
                 executeSB -RelativeDir "src/tests/unit" {
-                    dotnet test
+                    Remove-Item TestResults -Recurse -Force -ErrorAction Ignore
+                    dotnet test --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+                    Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
+                        "Move-Item $($_.FullName) ."
+                        Move-Item $_.FullName .
+                    }
                 }
             }
             'testIntegration' {
                 executeSB -RelativeDir "src/tests/integration" {
-                    dotnet test
+                    Remove-Item TestResults -Recurse -Force -ErrorAction Ignore
+                    dotnet test --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
+                    Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
+                        "Move-Item $($_.FullName) ."
+                        Move-Item $_.FullName .
+                    }
                 }
             }
             'run' {
@@ -119,6 +129,18 @@ foreach ($currentTask in $Tasks) {
                 executeSB -RelativeDir "src/${appName}" {
                     dotnet watch
                 }
+            }
+            'createLocalNuget' {
+                executeSB -Name 'CreateNuget' {
+                    $localNuget = dotnet nuget list source | Select-String "Local \[Enabled" -Context 0,1
+                    if (!$localNuget) {
+                        if (!$LocalNugetFolder) {
+                            $LocalNugetFolder = (Join-Path $PSScriptRoot 'packages')
+                            $null = New-Item 'packages' -ItemType Directory -ErrorAction Ignore
+                        }
+                        dotnet nuget add source $LocalNugetFolder --name Local
+                    }
+                    }
             }
             'pack' {
                 if ($Version) {

@@ -1,7 +1,0 @@
-﻿integration.MyAppOptions:
-  Name                    : "hi mom"
-  Password                : "*************"
-  Certificate             : "abc**********"
-  Secret                  : Len = 35
-  ConnectionString        : Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;
-  AnotherConnectionString : Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;

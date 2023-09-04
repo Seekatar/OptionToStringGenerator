@@ -1,0 +1,90 @@
+name: OptionToStringGenerator
+
+on:
+  push:
+    branches: [ main, build, releases/** ]
+  pull_request:
+    branches: [ main, releases/** ]
+  # workflow_dispatch: allows manually kicking off a build
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  buildAndDeploy:
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      max-parallel: 3
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3.6.0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3.0.3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Create GitHub NuGet Source
+      run: |
+       dotnet nuget add source --username $env:GITHUB_REPOSITORY_OWNER --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$($env:GITHUB_REPOSITORY_OWNER.ToLower())/index.json"
+
+    - name: Determine Version
+      run: |
+        if ('${{ github.ref }}' -match ".*/v{0,1}(?<ver>\d\.\d\.\d)(?:(?<prerelease>-[0-9a-z]+)(?<rest>.*))?" `
+            -and (!$matches['rest'] -or !$matches['rest'].StartsWith('-'))) {
+            $newVersion = $matches['ver']+$matches['prerelease']
+        } else {
+            $newVersion = "1.0.$env:GITHUB_RUN_NUMBER"
+        }
+        "Version=$newVersion written to $env:GITHUB_ENV"
+        "Version=$newVersion" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+    - name: Dump Environment
+      run: |
+       "::group::Pwsh Version"
+       $PSVersionTable
+       "::endgroup::"
+
+       "::group::Environment Variables"
+       gci env: | ft -wrap
+       "::endgroup::"
+
+    - name: Do CI Build and Test
+      run: |
+        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:Version
+      env:
+       Version: ${{ env.Version }}
+
+    # https://github.com/dorny/test-reporter/issues/149
+    # permissions:
+    #   id-token: write
+    #   contents: read
+    #   checks: write    # - name: Test Report
+    #   uses: dorny/test-reporter@v1
+    #   if: always()
+    #   with:
+    #     name: DotNET Tests
+    #     path: "**/test-results.trx"
+    #     reporter: dotnet-trx
+    #     fail-on-error: true
+
+    - name: Upload to CodeCov
+      if: ${{ matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      working-directory: src/tests/unit
+      run: |
+        export CODECOV_TOKEN="${{ secrets.CODECOV }}"
+        bash <(curl -s https://codecov.io/bash)
+
+    - name: Publish to NuGet.org
+      if: startsWith(github.ref, 'refs/heads/releases/') && matrix.os == 'ubuntu-latest'
+      run: |
+       "Publishing ./packages/Seekatar.Tools.$env:Version.nupkg to Nuget.org"
+       dotnet nuget push "./packages/Seekatar.Tools.$env:Version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
+      env:
+       Version: ${{ env.Version }}
