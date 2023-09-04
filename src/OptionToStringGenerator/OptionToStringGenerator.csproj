@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>Seekatar.$(MSBuildProjectName)</AssemblyName>
-    <PackageId>Seekatar..$(MSBuildProjectName)</PackageId>
+    <PackageId>Seekatar.$(MSBuildProjectName)</PackageId>
     <!-- 👇 Source generators must target netstandard 2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
