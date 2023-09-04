@@ -157,11 +157,13 @@ foreach ($currentTask in $Tasks) {
                             }
                             executeSB -RelativeDir "src/$_" -Name "$currentTask $_" {
                                 $logFile = Join-Path $BuildLogFolder Build.log
+                                $justVersion = $Version.Split('-')[0]
 
                                 # pack directly to local nuget folder since may not be able to push
                                 dotnet pack -o ($localNuget.Context.PostContext.Trim()) `
-                                            -p:VersionPrefix=$Version `
-                                            -p:AssemblyVersion=$Version `
+                                            -p:Version=$Version `
+                                            -p:PackageVersion=$Version `
+                                            -p:AssemblyVersion=$justVersion `
                                             /warnaserror `
                                             "/flp:logfile=`"$logFile`";Append" `
                                             @params
