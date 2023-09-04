@@ -57,8 +57,9 @@ jobs:
     - name: Do CI Build and Test
       run: |
         ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:Version
-        "::group::Environment Variables"
-        gci ./ -r | ft -wrap
+        "::group::Files"
+        "Current directory is $PWD"
+        gci ./ -r | select-object fullname | ft -wrap
         "::endgroup::"
       env:
        Version: ${{ env.Version }}
@@ -87,7 +88,7 @@ jobs:
     - name: Publish to NuGet.org
       if: startsWith(github.ref, 'refs/heads/releases/') && matrix.os == 'ubuntu-latest'
       run: |
-       "Publishing ./packages/Seekatar.OptionsToStringGenerator.$env:Version.nupkg to Nuget.org"
-       dotnet nuget push "./packages/Seekatar.OptionsToStringGenerator.$env:Version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
+       "Publishing ./OptionsToStringGenerator/packages/Seekatar.OptionsToStringGenerator.$env:Version.nupkg to Nuget.org"
+       dotnet nuget push "./OptionsToStringGenerator/packages/Seekatar.OptionsToStringGenerator.$env:Version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
       env:
        Version: ${{ env.Version }}
