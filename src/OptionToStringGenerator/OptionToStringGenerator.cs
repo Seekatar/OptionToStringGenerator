@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
+using System.Text.RegularExpressions;
+using static System.Net.WebRequestMethods;
 
 namespace Seekatar.OptionToStringGenerator;
 
@@ -52,7 +54,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
         // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
-        // loop through all the attributes 
+        // loop through all the attributes
         foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
         {
             foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
@@ -142,8 +144,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
             // Get all the public properties with a get method
             foreach (ISymbol member in classMembers)
             {
-                if (member is IPropertySymbol property 
-                    && property.GetMethod is not null 
+                if (member is IPropertySymbol property
+                    && property.GetMethod is not null
                     && property.DeclaredAccessibility == Accessibility.Public)
                 {
                     members.Add(property);
@@ -197,7 +199,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                         messageFormat: "No public properties have an Output* attribute",
                                         category: "Usage",
                                         defaultSeverity: DiagnosticSeverity.Warning,
-                                        isEnabledByDefault: true
+                                        isEnabledByDefault: true,
+                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek003-no-properties-found"
                                      ), classToGenerate.Location );
                 context.ReportDiagnostic(diag);
                 sb.AppendLine("                      No properties to display");
@@ -225,12 +228,23 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
                         {
                             var regexOk = false;
+                            var message = "You must specify a regex parameter";
                             foreach (var n in attribute.NamedArguments)
                             {
                                 if (n.Key == "Regex" && n.Value.Value is not null)
                                 {
-                                    formatParameters += ",regex:\"" + n.Value.Value + "\"";
-                                    regexOk = true;
+                                    var regex = n.Value.Value.ToString().Replace("\\", "\\\\");
+                                    try
+                                    {
+                                        var r = new Regex(regex);
+                                        formatParameters += ",regex:\"" + regex + "\"";
+                                        regexOk = true;
+                                    }
+                                    catch (ArgumentException e)
+                                    {
+                                        message = "Bad regex: "+e.Message;
+                                        break;
+                                    }
                                 }
                                 else if (n.Key == "IgnoreCase" && n.Value.Value is not null)
                                 {
@@ -241,11 +255,12 @@ public class OptionToStringGenerator : IIncrementalGenerator
                             {
                                 var diag = Diagnostic.Create(new DiagnosticDescriptor(
                                                         id: "SEEK001",
-                                                        title: "Missing regex parameter",
-                                                        messageFormat: "You must specify a regex parameter",
+                                                        title: "Missing or invalid regex parameter",
+                                                        messageFormat: message,
                                                         category: "Usage",
                                                         defaultSeverity: DiagnosticSeverity.Error,
-                                                        isEnabledByDefault: true
+                                                        isEnabledByDefault: true,
+                                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek001-missing-or-invalid-regex-parameter"
                                                      ), member.Locations[0]);
                                  context.ReportDiagnostic(diag);
                             }
@@ -261,7 +276,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         messageFormat: "You can only use one formatting attribute on a property",
                         category: "Usage",
                         defaultSeverity: DiagnosticSeverity.Warning,
-                        isEnabledByDefault: true
+                        isEnabledByDefault: true,
+                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek002-multiple-format-attributes"
                         ), member.Locations[0]);
                     context.ReportDiagnostic(diag);
                 }

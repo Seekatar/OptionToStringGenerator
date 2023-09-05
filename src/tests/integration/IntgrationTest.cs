@@ -1,55 +1,56 @@
 namespace integration;
 using Seekatar.OptionToStringGenerator;
-
-public class MyClass
-{
-    public string Name { get; set; } = "A name";
-    public string Description { get; set; } = "A description";
-    public override string ToString() => $"MyClass: {Name}";
-}
+using System.Globalization;
 
 [OptionsToString]
-class MyInternalAppOptions
+public class PublicOptions
 {
-    public string Name { get; set; } = "hi mom";
+    public class AClass
+    {
+        public string Name { get; set; } = "maybe this is secret";
+        public override string ToString() => $"{nameof(AClass)}: {Name}";
+    }
 
-    public string? NullName { get; set; }
+    public string PlainText { get; set; } = "hi mom";
 
-    public MyClass AnObject { get; set; } = new();
+    public int PlainNumber { get; set; } = 42;
+
+    public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
+
+    public string? NullItem { get; set; }
+
+    public AClass AnObject { get; set; } = new();
+
+    [OutputRegex(Regex = @"AClass\:\s+(.*)")]
+    public AClass AMaskedObject { get; set; } = new();
 
     [OutputMask]
-    public string Password { get; set; } = "thisisasecret";
+    public string FullyMasked { get; set; } = "thisisasecret";
 
     [OutputMask(PrefixLen=3)]
-    public string Certificate { get; set; } = "abc1233435667";
+    public string FirstThreeNotMasked { get; set; } = "abc1233435667";
 
     [OutputMask(PrefixLen = 100)]
-    public string CertificateShort { get; set; } = "abc1233435667";
+    public string NotMaskedSinceLongLength { get; set; } = "abc1233435667";
 
     [OutputLengthOnly]
-    public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
+    public string LengthOnly { get; set; } = "thisisasecretthatonlyshowsthelength";
 
     [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]
-    public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+    public string MaskUserAndPassword { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-    public string ConnectionStringIgnore { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+    public string MaskUserAndPasswordIngoreCase { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)")]
-    public string ConnectionStringCase { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+    public string RegexNotMatched { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
 
     [OutputIgnore]
     public string IgnoreMe { get; set; } = "abc1233435667";
 }
 
 [OptionsToString]
-public class MyPublicAppOptions
-{
-    public string Name { get; set; } = "hi mom";
-}
-
-[OptionsToString]
-public class MyPrivateAppOptions
+class InternalOptions
 {
     public string Name { get; set; } = "hi mom";
 }
@@ -63,7 +64,7 @@ class ObjectMasking
     }
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
-    public MyClass AnObject { get; }
+    public PublicOptions.AClass AnObject { get; }
 }
 
 [OptionsToString]
@@ -79,9 +80,6 @@ class BadOptions
     [OutputLengthOnly]
     public string Name { get; set; } = "hi mom";
 
-    // will make an error [OutputRegex]
-    public string Name2 { get; set; } = "hi mom";
-
     private string NoteShown1 { get; set; } = "bye mom";
     protected string NoteShown2 { get; set; } = "bye mom";
     internal string NoteShown3 { get; set; } = "bye mom";
@@ -93,10 +91,15 @@ public class IntegrationTest
 {
     const string SnapshotDirectory = "Snapshots";
 
+    public IntegrationTest()
+    {
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // for date formatting since different on different Oses
+    }
+
     [Fact]
     public Task TestPublicClass()
     {
-        var options = new MyPublicAppOptions();
+        var options = new PublicOptions();
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
@@ -104,15 +107,7 @@ public class IntegrationTest
     [Fact]
     public Task TestInternalClass()
     {
-        var options = new MyInternalAppOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task TestPrivateClass()
-    {
-        var options = new MyPrivateAppOptions();
+        var options = new InternalOptions();
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }

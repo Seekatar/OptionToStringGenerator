@@ -1,3 +1,2 @@
 ﻿integration.BadOptions:
-  Name  : Len = 6
-  Name2 : "hi mom"
+  Name : Len = 6

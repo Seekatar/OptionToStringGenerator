@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyName>Seekatar.$(MSBuildProjectName)</AssemblyName>
+    <PackageId>Seekatar.$(MSBuildProjectName)</PackageId>
     <!-- 👇 Source generators must target netstandard 2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- 👇 We don't want to reference the source generator dll directly in consuming projects -->
@@ -14,6 +16,17 @@
     https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/Core/AnalyzerBannedSymbols.txt
     -->
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <Authors>Seekatar.</Authors>
+    <Company>Seekatar</Company>
+    <RepositoryUrl>https://github.com/seekatar/OptionToStringGenerator</RepositoryUrl>
+    <Description>
+    This library contains an incremental source generator for formatting configuration objects.
+    </Description>
+    <Copyright>Copyright (c) 2023</Copyright>
+    <PackageProjectUrl>https://github.com/Seekatar/OptionToStringGenerator</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>.net;core;configuration;tools</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -30,6 +43,13 @@
     <Compile Remove="bin\**" />
     <EmbeddedResource Remove="bin\**" />
     <None Remove="bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <!-- The following libraries include the source generator interfaces and types we need -->
