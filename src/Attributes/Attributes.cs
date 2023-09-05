@@ -19,11 +19,12 @@ public class OptionsToStringAttribute : Attribute
     {
         if (o is null) return "<null>";
 
-        if (lengthOnly) return "Len = " + (o.ToString() ?? "").Length.ToString();
+        var value = o.ToString() ?? "";
+        if (lengthOnly) return "Len = " + (value).Length.ToString();
 
         if (prefixLen >= 0)
         {
-            var s = (o.ToString() ?? "");
+            var s = (value);
             if (prefixLen < s.Length)
             {
                 return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
@@ -37,7 +38,7 @@ public class OptionsToStringAttribute : Attribute
         if (regex is not null)
         {
             var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-            var s = (o.ToString() ?? "");
+            var s = (value);
             var matchCount = 0;
             var m = r.Match(s);
             while (m.Success)
@@ -57,9 +58,9 @@ public class OptionsToStringAttribute : Attribute
         }
 
         if (o is string)
-            return "\"" + o + "\"";
+            return "\"" + value + "\"";
         else
-            return (o.ToString() ?? "");
+            return (value);
     }
 }
 

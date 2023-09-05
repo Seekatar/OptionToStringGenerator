@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.1.2-prerelease] 2023-09-04
+## [0.1.2-prerelease] 2023-09-05
 
 ## Added
 
@@ -11,6 +11,10 @@
 ## Changed
 
 - Regex doesn't need double escaping of backslash
+
+## Fixed
+
+- Integration tests set current culture to avoid failing on Linux
 
 ## [0.1.1-prerelease] 2023-09-04
 

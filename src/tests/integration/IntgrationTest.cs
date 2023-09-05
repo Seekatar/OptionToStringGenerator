@@ -1,5 +1,6 @@
 namespace integration;
 using Seekatar.OptionToStringGenerator;
+using System.Globalization;
 
 [OptionsToString]
 public class PublicOptions
@@ -89,6 +90,11 @@ class BadOptions
 public class IntegrationTest
 {
     const string SnapshotDirectory = "Snapshots";
+
+    public IntegrationTest()
+    {
+        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // for date formatting since different on different Oses
+    }
 
     [Fact]
     public Task TestPublicClass()

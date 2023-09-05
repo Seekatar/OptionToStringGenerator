@@ -1,7 +1,7 @@
 ﻿integration.PublicOptions:
   PlainText                     : "hi mom"
   PlainNumber                   : 42
-  PlainDateTime                 : 1/2/2020 3:04:05 AM
+  PlainDateTime                 : 01/02/2020 03:04:05
   NullItem                      : <null>
   AnObject                      : AClass: maybe this is secret
   AMaskedObject                 : AClass: ***
