@@ -14,7 +14,7 @@ public class PublicOptions
 
     public int PlainNumber { get; set; } = 42;
 
-    public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 1);
+    public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
 
     public string? NullItem { get; set; }
 
