@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this MyAppOptions o)
         {
             return $"""
-                    MyAppOptions:
+                    MyAppOptions: 
                       Name : {OptionsToStringAttribute.Format(o.Name)}
                     """;
         }

@@ -1,0 +1,12 @@
+﻿{
+"JsonOptions" : {
+  "Name"                     : "hi mom",
+  "NullName"                 : null,
+  "Password"                 : "*************",
+  "Certificate"              : "abc**********",
+  "CertificateShort"         : "abc1233435667",
+  "Secret"                   : Len = 35,
+  "ConnectionString"         : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;",
+  "AnotherConnectionString"  : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+}
+}

@@ -135,4 +135,12 @@ public class IntegrationTest
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
+
+    [Fact]
+    public Task JsonTest()
+    {
+        var options = new JsonOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
 }

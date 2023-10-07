@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.1.3-prerelease] 2023-10-07
+
+## Added
+
+- Support for Json switch on class attribute to output as JSON
+
+## Changed
+
+- Quote regex type formats
+- Change value of a null object from `<null>` to `null`
+
 ## [0.1.2-prerelease] 2023-09-05
 
 ## Added

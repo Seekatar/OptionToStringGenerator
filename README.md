@@ -82,7 +82,7 @@ integration.PublicOptions:
   PlainText                     : "hi mom"
   PlainNumber                   : 42
   PlainDateTime                 : 1/1/2020 12:00:00 AM
-  NullItem                      : <null>
+  NullItem                      : null
   AnObject                      : AClass: maybe this is secret
   AMaskedObject                 : AClass: ***
   FullyMasked                   : "*************"
@@ -135,6 +135,9 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 - [ ] JSON output
 - [ ] Ability to use ILogger with semantic logging
 - [ ] Allow alternative method to get the string value of a property
+- [ ] Allow passing in a format parameter string for ToString(), at least for dates, datetimes, and numbers
+- [ ] Add option of postfix characters in masking
+- [ ] Allow title to include properties of the class
 
 ## Links to Documentation
 

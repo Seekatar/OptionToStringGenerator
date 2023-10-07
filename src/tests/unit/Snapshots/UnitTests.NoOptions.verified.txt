@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this NoOptions o)
         {
             return $"""
-                    NoOptions:
+                    NoOptions: 
                       No properties to display
                     """;
         }

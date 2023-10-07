@@ -6,6 +6,10 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class OptionsToStringAttribute : Attribute
 {
+    public string Indent { get; set; } = "  ";
+    public string Separator { get; set; } = ":";
+    public bool Json { get; set; } = false;
+
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
     /// </summary>
@@ -17,7 +21,7 @@ public class OptionsToStringAttribute : Attribute
     /// <returns></returns>
     public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
     {
-        if (o is null) return "<null>";
+        if (o is null) return "null";
 
         var value = o.ToString() ?? "";
         if (lengthOnly) return "Len = " + (value).Length.ToString();
@@ -54,7 +58,7 @@ public class OptionsToStringAttribute : Attribute
                 }
                 m = m.NextMatch();
             }
-            return matchCount > 0 ? s : "***!"; // if not matches, return mask
+            return $"\"{(matchCount > 0 ? s : "***!")}\""; // if not matches, return mask
         }
 
         if (o is string)

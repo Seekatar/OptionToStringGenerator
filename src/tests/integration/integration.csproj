@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
 		<PackageReference Include="Verify.XUnit" Version="20.8.0" />
 		<PackageReference Include="xunit" Version="2.5.0" />
@@ -25,6 +29,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestFiles\" />
   </ItemGroup>
 
 </Project>

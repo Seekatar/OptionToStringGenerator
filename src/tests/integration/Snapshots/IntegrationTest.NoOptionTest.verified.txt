@@ -1,2 +1,2 @@
-﻿integration.NoOptions:
+﻿integration.NoOptions: 
   No properties to display

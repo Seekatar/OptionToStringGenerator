@@ -1,3 +1,4 @@
+# run build, tests, pack, and if on releases/* branch, publish to nuget.org
 name: OptionToStringGenerator
 
 on:

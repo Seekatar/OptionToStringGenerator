@@ -1,0 +1,25 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Json o)
+        {
+            return $$"""
+                    {
+                    "Json" : {
+                      "Name"                     : {{OptionsToStringAttribute.Format(o.Name)}},
+                      "NullName"                 : {{OptionsToStringAttribute.Format(o.NullName)}},
+                      "Password"                 : {{OptionsToStringAttribute.Format(o.Password,prefixLen:0)}},
+                      "Certificate"              : {{OptionsToStringAttribute.Format(o.Certificate,prefixLen:3)}},
+                      "CertificateShort"         : {{OptionsToStringAttribute.Format(o.CertificateShort,prefixLen:30)}},
+                      "Secret"                   : {{OptionsToStringAttribute.Format(o.Secret,lengthOnly:true)}},
+                      "ConnectionString"         : {{OptionsToStringAttribute.Format(o.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)")}},
+                      "AnotherConnectionString"  : {{OptionsToStringAttribute.Format(o.AnotherConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}}
+                    }
+                    }
+                    """;
+        }
+
+    }
+}

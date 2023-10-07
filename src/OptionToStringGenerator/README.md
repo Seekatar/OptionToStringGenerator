@@ -83,7 +83,7 @@ integration.PublicOptions:
   PlainText                     : "hi mom"
   PlainNumber                   : 42
   PlainDateTime                 : 1/1/2020 12:00:00 AM
-  NullItem                      : <null>
+  NullItem                      : null
   AnObject                      : AClass: maybe this is secret
   AMaskedObject                 : AClass: ***
   FullyMasked                   : "*************"
