@@ -15,7 +15,6 @@
 	  <Compile Remove="TestFiles\NoOptions.cs" />
 	  <Compile Remove="TestFiles\ObjectMasking.cs" />
 	  <Compile Remove="TestFiles\PublicOptions.cs" />
-	  <Compile Remove="TestFiles\Title.cs" />
 	  <Compile Remove="TestFiles\TitleOptions.cs" />
 	</ItemGroup>
 
@@ -36,9 +35,6 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="TestFiles\PublicOptions.cs">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="TestFiles\FormattingOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="TestFiles\TitleOptions.cs">

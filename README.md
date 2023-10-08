@@ -132,12 +132,12 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 ## Roadmap
 
 - [ ] More configurability of the output. Indent, mask character, mask len, etc.
-- [ ] JSON output
 - [ ] Ability to use ILogger with semantic logging
 - [ ] Allow alternative method to get the string value of a property
 - [ ] Allow passing in a format parameter string for ToString(), at least for dates, datetimes, and numbers
 - [ ] Add option of postfix characters in masking
-- [ ] Allow title to include properties of the class
+- [x] Allow title to include properties of the class 0.1.3
+- [x] JSON output 0.1.3
 
 ## Links to Documentation
 

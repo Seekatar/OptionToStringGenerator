@@ -10,6 +10,8 @@ public class OptionsToStringAttribute : Attribute
     public string Separator { get; set; } = ":";
     public bool Json { get; set; } = false;
 
+    public string? Title { get; set; }
+
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
     /// </summary>

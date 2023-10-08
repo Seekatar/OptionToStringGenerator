@@ -41,7 +41,7 @@ public static class TestHelper
         return (diagnostics, output);
     }
 
-    public static Task Verify(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null)
+    public static Task Verify(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null )
     {
         var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
         if (assertDiag != null)
@@ -53,6 +53,21 @@ public static class TestHelper
             Assert.Empty(diag);
         }
         return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+    public static Task VerifyFile(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null)
+    {
+        var source = File.ReadAllText(filename);
+        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        if (assertDiag != null)
+        {
+            assertDiag(diag);
+        }
+        else
+        {
+            Assert.Empty(diag);
+        }
+        return Verifier.Verify(output).UseDirectory("Snapshots").UseParameters(Path.GetFileNameWithoutExtension(filename));
 
     }
+
 }

@@ -5,24 +5,16 @@ namespace Seekatar.OptionToStringGenerator.Tests;
 [UsesVerify] // Adds hooks for Verify into XUnit
 public class UnitTests
 {
-    [Fact]
-    public Task GeneratesOptionStringExtensionCorrectly()
+    [Theory]
+    [InlineData("TestFiles/FormattingOptions.cs")]
+    [InlineData("TestFiles/TitleOptions.cs")]
+    [InlineData("TestFiles/JsonOptions.cs")]
+    [InlineData("TestFiles/InternalOptions.cs")]
+    [InlineData("TestFiles/PublicOptions.cs")]
+    public Task HappyPathFiles(string filename)
     {
-        // The source code to test
-        var source =  File.ReadAllText("TestFiles/PublicOptions.cs");
-
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
-    }
-
-    [Fact]
-    public Task GeneratesOptionStringExtensionCorrectlyForInternalClass()
-    {
-        // The source code to test
-        var source = File.ReadAllText("TestFiles/InternalOptions.cs");
-
-        // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
+        return TestHelper.VerifyFile(filename);
     }
 
     [Fact]
@@ -98,13 +90,25 @@ public class UnitTests
     }
 
     [Fact]
-    public Task JsonOptions()
+    public Task BadTitle()
     {
         // The source code to test
-        var source = File.ReadAllText("TestFiles/JsonOptions.cs");
+        var source = """
+                        using Seekatar.OptionToStringGenerator;
+
+                        [OptionsToString(Title="Hi{Thisdoesntexist}"]
+                        public class BadTitleOptions
+                        {
+                            public string Name { get; set; } = "hi mom";
+                        }
+                     """;
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+            o[0].Id.ShouldBe("SEEK004");
+        });
     }
 
 

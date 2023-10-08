@@ -1,0 +1,3 @@
+﻿Test.FormattingOptions: 
+    IntProp    - 42
+    StringProp - "hi mom"

@@ -60,4 +60,20 @@ public class IntegrationTest
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
+
+    [Fact]
+    public Task TitleTest()
+    {
+        var options = new TitleOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task FormatTest()
+    {
+        var options = new FormattingOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
 }

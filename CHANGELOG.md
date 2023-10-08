@@ -1,10 +1,11 @@
 # Change Log
 
-## [0.1.3-prerelease] 2023-10-07
+## [0.2.0] 2023-10-07
 
 ## Added
 
 - Support for Json switch on class attribute to output as JSON
+- Support for using properties in the Title
 
 ## Changed
 

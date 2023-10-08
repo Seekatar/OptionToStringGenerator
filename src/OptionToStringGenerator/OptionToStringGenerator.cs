@@ -178,6 +178,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
             var classAttribute = classToGenerate.ClassSymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault();
             if (classAttribute is null) { continue; } // can't get here if it doesn't have the attribute, but just in case
+
+            var nameSuffix = ":";
             var indent = "  ";
             var separator = ":";
             var nameQuote = "";
@@ -187,6 +189,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
             var csOpenBrace = "{{";
             var csCloseBrace = "}";
             var leadDollar = "$";
+            var haveJson = false;
+            var title = classToGenerate.Name;
             foreach (var n in classAttribute.NamedArguments)
             {
                 if (n.Key == nameof(OptionsToStringAttribute.Json)
@@ -208,15 +212,49 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     csOpenBrace = "{{{{";
                     csCloseBrace = "}}";
                     leadDollar = "$$";
-                    break;
+                    haveJson = true;
                 }
-                else if (n.Key == nameof(OptionsToStringAttribute.Indent) && n.Value.Value is not null)
+                else if (n.Key == nameof(OptionsToStringAttribute.Title)
+                    && n.Value.Value is not null)
                 {
-                    indent = n.Value.Value.ToString();
+                    Regex regex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
+                    // loop over all the  regex matches, and see if the string is a member of the class
+                    var titleString = n.Value.Value.ToString();
+                    var matches = regex.Matches(titleString);
+                    foreach (Match match in matches)
+                    {
+                        var memberName = match.Groups[1].Value;
+                        var member = classToGenerate.Values.Where(m => m.Name == memberName).FirstOrDefault();
+                        if (member is null)
+                        {
+                            var diag = Diagnostic.Create(new DiagnosticDescriptor(
+                                                    id: "SEEK004",
+                                                    title: "Member in Title not found",
+                                                    messageFormat: $"Property '{memberName}' not found on {classToGenerate.Name}",
+                                                    category: "Usage",
+                                                    defaultSeverity: DiagnosticSeverity.Warning,
+                                                    isEnabledByDefault: true,
+                                                    helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek004-member-in-title-not-found"
+                                                 ), classToGenerate.Location);
+                            context.ReportDiagnostic(diag);
+                            titleString = titleString.Replace($"{{{memberName}}}", memberName);
+                        }
+                        else
+                        {
+                            titleString = titleString.Replace($"{{{memberName}}}", $"{{o.{memberName}}}");
+                        }
+                    }
+                    title = titleString;
                 }
-                else if (n.Key == nameof(OptionsToStringAttribute.Separator) && n.Value.Value is not null)
-                {
-                    separator = n.Value.Value.ToString();
+                else if (!haveJson) {
+                    if (n.Key == nameof(OptionsToStringAttribute.Indent) && n.Value.Value is not null)
+                    {
+                        indent = n.Value.Value.ToString();
+                    }
+                    else if (n.Key == nameof(OptionsToStringAttribute.Separator) && n.Value.Value is not null)
+                    {
+                        separator = n.Value.Value.ToString();
+                    }
                 }
             }
 
@@ -229,7 +267,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
                       """");
 
-            sb.Append($"                    {jsonOpenBrace}{nameQuote}{classToGenerate.Name}{nameQuote}{separator}{" "+jsonOpenBrace.Trim()}").AppendLine();
+            sb.Append($"                    {jsonOpenBrace}{nameQuote}{title}{nameQuote}{nameSuffix}{" "+jsonOpenBrace.Trim()}").AppendLine();
 
             if (!classToGenerate.Values.Any())
             {

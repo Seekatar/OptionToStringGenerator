@@ -1,0 +1,3 @@
+﻿TitleOptions_hi mom_42: 
+  IntProp    : 42
+  StringProp : "hi mom"
