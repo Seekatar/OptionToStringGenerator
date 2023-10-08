@@ -9,39 +9,7 @@ public class UnitTests
     public Task GeneratesOptionStringExtensionCorrectly()
     {
         // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString]
-                        public class MyAppOptions
-                        {
-                            public string Name { get; set; } = "hi mom";
-
-                            public string? NullName { get; set; };
-
-                            [OutputMask]
-                            public string Password { get; set; } = "thisisasecret";
-
-                            [OutputIgnore]
-                            public string IgnoreMe { get; set; } = "abc1233435667";
-                     
-                            [OutputMask(PrefixLen=3)]
-                            public string Certificate { get; set; } = "abc1233435667";
-
-                            [OutputMask(PrefixLen=30)]
-                            public string CertificateShort { get; set; } = "abc1233435667";
-
-                            [OutputLengthOnly]
-                            public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
-
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]
-                            public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
-                     
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-                            public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
-                     
-                        }
-                     """;
+        var source =  File.ReadAllText("TestFiles/PublicOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source);
@@ -51,15 +19,7 @@ public class UnitTests
     public Task GeneratesOptionStringExtensionCorrectlyForInternalClass()
     {
         // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString]
-                        class MyAppOptions
-                        {
-                            public string Name { get; set; } = "hi mom";
-                        }
-                     """;
+        var source = File.ReadAllText("TestFiles/InternalOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source);
@@ -127,14 +87,7 @@ public class UnitTests
     public Task NoOptions()
     {
         // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString]
-                        class NoOptions
-                        {
-                        }
-                     """;
+        var source = File.ReadAllText("TestFiles/NoOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
@@ -148,38 +101,7 @@ public class UnitTests
     public Task JsonOptions()
     {
         // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString(Json=true)]
-                        class Json
-                        {
-                            public string Name { get; set; } = "hi mom";
-                     
-                            public string? NullName { get; set; };
-                     
-                            [OutputMask]
-                            public string Password { get; set; } = "thisisasecret";
-                     
-                            [OutputIgnore]
-                            public string IgnoreMe { get; set; } = "abc1233435667";
-                     
-                            [OutputMask(PrefixLen=3)]
-                            public string Certificate { get; set; } = "abc1233435667";
-                     
-                            [OutputMask(PrefixLen=30)]
-                            public string CertificateShort { get; set; } = "abc1233435667";
-                     
-                            [OutputLengthOnly]
-                            public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
-                     
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]
-                            public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
-                     
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-                            public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
-                       }
-                     """;
+        var source = File.ReadAllText("TestFiles/JsonOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source);

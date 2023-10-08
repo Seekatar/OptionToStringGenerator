@@ -1,5 +1,7 @@
 ﻿using Seekatar.OptionToStringGenerator;
 
+namespace Test;
+
 [OptionsToString(Json = true)]
 class JsonOptions
 {

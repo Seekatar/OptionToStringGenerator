@@ -22,7 +22,7 @@ extension method for your classes. By marking properties in the class you can co
 Here's an example class of the various options with values set in the class for illustration purposes. The output follows.
 
 ```csharp
-namespace integration;
+namespace Test;
 using Seekatar.OptionToStringGenerator;
 
 [OptionsToString]

@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\unit\TestFiles\BadOptions.cs" Link="TestFiles\BadOptions.cs" />
+    <Compile Include="..\unit\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs" />
     <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
+    <Compile Include="..\unit\TestFiles\NoOptions.cs" Link="TestFiles\NoOptions.cs" />
+    <Compile Include="..\unit\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
+    <Compile Include="..\unit\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,10 +34,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Attributes\Attributes.csproj" />
     <ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TestFiles\" />
   </ItemGroup>
 
 </Project>

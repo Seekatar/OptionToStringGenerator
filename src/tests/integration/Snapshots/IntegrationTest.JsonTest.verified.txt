@@ -1,5 +1,5 @@
 ﻿{
-"JsonOptions" : {
+"Test.JsonOptions" : {
   "Name"                     : "hi mom",
   "NullName"                 : null,
   "Password"                 : "*************",

@@ -1,2 +1,2 @@
-﻿integration.ObjectMasking: 
+﻿Test.ObjectMasking: 
   AnObject : "AClass: Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"

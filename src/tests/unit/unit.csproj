@@ -9,12 +9,32 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="TestFiles\BadOptions.cs" />
+	  <Compile Remove="TestFiles\InternalOptions.cs" />
 	  <Compile Remove="TestFiles\JsonOptions.cs" />
+	  <Compile Remove="TestFiles\NoOptions.cs" />
+	  <Compile Remove="TestFiles\ObjectMasking.cs" />
+	  <Compile Remove="TestFiles\PublicOptions.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="TestFiles\BadOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\InternalOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="TestFiles\JsonOptions.cs">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\NoOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\ObjectMasking.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\PublicOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
 

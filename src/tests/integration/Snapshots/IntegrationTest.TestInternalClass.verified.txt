@@ -1,2 +1,2 @@
-﻿integration.InternalOptions: 
+﻿Test.InternalOptions: 
   Name : "hi mom"

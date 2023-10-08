@@ -181,11 +181,11 @@ public class OptionToStringGenerator : IIncrementalGenerator
             var indent = "  ";
             var separator = ":";
             var nameQuote = "";
-            var openBrace = "";
-            var closeBrace = "";
+            var jsonOpenBrace = "";
+            var jsonCloseBrace = "";
             var trailingComma = "";
-            var openBrace2 = "{{";
-            var closeBrace2 = "}";
+            var csOpenBrace = "{{";
+            var csCloseBrace = "}";
             var leadDollar = "$";
             foreach (var n in classAttribute.NamedArguments)
             {
@@ -195,19 +195,20 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 {
                     separator = " :";
                     nameQuote = "\"";
-                    openBrace = """
-                                {
-                                                    
-                                """;
-                    closeBrace = """
-                                 }
-                                                     
-                                 """;
+                    jsonOpenBrace = """
+                                    {
+                                                        
+                                    """;
+                    jsonCloseBrace = """
+                                     }
+                                                         
+                                     """;
                     maxLen += 2;
                     trailingComma = ",";
-                    openBrace2 = "{{{{";
-                    closeBrace2 = "}}";
+                    csOpenBrace = "{{{{";
+                    csCloseBrace = "}}";
                     leadDollar = "$$";
+                    break;
                 }
                 else if (n.Key == nameof(OptionsToStringAttribute.Indent) && n.Value.Value is not null)
                 {
@@ -228,7 +229,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
                       """");
 
-            sb.Append($"                    {openBrace}{nameQuote}{classToGenerate.Name}{nameQuote}{separator}{" "+openBrace.Trim()}").AppendLine();
+            sb.Append($"                    {jsonOpenBrace}{nameQuote}{classToGenerate.Name}{nameQuote}{separator}{" "+jsonOpenBrace.Trim()}").AppendLine();
 
             if (!classToGenerate.Values.Any())
             {
@@ -246,7 +247,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // each property
-            string format = $"                    {indent}{{0,-{maxLen}}} {separator} {openBrace2}OptionsToStringAttribute.Format(o.";
+            string format = $"                    {indent}{{0,-{maxLen}}} {separator} {csOpenBrace}OptionsToStringAttribute.Format(o.";
             int j = 0;
             foreach (var member in classToGenerate.Values)
             {
@@ -325,12 +326,12 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(diag);
                 }
                 if (!ignored)
-                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($"){closeBrace2}{trailingComma}");
+                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($"){csCloseBrace}{trailingComma}");
             }
 
             // end of method
             sb.Append($$""""
-                                          {{closeBrace}}{{closeBrace}}""";
+                                          {{jsonCloseBrace}}{{jsonCloseBrace}}""";
                               }
 
                       """");

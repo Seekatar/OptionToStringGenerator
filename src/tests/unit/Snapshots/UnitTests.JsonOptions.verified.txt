@@ -3,11 +3,11 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Json o)
+        internal static string OptionsToString(this Test.JsonOptions o)
         {
             return $$"""
                     {
-                    "Json" : {
+                    "Test.JsonOptions" : {
                       "Name"                     : {{OptionsToStringAttribute.Format(o.Name)}},
                       "NullName"                 : {{OptionsToStringAttribute.Format(o.NullName)}},
                       "Password"                 : {{OptionsToStringAttribute.Format(o.Password,prefixLen:0)}},
