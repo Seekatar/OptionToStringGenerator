@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.FormattingOptions o)
         {
             return $"""
-                    Test.FormattingOptions: 
+                    Test.FormattingOptions:
                         IntProp    - {OptionsToStringAttribute.Format(o.IntProp)}
                         StringProp - {OptionsToStringAttribute.Format(o.StringProp)}
                     """;

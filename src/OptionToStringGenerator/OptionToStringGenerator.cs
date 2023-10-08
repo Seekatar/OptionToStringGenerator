@@ -183,30 +183,29 @@ public class OptionToStringGenerator : IIncrementalGenerator
             var indent = "  ";
             var separator = ":";
             var nameQuote = "";
-            var jsonOpenBrace = "";
-            var jsonCloseBrace = "";
+            var jsonClose = "";
             var trailingComma = "";
             var csOpenBrace = "{{";
             var csCloseBrace = "}";
             var leadDollar = "$";
             var haveJson = false;
             var title = classToGenerate.Name;
+            var titleText = "";
+
             foreach (var n in classAttribute.NamedArguments)
             {
                 if (n.Key == nameof(OptionsToStringAttribute.Json)
                     && n.Value.Value is not null
                     && (bool)n.Value.Value)
                 {
+                    haveJson = true;
                     separator = " :";
                     nameQuote = "\"";
-                    jsonOpenBrace = """
-                                    {
-                                                        
-                                    """;
-                    jsonCloseBrace = """
-                                     }
-                                                         
-                                     """;
+                    jsonClose = """
+                                  }
+                                                     }
+                                                     
+                                """;
                     maxLen += 2;
                     trailingComma = ",";
                     csOpenBrace = "{{{{";
@@ -257,6 +256,16 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     }
                 }
             }
+            if (haveJson) { 
+                titleText = $$"""
+                               {
+                                                   {{nameQuote}}{{title}}{{nameQuote}} {{nameSuffix}} {
+                              """;
+            } 
+            else
+            {
+                titleText = $"{title}{nameSuffix}";
+            }   
 
             // method signature
             sb.Append($"        {classToGenerate.Accessibility} static string OptionsToString(this ").Append(classToGenerate.Name).Append(
@@ -267,7 +276,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
                       """");
 
-            sb.Append($"                    {jsonOpenBrace}{nameQuote}{title}{nameQuote}{nameSuffix}{" "+jsonOpenBrace.Trim()}").AppendLine();
+            sb.Append($"                    {titleText}").AppendLine();
 
             if (!classToGenerate.Values.Any())
             {
@@ -306,7 +315,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         else if (attribute.AttributeClass?.Name == "OutputMaskAttribute")
                             formatParameters += ",prefixLen:" + (attribute.NamedArguments.Length > 0 ? (attribute.NamedArguments[0].Value.Value?.ToString() ?? "0") : "0");
                         else if (attribute.AttributeClass?.Name == "OutputLengthOnlyAttribute")
-                            formatParameters = ",lengthOnly:true";
+                            formatParameters = $",lengthOnly:true,asJson:{haveJson.ToString().ToLowerInvariant()}";
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
                         {
                             var regexOk = false;
@@ -369,7 +378,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
             // end of method
             sb.Append($$""""
-                                          {{jsonCloseBrace}}{{jsonCloseBrace}}""";
+                                          {{jsonClose}}""";
                               }
 
                       """");

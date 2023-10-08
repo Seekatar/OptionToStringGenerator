@@ -1,2 +1,2 @@
-﻿Test.NoOptions: 
+﻿Test.NoOptions:
   No properties to display

@@ -39,7 +39,7 @@ public class PublicOptions
     public string MaskUserAndPassword { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-    public string MaskUserAndPasswordIgoreCase { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+    public string MaskUserAndPasswordIgnoreCase { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)")]
     public string RegexNotMatched { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";

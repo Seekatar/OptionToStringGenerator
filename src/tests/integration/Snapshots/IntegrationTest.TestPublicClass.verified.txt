@@ -1,14 +1,14 @@
-﻿Test.PublicOptions: 
-  PlainText                    : "hi mom"
-  PlainNumber                  : 42
-  PlainDateTime                : 01/02/2020 03:04:05
-  NullItem                     : null
-  AnObject                     : AClass: maybe this is secret
-  AMaskedObject                : "AClass: ***"
-  FullyMasked                  : "*************"
-  FirstThreeNotMasked          : "abc**********"
-  NotMaskedSinceLongLength     : "abc1233435667"
-  LengthOnly                   : Len = 35
-  MaskUserAndPassword          : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
-  MaskUserAndPasswordIgoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
-  RegexNotMatched              : "***!"
+﻿Test.PublicOptions:
+  PlainText                     : "hi mom"
+  PlainNumber                   : 42
+  PlainDateTime                 : 01/02/2020 03:04:05
+  NullItem                      : null
+  AnObject                      : AClass: maybe this is secret
+  AMaskedObject                 : "AClass: ***"
+  FullyMasked                   : "*************"
+  FirstThreeNotMasked           : "abc**********"
+  NotMaskedSinceLongLength      : "abc1233435667"
+  LengthOnly                    : Len = 35
+  MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
+  MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+  RegexNotMatched               : "***!"

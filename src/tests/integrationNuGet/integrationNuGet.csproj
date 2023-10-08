@@ -10,13 +10,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\integration\IntgrationTest.cs" Link="IntgrationTest.cs" />
+    <Compile Include="..\integration\IntegrationTest.cs" Link="IntegrationTest.cs" />
     <Compile Include="..\integration\Usings.cs" Link="Usings.cs" />
+    <Compile Include="..\unit\TestFiles\BadOptions.cs" Link="TestFiles\BadOptions.cs" />
+    <Compile Include="..\unit\TestFiles\FormattingOptions.cs" Link="TestFiles\FormattingOptions.cs" />
+    <Compile Include="..\unit\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs" />
+    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
+    <Compile Include="..\unit\TestFiles\NoOptions.cs" Link="TestFiles\NoOptions.cs" />
+    <Compile Include="..\unit\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
+    <Compile Include="..\unit\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
+    <Compile Include="..\unit\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="1.0.14" />
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="1.0.16" />
 		<PackageReference Include="Verify.XUnit" Version="20.8.0" />
 		<PackageReference Include="xunit" Version="2.5.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">

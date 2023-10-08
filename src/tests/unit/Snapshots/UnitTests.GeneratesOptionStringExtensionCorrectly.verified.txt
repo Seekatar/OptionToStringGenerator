@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.PublicOptions o)
         {
             return $"""
-                    Test.PublicOptions: 
+                    Test.PublicOptions:
                       PlainText                    : {OptionsToStringAttribute.Format(o.PlainText)}
                       PlainNumber                  : {OptionsToStringAttribute.Format(o.PlainNumber)}
                       PlainDateTime                : {OptionsToStringAttribute.Format(o.PlainDateTime)}
@@ -18,7 +18,7 @@ namespace Seekatar.OptionToStringGenerator
                       NotMaskedSinceLongLength     : {OptionsToStringAttribute.Format(o.NotMaskedSinceLongLength,prefixLen:100)}
                       LengthOnly                   : {OptionsToStringAttribute.Format(o.LengthOnly,lengthOnly:true)}
                       MaskUserAndPassword          : {OptionsToStringAttribute.Format(o.MaskUserAndPassword,regex:"User Id=([^;]+).*Password=([^;]+)")}
-                      MaskUserAndPasswordIgoreCase : {OptionsToStringAttribute.Format(o.MaskUserAndPasswordIgoreCase,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+                      MaskUserAndPasswordIgnoreCase : {OptionsToStringAttribute.Format(o.MaskUserAndPasswordIgnoreCase,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
                       RegexNotMatched              : {OptionsToStringAttribute.Format(o.RegexNotMatched,regex:"User Id=([^;]+).*Password=([^;]+)")}
                     """;
         }

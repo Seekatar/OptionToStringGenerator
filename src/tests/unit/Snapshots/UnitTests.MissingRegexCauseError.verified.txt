@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this MyAppOptions o)
         {
             return $"""
-                    MyAppOptions: 
+                    MyAppOptions:
                       Name              : {OptionsToStringAttribute.Format(o.Name)}
                       MissingRegexParam : {OptionsToStringAttribute.Format(o.MissingRegexParam)}
                       BadRegEx          : {OptionsToStringAttribute.Format(o.BadRegEx)}

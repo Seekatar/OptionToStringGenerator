@@ -9,7 +9,6 @@ public class OptionsToStringAttribute : Attribute
     public string Indent { get; set; } = "  ";
     public string Separator { get; set; } = ":";
     public bool Json { get; set; } = false;
-
     public string? Title { get; set; }
 
     /// <summary>
@@ -20,13 +19,14 @@ public class OptionsToStringAttribute : Attribute
     /// <param name="prefixLen">mask all but prefix</param>
     /// <param name="regex">Regex to mask</param>
     /// <param name="ignoreCase">ignore case on regex</param>
+    /// <param name="asJson">for lengthOnly, render as JSON</param>
     /// <returns></returns>
-    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
+    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
     {
         if (o is null) return "null";
 
         var value = o.ToString() ?? "";
-        if (lengthOnly) return "Len = " + (value).Length.ToString();
+        if (lengthOnly) return asJson ? ($"{{ \"Len\": {(value).Length} }}") : ("Len = " + (value).Length.ToString());
 
         if (prefixLen >= 0)
         {
