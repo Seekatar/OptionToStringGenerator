@@ -105,6 +105,28 @@ Test.PublicOptions:
 - `OutputRegex` must have a `Regex` parameter, or you'll get a compile error.
 - If the regex doesn't match the value, the output will be `***!` to indicate it didn't match.
 
+### Collections
+
+Currently you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options, and all the children.
+
+```csharp
+public override string ToString()
+{
+    var sb = new StringBuilder(this.OptionsToString());
+    sb.AppendLine();
+    foreach (var c in Consumers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(c.Value.OptionsToString());
+    }
+    foreach (var p in Producers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(p.Value.OptionsToString());
+    }
+
+    return sb.ToString();
+}
+```
+
 ### Formatting Options
 
 There are some properties on the `OptionToStringAttribute` to control how the output is generated.
@@ -119,7 +141,7 @@ There are some properties on the `OptionToStringAttribute` to control how the ou
 In addition to literal text, the `Title` parameter can include property names in braces. For example
 
 ```csharp
-[OptionsToString(Title = "TitleOptions_{StringProp}_{IntProp}")]
+[OptionsToString(Title = nameof(TitleOptions) + "_{StringProp}_{IntProp}")]
 public class TitleOptions
 {
     public int IntProp { get; set; } = 42;

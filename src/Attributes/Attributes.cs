@@ -1,4 +1,6 @@
-﻿namespace Seekatar.OptionToStringGenerator;
+﻿using System.Runtime.CompilerServices;
+
+namespace Seekatar.OptionToStringGenerator;
 
 /// <summary>
 /// Marker attribute to indicate a OptionToString() extension method should be generated
@@ -63,10 +65,23 @@ public class OptionsToStringAttribute : Attribute
             return $"\"{(matchCount > 0 ? s : "***!")}\""; // if not matches, return mask
         }
 
-        if (o is string)
+        if (o is bool) 
+            return (value).ToLowerInvariant();
+
+        if (o is string or char 
+            || o.GetType().IsClass 
+            || (asJson && (o is Guid or DateTime
+                  || o.GetType().Name == "DateOnly" || o.GetType().Name == "TimeOnly" )) // can't use these types in .NET Standard 2.0
+           )
             return "\"" + value + "\"";
-        else
-            return (value);
+
+        if (o.GetType().IsPrimitive)
+        {
+            return value;
+        }
+
+
+        return value;
     }
 }
 

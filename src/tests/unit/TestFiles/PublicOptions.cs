@@ -12,9 +12,23 @@ public class PublicOptions
 
     public string PlainText { get; set; } = "hi mom";
 
-    public int PlainNumber { get; set; } = 42;
+    public char Why { get; set; } = 'Y';
+
+    public int PlainInt { get; set; } = 42;
+
+    public double PlainDouble { get; set; } = 3.141;
+
+    public double PlainDecimal { get; set; } = 6.02;
 
     public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
+
+    public DateOnly PlainDatOnly { get; set; } = new DateOnly(2020, 1, 2);
+
+    public TimeOnly PlainTimeOnly { get; set; } = new TimeOnly(12, 23, 2);
+
+    public TimeSpan TimeSpan { get; set; } = new TimeSpan(1, 2, 3, 4, 5);
+
+    public Guid UUID { get; set; } = Guid.Parse("6536b25c-3a45-48d8-8ea3-756e19f5bad1");
 
     public string? NullItem { get; set; }
 
@@ -43,6 +57,8 @@ public class PublicOptions
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)")]
     public string RegexNotMatched { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+
+    public ConsoleColor Color { get; set; } = ConsoleColor.Red;
 
     [OutputIgnore]
     public string IgnoreMe { get; set; } = "abc1233435667";

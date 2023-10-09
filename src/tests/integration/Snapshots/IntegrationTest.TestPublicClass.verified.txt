@@ -1,9 +1,16 @@
 ﻿Test.PublicOptions:
   PlainText                     : "hi mom"
-  PlainNumber                   : 42
+  Why                           : "Y"
+  PlainInt                      : 42
+  PlainDouble                   : 3.141
+  PlainDecimal                  : 6.02
   PlainDateTime                 : 01/02/2020 03:04:05
+  PlainDatOnly                  : 01/02/2020
+  PlainTimeOnly                 : 12:23
+  TimeSpan                      : 1.02:03:04.0050000
+  UUID                          : 6536b25c-3a45-48d8-8ea3-756e19f5bad1
   NullItem                      : null
-  AnObject                      : AClass: maybe this is secret
+  AnObject                      : "AClass: maybe this is secret"
   AMaskedObject                 : "AClass: ***"
   FullyMasked                   : "*************"
   FirstThreeNotMasked           : "abc**********"
@@ -12,3 +19,4 @@
   MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
   MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
   RegexNotMatched               : "***!"
+  Color                         : Red

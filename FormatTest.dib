@@ -4,15 +4,30 @@
 
 #!csharp
 
+using System;
+using static System.Console;
+var dt = new DateTime();
+var d = new DateOnly();
+var t = new TimeOnly();
+
+var dc = new Decimal();
+var f = new Double();
+dc = (int)1;
+
+
+Console.WriteLine(Convert.ChangeType(1, typeof(int)));
+
+#!csharp
+
 #nullable enable
 using static System.Console;
 
 string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
 {
     if ( o is null ) return "<null>";
-   
+
     if (lengthOnly) return "Len = " + o.ToString().Length.ToString();
-    
+
     if (prefixLen >= 0) {
         var s = o.ToString();
         if (prefixLen < s.Length) {
@@ -20,7 +35,7 @@ string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? reg
         } else {
             return "\"" + s + "\"";
         }
-    } 
+    }
 
     if (regex is not null) {
         var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
@@ -36,11 +51,11 @@ string Format(object o, bool lengthOnly = false, int prefixLen = -1, string? reg
             m = m.NextMatch();
         }
         return s;
-    } 
+    }
 
-    if (o is string) 
+    if (o is string)
         return "\"" + o + "\"";
-    else 
+    else
         return o.ToString();
 }
 

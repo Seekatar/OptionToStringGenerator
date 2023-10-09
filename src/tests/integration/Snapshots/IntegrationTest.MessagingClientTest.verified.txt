@@ -1,0 +1,18 @@
+﻿ClientOptions Event Hub TestName:
+  Prefix               : "Event Hub"
+  Name                 : "TestName"
+  EncryptionKey        : "asd***********************"
+  GroupId              : "testhost"
+  StartingOffset       : Earliest
+  MaxPollIntervalMs    : null
+  CertBootstrapServers : "certBootstrapServers"
+  CA                   : Len = 10
+  CertPem              : Len = 11
+  KeyPem               : Len = 0
+  SaslBootstrapServers : "saslBootstrapServers"
+  SaslPassword         : "************"
+  SaslMechanism        : "saslMechanism"
+  SaslUsername         : "$ConnectionString"
+  LocalhostBootstrap   : false
+  ConfiguredWithCerts  : false
+  ConfiguredWithSasl   : true

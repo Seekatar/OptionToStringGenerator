@@ -302,7 +302,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     trailingComma = "";
 
                 bool ignored = false;
-                var formatParameters = "";
+                var formatParameters = haveJson ? $",asJson:{haveJson.ToString().ToLowerInvariant()}" : "";
                 var attributeCount = 0;
                 for (int i = 0; i < member.GetAttributes().Length; i++)
                 {
@@ -315,7 +315,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         else if (attribute.AttributeClass?.Name == "OutputMaskAttribute")
                             formatParameters += ",prefixLen:" + (attribute.NamedArguments.Length > 0 ? (attribute.NamedArguments[0].Value.Value?.ToString() ?? "0") : "0");
                         else if (attribute.AttributeClass?.Name == "OutputLengthOnlyAttribute")
-                            formatParameters = $",lengthOnly:true,asJson:{haveJson.ToString().ToLowerInvariant()}";
+                            formatParameters += $",lengthOnly:true";
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
                         {
                             var regexOk = false;
