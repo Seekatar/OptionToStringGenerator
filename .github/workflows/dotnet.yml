@@ -4,8 +4,12 @@ name: OptionToStringGenerator
 on:
   push:
     branches: [ main, build, releases/** ]
+    paths:
+      - "src/**"
   pull_request:
     branches: [ main, releases/** ]
+    paths:
+      - "src/**"
   # workflow_dispatch: allows manually kicking off a build
   workflow_dispatch:
 

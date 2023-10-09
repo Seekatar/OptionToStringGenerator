@@ -194,17 +194,6 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 3. When ready, create a PR to `main`
 4. To push to the NuGet Gallery create a `releases/vX.X.X` branch and push to it.
 
-## Roadmap
-
-- [ ] More configurability of the output. Mask character, mask len, etc.
-- [ ] Ability to use ILogger with semantic logging
-- [ ] Allow alternative method to get the string value of a property
-- [ ] Allow passing in a format parameter string for ToString(), at least for dates, datetimes, and numbers
-- [ ] Add option of postfix characters in masking
-- [ ] More configurability of the output. Indent, separator.
-- [x] Allow title to include properties of the class 0.1.3
-- [x] JSON output 0.1.3
-
 ## Links to Documentation
 
 These are links to the MS documentation for the items I used in the generator.
