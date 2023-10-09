@@ -303,3 +303,4 @@ obj/
 
 launchSettings.json
 *.received.*
+**/coverage.cobertura.xml
