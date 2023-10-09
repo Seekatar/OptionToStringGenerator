@@ -8,12 +8,12 @@
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
 This package generates an `OptionToString`
-extension method for your classes. By marking properties in the class you can control how the values are masked. It was created for dumping out objects used by [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) or [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) when the application starts.
+extension method for your classes. By marking properties in the class you can control how the values are masked. It was created for dumping out classes used by [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) or [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) when the application starts.
 
 ## Usage
 
 1. Add the [OptionToString](https://www.nuget.org/packages/OptionToString/) NuGet package to your project.
-2. Decorate a class with the `OptionToStringAttribute` attribute.
+2. Decorate a class with the `OptionToString` attribute.
 3. Optionally decorate properties with how you want them to be you want to dump out. If you don't decorate a property, its full text is dumped out.
 
 ### Example
@@ -70,6 +70,7 @@ public class PublicOptions
     [OutputIgnore]
     public string IgnoreMe { get; set; } = "abc1233435667";
 }
+
 // usage
 var options = new PublicOptions();
 _logger.LogInformation(options.OptionToString());
@@ -78,20 +79,20 @@ _logger.LogInformation(options.OptionToString());
 The output has the class name followed by an indented list of all the properties' values masked as specified.
 
 ```text
-integration.PublicOptions:
+Test.PublicOptions:
   PlainText                     : "hi mom"
   PlainNumber                   : 42
-  PlainDateTime                 : 1/1/2020 12:00:00 AM
-  NullItem                      : <null>
+  PlainDateTime                 : 01/02/2020 03:04:05
+  NullItem                      : null
   AnObject                      : AClass: maybe this is secret
-  AMaskedObject                 : AClass: ***
+  AMaskedObject                 : "AClass: ***"
   FullyMasked                   : "*************"
   FirstThreeNotMasked           : "abc**********"
   NotMaskedSinceLongLength      : "abc1233435667"
   LengthOnly                    : Len = 35
-  MaskUserAndPassword           : ...;User Id=***;Password=***;
-  MaskUserAndPasswordIngoreCase : ...;user Id=***;Password=***;
-  RegexNotMatched               : ***!
+  MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
+  MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+  RegexNotMatched               : "***!"
 ```
 
 ### Notes
@@ -103,6 +104,63 @@ integration.PublicOptions:
 - Regex strings with back slashes need to use a verbatim string or escape the back slashes (e.g.  `@"\s+"`  or `"\\s+"`).
 - `OutputRegex` must have a `Regex` parameter, or you'll get a compile error.
 - If the regex doesn't match the value, the output will be `***!` to indicate it didn't match.
+
+### Collections
+
+Currently you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options, and all the children.
+
+```csharp
+public override string ToString()
+{
+    var sb = new StringBuilder(this.OptionsToString());
+    sb.AppendLine();
+    foreach (var c in Consumers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(c.Value.OptionsToString());
+    }
+    foreach (var p in Producers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(p.Value.OptionsToString());
+    }
+
+    return sb.ToString();
+}
+```
+
+### Formatting Options
+
+There are some properties on the `OptionToStringAttribute` to control how the output is generated.
+
+| Name        | Description                                | Default           |
+| ----------- | ------------------------------------------ | ----------------- |
+| `Indent`    | The indenting string                       | "  " (Two spaces) |
+| `Separator` | the name, value separator                  | ":"               |
+| `Title`     | The title to use for the output. See below | Class name        |
+| `Json`      | Format the output as JSON                  | false             |
+
+In addition to literal text, the `Title` parameter can include property names in braces. For example
+
+```csharp
+[OptionsToString(Title = nameof(TitleOptions) + "_{StringProp}_{IntProp}")]
+public class TitleOptions
+{
+    public int IntProp { get; set; } = 42;
+    public string StringProp { get; set; } = "hi mom";
+}
+```
+
+Will output
+
+```text
+TitleOptions_hi mom_42:
+  IntProp    : 42
+  StringProp : "hi mom"
+```
+
+## Warnings and Errors
+
+If attributes have invalid parameters you will get warnings or errors from the compiler. They are documented [here](https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages).
+
 ## Implementation
 
 Big shout out to Andrew Lock and his [blog series](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/) on incremental source generators. I used that as a starting point for this project.
@@ -129,12 +187,12 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
     1. Take the syntax and get the semantic model of the class, extracting the name, accessibility, and list of properties with a `get`
     2. Generate the code for the extension method
 
-## Roadmap
+## Branching Strategy
 
-- [ ] More configurability of the output. Indent, mask character, mask len, etc.
-- [ ] JSON output
-- [ ] Ability to use ILogger with semantic logging
-- [ ] Allow alternative method to get the string value of a property
+1. Branch from `main` for new features
+2. Pushes will trigger a build and test run using GitHub Actions
+3. When ready, create a PR to `main`
+4. To push to the NuGet Gallery create a `releases/vX.X.X` branch and push to it.
 
 ## Links to Documentation
 

@@ -9,6 +9,44 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="TestFiles\BadOptions.cs" />
+	  <Compile Remove="TestFiles\InternalOptions.cs" />
+	  <Compile Remove="TestFiles\JsonOptions.cs" />
+	  <Compile Remove="TestFiles\NoOptions.cs" />
+	  <Compile Remove="TestFiles\ObjectMasking.cs" />
+	  <Compile Remove="TestFiles\PublicOptions.cs" />
+	  <Compile Remove="TestFiles\Title.cs" />
+	  <Compile Remove="TestFiles\TitleOptions.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="TestFiles\BadOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\InternalOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\JsonOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\NoOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\ObjectMasking.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\PublicOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\FormattingOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="TestFiles\TitleOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>

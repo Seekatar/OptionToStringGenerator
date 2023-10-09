@@ -5,64 +5,16 @@ namespace Seekatar.OptionToStringGenerator.Tests;
 [UsesVerify] // Adds hooks for Verify into XUnit
 public class UnitTests
 {
-    [Fact]
-    public Task GeneratesOptionStringExtensionCorrectly()
+    [Theory]
+    [InlineData("TestFiles/FormattingOptions.cs")]
+    [InlineData("TestFiles/TitleOptions.cs")]
+    [InlineData("TestFiles/JsonOptions.cs")]
+    [InlineData("TestFiles/InternalOptions.cs")]
+    [InlineData("TestFiles/PublicOptions.cs")]
+    public Task HappyPathFiles(string filename)
     {
-        // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString]
-                        public class MyAppOptions
-                        {
-                            public string Name { get; set; } = "hi mom";
-
-                            public string? NullName { get; set; };
-
-                            [OutputMask]
-                            public string Password { get; set; } = "thisisasecret";
-
-                            [OutputIgnore]
-                            public string IgnoreMe { get; set; } = "abc1233435667";
-                     
-                            [OutputMask(PrefixLen=3)]
-                            public string Certificate { get; set; } = "abc1233435667";
-
-                            [OutputMask(PrefixLen=30)]
-                            public string CertificateShort { get; set; } = "abc1233435667";
-
-                            [OutputLengthOnly]
-                            public string Secret { get; set; } = "thisisasecretthatonlyshowsthelength";
-
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]
-                            public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
-                     
-                            [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-                            public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
-                     
-                        }
-                     """;
-
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
-    }
-
-    [Fact]
-    public Task GeneratesOptionStringExtensionCorrectlyForInternalClass()
-    {
-        // The source code to test
-        var source = """
-                        using Seekatar.OptionToStringGenerator;
-
-                        [OptionsToString]
-                        class MyAppOptions
-                        {
-                            public string Name { get; set; } = "hi mom";
-                        }
-                     """;
-
-        // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source);
+        return TestHelper.VerifyFile(filename);
     }
 
     [Fact]
@@ -127,12 +79,27 @@ public class UnitTests
     public Task NoOptions()
     {
         // The source code to test
+        var source = File.ReadAllText("TestFiles/NoOptions.cs");
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+            o[0].Id.ShouldBe("SEEK003");
+        });
+    }
+
+    [Fact]
+    public Task BadTitle()
+    {
+        // The source code to test
         var source = """
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToString]
-                        class NoOptions
+                        [OptionsToString(Title="Hi{Thisdoesntexist}"]
+                        public class BadTitleOptions
                         {
+                            public string Name { get; set; } = "hi mom";
                         }
                      """;
 
@@ -140,7 +107,7 @@ public class UnitTests
         return TestHelper.Verify(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe("SEEK003");
+            o[0].Id.ShouldBe("SEEK004");
         });
     }
 

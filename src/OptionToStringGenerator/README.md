@@ -22,7 +22,7 @@ extension method for your classes. By marking properties in the class you can co
 Here's an example class of the various options with values set in the class for illustration purposes. The output follows.
 
 ```csharp
-namespace integration;
+namespace Test;
 using Seekatar.OptionToStringGenerator;
 
 [OptionsToString]
@@ -83,7 +83,7 @@ integration.PublicOptions:
   PlainText                     : "hi mom"
   PlainNumber                   : 42
   PlainDateTime                 : 1/1/2020 12:00:00 AM
-  NullItem                      : <null>
+  NullItem                      : null
   AnObject                      : AClass: maybe this is secret
   AMaskedObject                 : AClass: ***
   FullyMasked                   : "*************"

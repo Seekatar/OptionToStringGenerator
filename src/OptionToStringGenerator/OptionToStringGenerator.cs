@@ -1,26 +1,26 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Net.WebRequestMethods;
+using System.Xml.Schema;
 
 namespace Seekatar.OptionToStringGenerator;
 
 public readonly struct ClassToGenerate
 {
-    public readonly string Name;
+    public string Name => ClassSymbol.ToString();
     public readonly List<IPropertySymbol> Values;
-    public readonly string Accessibility { get; }
-    public readonly Location Location { get; }
+    public Location Location => ClassSymbol.Locations[0];
+    public readonly INamedTypeSymbol ClassSymbol { get; }
+    public string Accessibility => ClassSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
 
-    public ClassToGenerate(string name, List<IPropertySymbol> values, string accessibility, Location location)
+    public ClassToGenerate(INamedTypeSymbol classSymbol, List<IPropertySymbol> values)
     {
-        Name = name;
+        ClassSymbol = classSymbol;
         Values = values;
-        Accessibility = accessibility;
-        Location = location;
     }
 }
 
@@ -132,11 +132,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 continue;
             }
 
-            // Get the full type name of the class
-            // or OuterClass<T>.Color if it was nested in a generic type (for example)
-            string className = classSymbol.ToString();
-            string accessibility = classSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
-
             // Get all the members in the class
             ImmutableArray<ISymbol> classMembers = classSymbol.GetMembers();
             var members = new List<IPropertySymbol>(classMembers.Length);
@@ -153,7 +148,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // Create an ClassToGenerate for use in the generation phase
-            classToGenerate.Add(new ClassToGenerate(className, members, accessibility, classSymbol.Locations[0]));
+            classToGenerate.Add(new ClassToGenerate(classSymbol, members));
         }
 
         return classToGenerate;
@@ -181,15 +176,107 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 }
             }
 
+            var classAttribute = classToGenerate.ClassSymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault();
+            if (classAttribute is null) { continue; } // can't get here if it doesn't have the attribute, but just in case
+
+            var nameSuffix = ":";
+            var indent = "  ";
+            var separator = ":";
+            var nameQuote = "";
+            var jsonClose = "";
+            var trailingComma = "";
+            var csOpenBrace = "{{";
+            var csCloseBrace = "}";
+            var leadDollar = "$";
+            var haveJson = false;
+            var title = classToGenerate.Name;
+            var titleText = "";
+
+            foreach (var n in classAttribute.NamedArguments)
+            {
+                if (n.Key == nameof(OptionsToStringAttribute.Json)
+                    && n.Value.Value is not null
+                    && (bool)n.Value.Value)
+                {
+                    haveJson = true;
+                    separator = " :";
+                    nameQuote = "\"";
+                    jsonClose = """
+                                  }
+                                                     }
+                                                     
+                                """;
+                    maxLen += 2;
+                    trailingComma = ",";
+                    csOpenBrace = "{{{{";
+                    csCloseBrace = "}}";
+                    leadDollar = "$$";
+                    haveJson = true;
+                }
+                else if (n.Key == nameof(OptionsToStringAttribute.Title)
+                    && n.Value.Value is not null)
+                {
+                    Regex regex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
+                    // loop over all the  regex matches, and see if the string is a member of the class
+                    var titleString = n.Value.Value.ToString();
+                    var matches = regex.Matches(titleString);
+                    foreach (Match match in matches)
+                    {
+                        var memberName = match.Groups[1].Value;
+                        var member = classToGenerate.Values.Where(m => m.Name == memberName).FirstOrDefault();
+                        if (member is null)
+                        {
+                            var diag = Diagnostic.Create(new DiagnosticDescriptor(
+                                                    id: "SEEK004",
+                                                    title: "Member in Title not found",
+                                                    messageFormat: $"Property '{memberName}' not found on {classToGenerate.Name}",
+                                                    category: "Usage",
+                                                    defaultSeverity: DiagnosticSeverity.Warning,
+                                                    isEnabledByDefault: true,
+                                                    helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek004-member-in-title-not-found"
+                                                 ), classToGenerate.Location);
+                            context.ReportDiagnostic(diag);
+                            titleString = titleString.Replace($"{{{memberName}}}", memberName);
+                        }
+                        else
+                        {
+                            titleString = titleString.Replace($"{{{memberName}}}", $"{{o.{memberName}}}");
+                        }
+                    }
+                    title = titleString;
+                }
+                else if (!haveJson) {
+                    if (n.Key == nameof(OptionsToStringAttribute.Indent) && n.Value.Value is not null)
+                    {
+                        indent = n.Value.Value.ToString();
+                    }
+                    else if (n.Key == nameof(OptionsToStringAttribute.Separator) && n.Value.Value is not null)
+                    {
+                        separator = n.Value.Value.ToString();
+                    }
+                }
+            }
+            if (haveJson) { 
+                titleText = $$"""
+                               {
+                                                   {{nameQuote}}{{title}}{{nameQuote}} {{nameSuffix}} {
+                              """;
+            } 
+            else
+            {
+                titleText = $"{title}{nameSuffix}";
+            }   
+
             // method signature
             sb.Append($"        {classToGenerate.Accessibility} static string OptionsToString(this ").Append(classToGenerate.Name).Append(
-                      """"
+                      $$""""
                        o)
                               {
-                                  return $"""
+                                  return {{leadDollar}}"""
 
                       """");
-            sb.Append("                    " + classToGenerate.Name).AppendLine(":");
+
+            sb.Append($"                    {titleText}").AppendLine();
 
             if (!classToGenerate.Values.Any())
             {
@@ -207,11 +294,15 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // each property
-            string format = $"                      {{0,-{maxLen}}} : {{{{OptionsToStringAttribute.Format(o.";
+            string format = $"                    {indent}{{0,-{maxLen}}} {separator} {csOpenBrace}OptionsToStringAttribute.Format(o.";
+            int j = 0;
             foreach (var member in classToGenerate.Values)
             {
+                if (++j == classToGenerate.Values.Count)
+                    trailingComma = "";
+
                 bool ignored = false;
-                var formatParameters = "";
+                var formatParameters = haveJson ? $",asJson:{haveJson.ToString().ToLowerInvariant()}" : "";
                 var attributeCount = 0;
                 for (int i = 0; i < member.GetAttributes().Length; i++)
                 {
@@ -224,7 +315,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         else if (attribute.AttributeClass?.Name == "OutputMaskAttribute")
                             formatParameters += ",prefixLen:" + (attribute.NamedArguments.Length > 0 ? (attribute.NamedArguments[0].Value.Value?.ToString() ?? "0") : "0");
                         else if (attribute.AttributeClass?.Name == "OutputLengthOnlyAttribute")
-                            formatParameters = ",lengthOnly:true";
+                            formatParameters += $",lengthOnly:true";
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
                         {
                             var regexOk = false;
@@ -282,12 +373,12 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(diag);
                 }
                 if (!ignored)
-                    sb.AppendFormat(format, member.Name).Append(member.Name).Append(formatParameters).AppendLine(")}");
+                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($"){csCloseBrace}{trailingComma}");
             }
 
             // end of method
-            sb.Append(""""
-                                          """;
+            sb.Append($$""""
+                                          {{jsonClose}}""";
                               }
 
                       """");

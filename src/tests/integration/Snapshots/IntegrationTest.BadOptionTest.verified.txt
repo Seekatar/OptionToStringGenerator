@@ -1,2 +1,2 @@
-﻿integration.BadOptions:
+﻿Test.BadOptions:
   Name : Len = 6

@@ -3,11 +3,11 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.NoOptions o)
+        public static string OptionsToString(this BadTitleOptions o)
         {
             return $"""
-                    Test.NoOptions:
-                      No properties to display
+                    HiThisdoesntexist:
+                      Name : {OptionsToStringAttribute.Format(o.Name)}
                     """;
         }
 

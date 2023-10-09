@@ -1,4 +1,6 @@
-﻿namespace Seekatar.OptionToStringGenerator;
+﻿using System.Runtime.CompilerServices;
+
+namespace Seekatar.OptionToStringGenerator;
 
 /// <summary>
 /// Marker attribute to indicate a OptionToString() extension method should be generated
@@ -6,6 +8,11 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class OptionsToStringAttribute : Attribute
 {
+    public string Indent { get; set; } = "  ";
+    public string Separator { get; set; } = ":";
+    public bool Json { get; set; } = false;
+    public string? Title { get; set; }
+
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
     /// </summary>
@@ -14,13 +21,14 @@ public class OptionsToStringAttribute : Attribute
     /// <param name="prefixLen">mask all but prefix</param>
     /// <param name="regex">Regex to mask</param>
     /// <param name="ignoreCase">ignore case on regex</param>
+    /// <param name="asJson">for lengthOnly, render as JSON</param>
     /// <returns></returns>
-    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false)
+    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
     {
-        if (o is null) return "<null>";
+        if (o is null) return "null";
 
         var value = o.ToString() ?? "";
-        if (lengthOnly) return "Len = " + (value).Length.ToString();
+        if (lengthOnly) return asJson ? ($"{{ \"Len\": {(value).Length} }}") : ("Len = " + (value).Length.ToString());
 
         if (prefixLen >= 0)
         {
@@ -54,13 +62,26 @@ public class OptionsToStringAttribute : Attribute
                 }
                 m = m.NextMatch();
             }
-            return matchCount > 0 ? s : "***!"; // if not matches, return mask
+            return $"\"{(matchCount > 0 ? s : "***!")}\""; // if not matches, return mask
         }
 
-        if (o is string)
+        if (o is bool) 
+            return (value).ToLowerInvariant();
+
+        if (o is string or char 
+            || o.GetType().IsClass 
+            || (asJson && (o is Guid or DateTime
+                  || o.GetType().Name == "DateOnly" || o.GetType().Name == "TimeOnly" )) // can't use these types in .NET Standard 2.0
+           )
             return "\"" + value + "\"";
-        else
-            return (value);
+
+        if (o.GetType().IsPrimitive)
+        {
+            return value;
+        }
+
+
+        return value;
     }
 }
 

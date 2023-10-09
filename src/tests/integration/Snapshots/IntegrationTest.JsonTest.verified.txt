@@ -1,0 +1,23 @@
+﻿{
+"Test.JsonOptions" : {
+ "Name"                     : "hi mom",
+ "Why"                      : "Y",
+ "PlainInt"                 : 42,
+ "PlainDouble"              : 3.141,
+ "PlainDecimal"             : 6.02,
+ "PlainDateTime"            : "01/02/2020 03:04:05",
+ "PlainDatOnly"             : "01/02/2020",
+ "PlainTimeOnly"            : "12:23",
+ "TimeSpan"                 : 1.02:03:04.0050000,
+ "UUID"                     : "6536b25c-3a45-48d8-8ea3-756e19f5bad1",
+ "NullName"                 : null,
+ "YesNo"                    : false,
+ "Password"                 : "*************",
+ "Certificate"              : "abc**********",
+ "CertificateShort"         : "abc1233435667",
+ "Secret"                   : { "Len": 35 },
+ "ConnectionString"         : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;",
+ "AnotherConnectionString"  : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;",
+ "AnEum"                    : ReadOnly, Hidden
+ }
+}
