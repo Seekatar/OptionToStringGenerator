@@ -1,6 +1,12 @@
 # Change Log
 
-## [0.2.0] 2023-10-07
+## [0.1.3] 2023-10-07
+
+## Changed
+
+- NuGet Ref of `Microsoft.CodeAnalysis.CSharp` from `4.7.0` to `4.6.0`
+
+## [0.1.3] 2023-10-07
 
 ## Added
 

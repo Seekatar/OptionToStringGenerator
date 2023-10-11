@@ -5,10 +5,10 @@ namespace Seekatar.OptionToStringGenerator
     {
         public static string OptionsToString(this BadTitleOptions o)
         {
-            return $"""
-                    HiThisdoesntexist:
-                      Name : {OptionsToStringAttribute.Format(o.Name)}
-                    """;
+            return $@"
+HiThisdoesntexist:
+  Name : {OptionsToStringAttribute.Format(o.Name)}
+";
         }
 
     }

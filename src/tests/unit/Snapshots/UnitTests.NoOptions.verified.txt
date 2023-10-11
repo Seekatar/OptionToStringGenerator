@@ -5,10 +5,10 @@ namespace Seekatar.OptionToStringGenerator
     {
         internal static string OptionsToString(this Test.NoOptions o)
         {
-            return $"""
-                    Test.NoOptions:
-                      No properties to display
-                    """;
+            return $@"
+Test.NoOptions:
+  No properties to display
+";
         }
 
     }
