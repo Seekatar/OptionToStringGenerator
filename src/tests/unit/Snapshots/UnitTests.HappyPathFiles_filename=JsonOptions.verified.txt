@@ -7,7 +7,7 @@ namespace Seekatar.OptionToStringGenerator
         {
             return $@"
 {{
-""Test.JsonOptions"" : {{
+  ""Test.JsonOptions"" : {{
   ""Name""                     : {OptionsToStringAttribute.Format(o.Name,asJson:true)},
   ""Why""                      : {OptionsToStringAttribute.Format(o.Why,asJson:true)},
   ""PlainInt""                 : {OptionsToStringAttribute.Format(o.PlainInt,asJson:true)},

@@ -185,8 +185,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
             var nameQuote = "";
             var jsonClose = "";
             var trailingComma = "";
-            var csOpenBrace = "{{";
-            var csCloseBrace = "}";
             var haveJson = false;
             var title = classToGenerate.Name;
             var titleText = "";
@@ -201,13 +199,11 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     separator = " :";
                     nameQuote = "\"\"";
                     jsonClose = """
-                                  }
-                                }
+                                  }}
+                                }}
                                 """;
                     maxLen += 4; // for the quotes
                     trailingComma = ",";
-                    csOpenBrace = "{";
-                    csCloseBrace = "}}";
                     haveJson = true;
                 }
                 else if (n.Key == nameof(OptionsToStringAttribute.Title)
@@ -254,9 +250,9 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 }
             }
             if (haveJson) {
-                titleText = $$"""
-                              {
-                                {{nameQuote}}{{title}}{{nameQuote}} {{nameSuffix}} {
+                titleText = $$$"""
+                              {{
+                                {{{nameQuote}}}{{{title}}}{{{nameQuote}}} {{{nameSuffix}}} {{
                               """;
             }
             else
@@ -291,7 +287,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
             }
 
             // each property
-            string format = $"{indent}{{0,-{maxLen}}} {separator} {csOpenBrace}OptionsToStringAttribute.Format(o.";
+            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o.";
             int j = 0;
             foreach (var member in classToGenerate.Values)
             {
@@ -370,7 +366,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(diag);
                 }
                 if (!ignored)
-                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($"){csCloseBrace}{trailingComma}");
+                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }
 
             // end of method
