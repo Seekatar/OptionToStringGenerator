@@ -266,7 +266,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
                        o)
                               {
                                   return $@"
-
                       """");
 
             sb.Append($"{titleText}").AppendLine();
@@ -373,7 +372,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
             sb.Append($$"""
                       {{jsonClose}}";
                               }
-
                       """);
 
         }

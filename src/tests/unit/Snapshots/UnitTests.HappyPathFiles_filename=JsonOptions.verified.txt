@@ -5,8 +5,7 @@ namespace Seekatar.OptionToStringGenerator
     {
         internal static string OptionsToString(this Test.JsonOptions o)
         {
-            return $@"
-{{
+            return $@"{{
   ""Test.JsonOptions"" : {{
   ""Name""                     : {OptionsToStringAttribute.Format(o.Name,asJson:true)},
   ""Why""                      : {OptionsToStringAttribute.Format(o.Why,asJson:true)},
@@ -30,6 +29,5 @@ namespace Seekatar.OptionToStringGenerator
   }}
 }}";
         }
-
     }
 }

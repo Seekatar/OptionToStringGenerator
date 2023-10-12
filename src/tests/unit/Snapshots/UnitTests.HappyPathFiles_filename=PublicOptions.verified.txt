@@ -5,8 +5,7 @@ namespace Seekatar.OptionToStringGenerator
     {
         public static string OptionsToString(this Test.PublicOptions o)
         {
-            return $@"
-Test.PublicOptions:
+            return $@"Test.PublicOptions:
   PlainText                     : {OptionsToStringAttribute.Format(o.PlainText)}
   Why                           : {OptionsToStringAttribute.Format(o.Why)}
   PlainInt                      : {OptionsToStringAttribute.Format(o.PlainInt)}
@@ -30,6 +29,5 @@ Test.PublicOptions:
   Color                         : {OptionsToStringAttribute.Format(o.Color)}
 ";
         }
-
     }
 }

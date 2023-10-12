@@ -16,6 +16,7 @@
   LocalhostBootstrap   : false
   ConfiguredWithCerts  : false
   ConfiguredWithSasl   : true
+
 ClientOptions Event Hub TestName:
   Prefix               : "Event Hub"
   Name                 : "TestName"
@@ -34,6 +35,7 @@ ClientOptions Event Hub TestName:
   LocalhostBootstrap   : false
   ConfiguredWithCerts  : false
   ConfiguredWithSasl   : true
+
 ClientOptions Event Hub TestName:
   Prefix               : "Event Hub"
   Name                 : "TestName"
@@ -52,3 +54,4 @@ ClientOptions Event Hub TestName:
   LocalhostBootstrap   : false
   ConfiguredWithCerts  : false
   ConfiguredWithSasl   : true
+

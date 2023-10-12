@@ -4,6 +4,17 @@
 
 #!csharp
 
+using static System.Console;
+        internal static string OptionsToString(string h)
+        {
+            return $@"Test.InternalOptions:
+  Name : {h}";
+        }
+
+WriteLine(">"+OptionsToString("Hello")+"<");
+
+#!csharp
+
 using System;
 using static System.Console;
 var dt = new DateTime();
