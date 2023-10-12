@@ -53,13 +53,13 @@ public class IntegrationTest
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-    //[Fact]
-    //public Task JsonTest()
-    //{
-    //    var options = new JsonOptions();
-    //    var s = options.OptionsToString();
-    //    return Verify(s).UseDirectory(SnapshotDirectory);
-    //}
+    [Fact]
+    public Task JsonTest()
+    {
+       var options = new JsonOptions();
+       var s = options.OptionsToString();
+       return Verify(s).UseDirectory(SnapshotDirectory);
+    }
 
     [Fact]
     public Task TitleTest()
@@ -124,6 +124,14 @@ public class IntegrationTest
     }
 
     [Fact]
+    public Task EscapeTest()
+    {
+        var options = new EscapeOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+   [Fact]
     public async Task MessagingClientTest()
     {
 

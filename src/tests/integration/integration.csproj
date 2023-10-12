@@ -16,6 +16,8 @@
     <Compile Include="..\unit\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
     <Compile Include="..\unit\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
     <Compile Include="..\unit\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
+    <Compile Include="..\unit\TestFiles\EscapeOptions.cs" Link="TestFiles\EscapeOptions.cs" />
+    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
