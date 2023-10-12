@@ -11,6 +11,7 @@ public class UnitTests
     [InlineData("TestFiles/JsonOptions.cs")]
     [InlineData("TestFiles/InternalOptions.cs")]
     [InlineData("TestFiles/PublicOptions.cs")]
+    [InlineData("TestFiles/EscapeOptions.cs")]
     public Task HappyPathFiles(string filename)
     {
         // Pass the source code to our helper and snapshot test the output
@@ -21,19 +22,19 @@ public class UnitTests
     public Task MultipleAttributesCauseWarning()
     {
         // The source code to test
-        var source = """
+        var source = @"
                         using Seekatar.OptionToStringGenerator;
 
                         [OptionsToStringAttribute]
                         public class MyAppOptions
                         {
-                            public string Name { get; set; } = "hi mom";
+                            public string Name { get; set; } = ""hi mom"";
 
                             [OutputMask]
                             [OutputMask(PrefixLen=3)]
-                            public string Password { get; set; } = "thisisasecret";
+                            public string Password { get; set; } = ""thisisasecret"";
                         }
-                     """;
+                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
@@ -48,22 +49,22 @@ public class UnitTests
     public Task MissingRegexCauseError()
     {
         // The source code to test
-        var source = """
+        var source = @"
                         using Seekatar.OptionToStringGenerator;
 
                         [OptionsToStringAttribute]
                         public class MyAppOptions
                         {
-                            public string Name { get; set; } = "hi mom";
+                            public string Name { get; set; } = ""hi mom"";
 
                             [OutputRegex]
-                            public string MissingRegexParam { get; set; } = "thisisasecret";
+                            public string MissingRegexParam { get; set; } = ""thisisasecret"";
 
-                            [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+", IgnoreCase = true)]
-                            public string BadRegEx { get; set; } = "hi mom";
+                            [OutputRegex(Regex = ""User Id=([^;]+).*Password=([^;]+"", IgnoreCase = true)]
+                            public string BadRegEx { get; set; } = ""hi mom"";
 
                         }
-                     """;
+                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
@@ -93,15 +94,15 @@ public class UnitTests
     public Task BadTitle()
     {
         // The source code to test
-        var source = """
+        var source = @"
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToString(Title="Hi{Thisdoesntexist}"]
+                        [OptionsToString(Title=""Hi{Thisdoesntexist}""]
                         public class BadTitleOptions
                         {
-                            public string Name { get; set; } = "hi mom";
+                            public string Name { get; set; } = ""hi mom"";
                         }
-                     """;
+                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {

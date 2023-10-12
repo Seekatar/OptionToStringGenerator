@@ -106,6 +106,7 @@ foreach ($currentTask in $Tasks) {
                     dotnet test --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
                     Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
                         "Move-Item $($_.FullName) ."
+                        Remove-Item $_.Name -ErrorAction Ignore
                         Move-Item $_.FullName .
                     }
                 }
@@ -116,6 +117,7 @@ foreach ($currentTask in $Tasks) {
                     dotnet test --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx"
                     Get-ChildItem *coverage.cobertura.xml -R | Select-Object -First 1 | ForEach-Object {
                         "Move-Item $($_.FullName) ."
+                        Remove-Item $_.Name -ErrorAction Ignore
                         Move-Item $_.FullName .
                     }
                 }

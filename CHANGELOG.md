@@ -1,6 +1,13 @@
 # Change Log
 
-## [0.2.0] 2023-10-07
+## [0.1.4] 2023-10-11
+
+## Changed
+
+- NuGet Ref of `Microsoft.CodeAnalysis.CSharp` from `4.7.0` to `4.6.0`
+- Generate code for .NET 6 (no raw strings)
+
+## [0.1.3] 2023-10-07
 
 ## Added
 

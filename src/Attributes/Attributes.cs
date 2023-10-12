@@ -65,13 +65,15 @@ public class OptionsToStringAttribute : Attribute
             return $"\"{(matchCount > 0 ? s : "***!")}\""; // if not matches, return mask
         }
 
-        if (o is bool) 
+        if (o is bool)
             return (value).ToLowerInvariant();
 
-        if (o is string or char 
-            || o.GetType().IsClass 
-            || (asJson && (o is Guid or DateTime
-                  || o.GetType().Name == "DateOnly" || o.GetType().Name == "TimeOnly" )) // can't use these types in .NET Standard 2.0
+        if (o is string or char
+            || o.GetType().IsClass
+            || (asJson && (o is Guid or DateTime or TimeSpan
+                  || o.GetType().IsEnum
+                  || o.GetType().Name == "DateOnly" // can't use these types in .NET Standard 2.0
+                  || o.GetType().Name == "TimeOnly" ))
            )
             return "\"" + value + "\"";
 

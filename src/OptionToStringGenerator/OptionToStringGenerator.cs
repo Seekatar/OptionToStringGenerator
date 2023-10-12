@@ -185,9 +185,6 @@ public class OptionToStringGenerator : IIncrementalGenerator
             var nameQuote = "";
             var jsonClose = "";
             var trailingComma = "";
-            var csOpenBrace = "{{";
-            var csCloseBrace = "}";
-            var leadDollar = "$";
             var haveJson = false;
             var title = classToGenerate.Name;
             var titleText = "";
@@ -200,17 +197,13 @@ public class OptionToStringGenerator : IIncrementalGenerator
                 {
                     haveJson = true;
                     separator = " :";
-                    nameQuote = "\"";
+                    nameQuote = "\"\"";
                     jsonClose = """
-                                  }
-                                                     }
-                                                     
+                                  }}
+                                }}
                                 """;
-                    maxLen += 2;
+                    maxLen += 4; // for the quotes
                     trailingComma = ",";
-                    csOpenBrace = "{{{{";
-                    csCloseBrace = "}}";
-                    leadDollar = "$$";
                     haveJson = true;
                 }
                 else if (n.Key == nameof(OptionsToStringAttribute.Title)
@@ -256,27 +249,26 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     }
                 }
             }
-            if (haveJson) { 
-                titleText = $$"""
-                               {
-                                                   {{nameQuote}}{{title}}{{nameQuote}} {{nameSuffix}} {
+            if (haveJson) {
+                titleText = $$$"""
+                              {{
+                                {{{nameQuote}}}{{{title}}}{{{nameQuote}}} {{{nameSuffix}}} {{
                               """;
-            } 
+            }
             else
             {
                 titleText = $"{title}{nameSuffix}";
-            }   
+            }
 
             // method signature
             sb.Append($"        {classToGenerate.Accessibility} static string OptionsToString(this ").Append(classToGenerate.Name).Append(
                       $$""""
                        o)
                               {
-                                  return {{leadDollar}}"""
-
+                                  return $@"
                       """");
 
-            sb.Append($"                    {titleText}").AppendLine();
+            sb.Append($"{titleText}").AppendLine();
 
             if (!classToGenerate.Values.Any())
             {
@@ -290,11 +282,11 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                         helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek003-no-properties-found"
                                      ), classToGenerate.Location );
                 context.ReportDiagnostic(diag);
-                sb.AppendLine("                      No properties to display");
+                sb.AppendLine($"{indent}No properties to display");
             }
 
             // each property
-            string format = $"                    {indent}{{0,-{maxLen}}} {separator} {csOpenBrace}OptionsToStringAttribute.Format(o.";
+            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o.";
             int j = 0;
             foreach (var member in classToGenerate.Values)
             {
@@ -373,15 +365,14 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     context.ReportDiagnostic(diag);
                 }
                 if (!ignored)
-                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($"){csCloseBrace}{trailingComma}");
+                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }
 
             // end of method
-            sb.Append($$""""
-                                          {{jsonClose}}""";
+            sb.Append($$"""
+                      {{jsonClose}}";
                               }
-
-                      """");
+                      """);
 
         }
 

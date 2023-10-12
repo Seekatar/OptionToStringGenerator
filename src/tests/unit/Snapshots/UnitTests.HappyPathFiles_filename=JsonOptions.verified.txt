@@ -5,32 +5,29 @@ namespace Seekatar.OptionToStringGenerator
     {
         internal static string OptionsToString(this Test.JsonOptions o)
         {
-            return $$"""
-                     {
-                     "Test.JsonOptions" : {
-                      "Name"                     : {{OptionsToStringAttribute.Format(o.Name,asJson:true)}},
-                      "Why"                      : {{OptionsToStringAttribute.Format(o.Why,asJson:true)}},
-                      "PlainInt"                 : {{OptionsToStringAttribute.Format(o.PlainInt,asJson:true)}},
-                      "PlainDouble"              : {{OptionsToStringAttribute.Format(o.PlainDouble,asJson:true)}},
-                      "PlainDecimal"             : {{OptionsToStringAttribute.Format(o.PlainDecimal,asJson:true)}},
-                      "PlainDateTime"            : {{OptionsToStringAttribute.Format(o.PlainDateTime,asJson:true)}},
-                      "PlainDatOnly"             : {{OptionsToStringAttribute.Format(o.PlainDatOnly,asJson:true)}},
-                      "PlainTimeOnly"            : {{OptionsToStringAttribute.Format(o.PlainTimeOnly,asJson:true)}},
-                      "TimeSpan"                 : {{OptionsToStringAttribute.Format(o.TimeSpan,asJson:true)}},
-                      "UUID"                     : {{OptionsToStringAttribute.Format(o.UUID,asJson:true)}},
-                      "NullName"                 : {{OptionsToStringAttribute.Format(o.NullName,asJson:true)}},
-                      "YesNo"                    : {{OptionsToStringAttribute.Format(o.YesNo,asJson:true)}},
-                      "Password"                 : {{OptionsToStringAttribute.Format(o.Password,asJson:true,prefixLen:0)}},
-                      "Certificate"              : {{OptionsToStringAttribute.Format(o.Certificate,asJson:true,prefixLen:3)}},
-                      "CertificateShort"         : {{OptionsToStringAttribute.Format(o.CertificateShort,asJson:true,prefixLen:30)}},
-                      "Secret"                   : {{OptionsToStringAttribute.Format(o.Secret,asJson:true,lengthOnly:true)}},
-                      "ConnectionString"         : {{OptionsToStringAttribute.Format(o.ConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)")}},
-                      "AnotherConnectionString"  : {{OptionsToStringAttribute.Format(o.AnotherConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}},
-                      "AnEum"                    : {{OptionsToStringAttribute.Format(o.AnEum,asJson:true)}}
-                      }
-                     }
-                     """;
+            return $@"{{
+  ""Test.JsonOptions"" : {{
+  ""Name""                     : {OptionsToStringAttribute.Format(o.Name,asJson:true)},
+  ""Why""                      : {OptionsToStringAttribute.Format(o.Why,asJson:true)},
+  ""PlainInt""                 : {OptionsToStringAttribute.Format(o.PlainInt,asJson:true)},
+  ""PlainDouble""              : {OptionsToStringAttribute.Format(o.PlainDouble,asJson:true)},
+  ""PlainDecimal""             : {OptionsToStringAttribute.Format(o.PlainDecimal,asJson:true)},
+  ""PlainDateTime""            : {OptionsToStringAttribute.Format(o.PlainDateTime,asJson:true)},
+  ""PlainDatOnly""             : {OptionsToStringAttribute.Format(o.PlainDatOnly,asJson:true)},
+  ""PlainTimeOnly""            : {OptionsToStringAttribute.Format(o.PlainTimeOnly,asJson:true)},
+  ""TimeSpan""                 : {OptionsToStringAttribute.Format(o.TimeSpan,asJson:true)},
+  ""UUID""                     : {OptionsToStringAttribute.Format(o.UUID,asJson:true)},
+  ""NullName""                 : {OptionsToStringAttribute.Format(o.NullName,asJson:true)},
+  ""YesNo""                    : {OptionsToStringAttribute.Format(o.YesNo,asJson:true)},
+  ""Password""                 : {OptionsToStringAttribute.Format(o.Password,asJson:true,prefixLen:0)},
+  ""Certificate""              : {OptionsToStringAttribute.Format(o.Certificate,asJson:true,prefixLen:3)},
+  ""CertificateShort""         : {OptionsToStringAttribute.Format(o.CertificateShort,asJson:true,prefixLen:30)},
+  ""Secret""                   : {OptionsToStringAttribute.Format(o.Secret,asJson:true,lengthOnly:true)},
+  ""ConnectionString""         : {OptionsToStringAttribute.Format(o.ConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)")},
+  ""AnotherConnectionString""  : {OptionsToStringAttribute.Format(o.AnotherConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)},
+  ""AnEum""                    : {OptionsToStringAttribute.Format(o.AnEum,asJson:true)}
+  }}
+}}";
         }
-
     }
 }

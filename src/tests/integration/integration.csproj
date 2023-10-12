@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -12,11 +12,12 @@
     <Compile Include="..\unit\TestFiles\BadOptions.cs" Link="TestFiles\BadOptions.cs" />
     <Compile Include="..\unit\TestFiles\FormattingOptions.cs" Link="TestFiles\FormattingOptions.cs" />
     <Compile Include="..\unit\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs" />
-    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
     <Compile Include="..\unit\TestFiles\NoOptions.cs" Link="TestFiles\NoOptions.cs" />
     <Compile Include="..\unit\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
     <Compile Include="..\unit\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
     <Compile Include="..\unit\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
+    <Compile Include="..\unit\TestFiles\EscapeOptions.cs" Link="TestFiles\EscapeOptions.cs" />
+    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
