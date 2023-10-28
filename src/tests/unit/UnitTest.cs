@@ -108,7 +108,7 @@ public class UnitTests
                         {
                             public string Name { get; set; } = ""hi mom"";
                         }
-                     "; 
+                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
