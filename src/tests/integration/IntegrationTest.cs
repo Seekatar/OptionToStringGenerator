@@ -40,7 +40,7 @@ public class IntegrationTest
     [Fact]
     public Task BadOptionTest()
     {
-        var options = new BadOptions();
+        var options = new NegativeBadOptions();
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
@@ -48,7 +48,7 @@ public class IntegrationTest
     [Fact]
     public Task NoOptionTest()
     {
-        var options = new NoOptions();
+        var options = new NegativeNoOptions();
         var s = options.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }

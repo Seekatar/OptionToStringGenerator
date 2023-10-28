@@ -1,0 +1,13 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Test.ObjectMasking o)
+        {
+            return $@"Test.ObjectMasking:
+  AnObject : {OptionsToStringAttribute.Format(o.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+";
+        }
+    }
+}
