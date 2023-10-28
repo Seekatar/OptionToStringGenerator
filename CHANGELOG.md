@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.1.5] 2023-10-28
+
+## Added
+
+- SuffixLen to the OutputMaskAttribute
+
 ## [0.1.4] 2023-10-11
 
 ## Changed

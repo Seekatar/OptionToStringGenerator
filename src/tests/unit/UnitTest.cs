@@ -12,6 +12,7 @@ public class UnitTests
     [InlineData("TestFiles/InternalOptions.cs")]
     [InlineData("TestFiles/PublicOptions.cs")]
     [InlineData("TestFiles/EscapeOptions.cs")]
+    [InlineData("TestFiles/MaskingOptions.cs")]
     public Task HappyPathFiles(string filename)
     {
         // Pass the source code to our helper and snapshot test the output

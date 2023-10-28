@@ -305,7 +305,18 @@ public class OptionToStringGenerator : IIncrementalGenerator
                         if (attribute.AttributeClass?.Name == "OutputIgnoreAttribute")
                             ignored = true;
                         else if (attribute.AttributeClass?.Name == "OutputMaskAttribute")
-                            formatParameters += ",prefixLen:" + (attribute.NamedArguments.Length > 0 ? (attribute.NamedArguments[0].Value.Value?.ToString() ?? "0") : "0");
+                        {
+                            var prefixLen = "0";
+                            var suffixLen = "0";
+                            for ( int k = 0; k < attribute.NamedArguments.Length; k++)
+                            {
+                                if (attribute.NamedArguments[k].Key == nameof(OutputMaskAttribute.PrefixLen))
+                                    prefixLen = attribute.NamedArguments[k].Value.Value?.ToString() ?? "0";
+                                else if (attribute.NamedArguments[k].Key == nameof(OutputMaskAttribute.SuffixLen))
+                                    suffixLen = attribute.NamedArguments[k].Value.Value?.ToString() ?? "0";
+                            }
+                            formatParameters += ",prefixLen:" + prefixLen + ",suffixLen:" + suffixLen;
+                        }
                         else if (attribute.AttributeClass?.Name == "OutputLengthOnlyAttribute")
                             formatParameters += $",lengthOnly:true";
                         else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
@@ -325,7 +336,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                     }
                                     catch (ArgumentException e)
                                     {
-                                        message = "Bad regex: "+e.Message;
+                                        message = "Bad regex: " + e.Message;
                                         break;
                                     }
                                 }
@@ -345,7 +356,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
                                                         isEnabledByDefault: true,
                                                         helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek001-missing-or-invalid-regex-parameter"
                                                      ), member.Locations[0]);
-                                 context.ReportDiagnostic(diag);
+                                context.ReportDiagnostic(diag);
                             }
                         }
                     }

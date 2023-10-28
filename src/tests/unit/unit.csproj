@@ -12,6 +12,7 @@
 	  <Compile Remove="TestFiles\BadOptions.cs" />
 	  <Compile Remove="TestFiles\InternalOptions.cs" />
 	  <Compile Remove="TestFiles\JsonOptions.cs" />
+	  <Compile Remove="TestFiles\MaskingOptions.cs" />
 	  <Compile Remove="TestFiles\NoOptions.cs" />
 	  <Compile Remove="TestFiles\ObjectMasking.cs" />
 	  <Compile Remove="TestFiles\PublicOptions.cs" />

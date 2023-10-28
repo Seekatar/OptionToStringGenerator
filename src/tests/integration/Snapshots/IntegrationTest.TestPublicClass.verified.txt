@@ -14,9 +14,11 @@
   AMaskedObject                 : "AClass: ***"
   FullyMasked                   : "*************"
   FirstThreeNotMasked           : "abc**********"
+  LastThreeNotMasked            : "**********667"
+  FirstAndLastThreeNotMasked    : "abc*******667"
   NotMaskedSinceLongLength      : "abc1233435667"
   LengthOnly                    : Len = 35
   MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
   MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
-  RegexNotMatched               : "***!"
+  RegexNotMatched               : "***Regex no match***!"
   Color                         : Red

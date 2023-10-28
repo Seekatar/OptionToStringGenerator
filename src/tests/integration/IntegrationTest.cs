@@ -56,9 +56,9 @@ public class IntegrationTest
     [Fact]
     public Task JsonTest()
     {
-       var options = new JsonOptions();
-       var s = options.OptionsToString();
-       return Verify(s).UseDirectory(SnapshotDirectory);
+        var options = new JsonOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class IntegrationTest
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-   [Fact]
+    [Fact]
     public async Task MessagingClientTest()
     {
 
@@ -148,5 +148,13 @@ public class IntegrationTest
         };
         var s = options.OptionsToString();
         await Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task MaskTest()
+    {
+        var options = new MaskingOptions();
+        var s = options.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 }

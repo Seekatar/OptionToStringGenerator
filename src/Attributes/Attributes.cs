@@ -23,30 +23,38 @@ public class OptionsToStringAttribute : Attribute
     /// <param name="ignoreCase">ignore case on regex</param>
     /// <param name="asJson">for lengthOnly, render as JSON</param>
     /// <returns></returns>
-    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
+    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
     {
         if (o is null) return "null";
 
         var value = o.ToString() ?? "";
         if (lengthOnly) return asJson ? ($"{{ \"Len\": {(value).Length} }}") : ("Len = " + (value).Length.ToString());
 
-        if (prefixLen >= 0)
+        if (prefixLen >= 0 || suffixLen >= 0)
         {
-            var s = (value);
-            if (prefixLen < s.Length)
+            var s = value;
+            var middleLen = Math.Max(0, s.Length - prefixLen - suffixLen);
+            if (middleLen == 0) return "\"" + s + "\"";
+            var middle = new string('*', middleLen);
+
+            var prefix = "";
+            var suffix = "";
+            if (prefixLen > 0 && prefixLen < s.Length)
             {
-                return "\"" + s.Substring(0, prefixLen) + new string('*', s.Length - prefixLen) + "\"";
+                prefix = s.Substring(0, prefixLen);
             }
-            else
+            if (suffixLen > 0 && suffixLen < s.Length)
             {
-                return "\"" + s + "\"";
+                suffix = s.Substring(s.Length - suffixLen);
             }
+            
+            return "\"" + prefix + middle + suffix + "\"";
         }
 
         if (regex is not null)
         {
             var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-            var s = (value);
+            var s = value;
             var matchCount = 0;
             var m = r.Match(s);
             while (m.Success)
@@ -62,7 +70,7 @@ public class OptionsToStringAttribute : Attribute
                 }
                 m = m.NextMatch();
             }
-            return $"\"{(matchCount > 0 ? s : "***!")}\""; // if not matches, return mask
+            return $"\"{(matchCount > 0 ? s : "***Regex no match***!")}\""; // if not matches, return mask
         }
 
         if (o is bool)
@@ -73,7 +81,7 @@ public class OptionsToStringAttribute : Attribute
             || (asJson && (o is Guid or DateTime or TimeSpan
                   || o.GetType().IsEnum
                   || o.GetType().Name == "DateOnly" // can't use these types in .NET Standard 2.0
-                  || o.GetType().Name == "TimeOnly" ))
+                  || o.GetType().Name == "TimeOnly"))
            )
             return "\"" + value + "\"";
 
@@ -97,6 +105,10 @@ public class OutputMaskAttribute : Attribute
     /// Number of unmasked characters at the start of the string
     /// </summary>
     public int PrefixLen { get; set; }
+    /// <summary>
+    /// Number of unmasked characters at the end of the string
+    /// </summary>
+    public int SuffixLen { get; set; }
 }
 
 /// <summary>
