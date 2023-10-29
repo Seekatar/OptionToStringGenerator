@@ -1,0 +1,22 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Test.MaskingOptions o)
+        {
+            return $@"Test.MaskingOptions:
+  Masked             : {OptionsToStringAttribute.Format(o.Masked,prefixLen:0,suffixLen:0)}
+  MaskedPrefix       : {OptionsToStringAttribute.Format(o.MaskedPrefix,prefixLen:3,suffixLen:0)}
+  MaskedSuffix       : {OptionsToStringAttribute.Format(o.MaskedSuffix,prefixLen:0,suffixLen:3)}
+  MaskedPrefixSuffix : {OptionsToStringAttribute.Format(o.MaskedPrefixSuffix,prefixLen:3,suffixLen:3)}
+  MaskedPrefixTooBig : {OptionsToStringAttribute.Format(o.MaskedPrefixTooBig,prefixLen:100,suffixLen:0)}
+  MaskedSuffixTooBig : {OptionsToStringAttribute.Format(o.MaskedSuffixTooBig,prefixLen:0,suffixLen:100)}
+  MaskedBothTooBig   : {OptionsToStringAttribute.Format(o.MaskedBothTooBig,prefixLen:100,suffixLen:100)}
+  Empty              : {OptionsToStringAttribute.Format(o.Empty,prefixLen:10,suffixLen:10)}
+  Negative           : {OptionsToStringAttribute.Format(o.Negative,prefixLen:-10,suffixLen:-10)}
+  Zero               : {OptionsToStringAttribute.Format(o.Zero,prefixLen:0,suffixLen:0)}
+";
+        }
+    }
+}

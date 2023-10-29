@@ -2,6 +2,6 @@
 using Seekatar.OptionToStringGenerator;
 
 [OptionsToString]
-class NoOptions
+class NegativeNoOptions
 {
 }

@@ -1,2 +1,2 @@
-﻿Test.BadOptions:
+﻿Test.NegativeBadOptions:
   Name : Len = 6

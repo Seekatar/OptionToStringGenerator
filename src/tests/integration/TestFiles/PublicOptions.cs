@@ -43,6 +43,12 @@ public class PublicOptions
     [OutputMask(PrefixLen=3)]
     public string FirstThreeNotMasked { get; set; } = "abc1233435667";
 
+    [OutputMask(SuffixLen=3)]
+    public string LastThreeNotMasked { get; set; } = "abc1233435667";
+
+    [OutputMask(PrefixLen = 3, SuffixLen=3)]
+    public string FirstAndLastThreeNotMasked { get; set; } = "abc1233435667";
+
     [OutputMask(PrefixLen = 100)]
     public string NotMaskedSinceLongLength { get; set; } = "abc1233435667";
 

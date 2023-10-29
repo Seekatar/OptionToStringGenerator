@@ -2,7 +2,7 @@
 using Seekatar.OptionToStringGenerator;
 
 [OptionsToString]
-class BadOptions
+class NegativeBadOptions
 {
     // shows warning about two attributes
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]

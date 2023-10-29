@@ -1,0 +1,11 @@
+﻿Test.MaskingOptions:
+  Masked             : "**************************"
+  MaskedPrefix       : "abc***********************"
+  MaskedSuffix       : "***********************xyz"
+  MaskedPrefixSuffix : "abc********************xyz"
+  MaskedPrefixTooBig : "abcdefghijklmnopqrstuvwxyz"
+  MaskedSuffixTooBig : "abcdefghijklmnopqrstuvwxyz"
+  MaskedBothTooBig   : "abcdefghijklmnopqrstuvwxyz"
+  Empty              : ""
+  Negative           : "abcdefghijklmnopqrstuvwxyz"
+  Zero               : "**************************"

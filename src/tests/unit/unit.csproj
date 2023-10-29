@@ -9,10 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="TestFiles\BadOptions.cs" />
+	  <Compile Remove="TestFiles\NegativeBadOptions.cs" />
 	  <Compile Remove="TestFiles\InternalOptions.cs" />
 	  <Compile Remove="TestFiles\JsonOptions.cs" />
-	  <Compile Remove="TestFiles\NoOptions.cs" />
+	  <Compile Remove="TestFiles\MaskingOptions.cs" />
+	  <Compile Remove="TestFiles\NegativeNoOptions.cs" />
 	  <Compile Remove="TestFiles\ObjectMasking.cs" />
 	  <Compile Remove="TestFiles\PublicOptions.cs" />
 	  <Compile Remove="TestFiles\Title.cs" />
@@ -21,6 +22,39 @@
 
 	<ItemGroup>
 	  <Content Include="TestFiles\*.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\EscapeOptions.cs" Link="TestFiles\EscapeOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\FormattingOptions.cs" Link="TestFiles\FormattingOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\MaskingOptions.cs" Link="TestFiles\MaskingOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\NegativeNoOptions.cs" Link="TestFiles\NegativeNoOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

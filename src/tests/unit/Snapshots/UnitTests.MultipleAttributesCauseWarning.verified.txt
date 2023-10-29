@@ -7,7 +7,7 @@ namespace Seekatar.OptionToStringGenerator
         {
             return $@"MyAppOptions:
   Name     : {OptionsToStringAttribute.Format(o.Name)}
-  Password : {OptionsToStringAttribute.Format(o.Password,prefixLen:0,prefixLen:3)}
+  Password : {OptionsToStringAttribute.Format(o.Password,prefixLen:0,suffixLen:0,prefixLen:3,suffixLen:0)}
 ";
         }
     }

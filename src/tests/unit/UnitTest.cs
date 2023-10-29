@@ -1,17 +1,23 @@
 using Shouldly;
+using System.Collections;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
 
 [UsesVerify] // Adds hooks for Verify into XUnit
 public class UnitTests
 {
+    public static IEnumerable<object[]> TestFileData()
+    {
+        // get all the files in the TestFiles directory
+        var files = Directory.GetFiles("TestFiles", "*.cs");
+        foreach (var file in files.Where( o => !o.Contains("Negative")))
+        {
+            yield return new object[] { file };
+        }
+    }
+
     [Theory]
-    [InlineData("TestFiles/FormattingOptions.cs")]
-    [InlineData("TestFiles/TitleOptions.cs")]
-    [InlineData("TestFiles/JsonOptions.cs")]
-    [InlineData("TestFiles/InternalOptions.cs")]
-    [InlineData("TestFiles/PublicOptions.cs")]
-    [InlineData("TestFiles/EscapeOptions.cs")]
+    [MemberData(nameof(TestFileData))]
     public Task HappyPathFiles(string filename)
     {
         // Pass the source code to our helper and snapshot test the output
@@ -77,10 +83,10 @@ public class UnitTests
     }
 
     [Fact]
-    public Task NoOptions()
+    public Task NegativeNoOptions()
     {
         // The source code to test
-        var source = File.ReadAllText("TestFiles/NoOptions.cs");
+        var source = File.ReadAllText("TestFiles/NegativeNoOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
@@ -102,7 +108,7 @@ public class UnitTests
                         {
                             public string Name { get; set; } = ""hi mom"";
                         }
-                     ";
+                     "; 
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify(source, (o) => {
