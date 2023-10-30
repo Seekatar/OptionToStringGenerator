@@ -83,6 +83,28 @@ public class UnitTests
     }
 
     [Fact]
+    public Task PrivateClassWarning()
+    {
+        // The source code to test
+        var source = @"
+                        using Seekatar.OptionToStringGenerator;
+
+                        [OptionsToStringAttribute]
+                        private class MyAppOptions
+                        {
+                            public string Name { get; set; } = ""hi mom"";
+                        }
+                     ";
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify(source, (o) => {
+            o.Count().ShouldBe(1);
+            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
+            o[0].Id.ShouldBe("SEEK005");
+        });
+    }
+
+    [Fact]
     public Task NegativeNoOptions()
     {
         // The source code to test

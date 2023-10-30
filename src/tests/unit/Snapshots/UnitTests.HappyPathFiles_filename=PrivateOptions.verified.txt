@@ -1,0 +1,14 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Test.Wrapper.PrivateOptions o)
+        {
+            return $@"Test.Wrapper.PrivateOptions:
+  IntProp    : {OptionsToStringAttribute.Format(o.IntProp)}
+  StringProp : {OptionsToStringAttribute.Format(o.StringProp)}
+";
+        }
+    }
+}

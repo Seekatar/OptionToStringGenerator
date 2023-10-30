@@ -167,6 +167,21 @@ public class OptionToStringGenerator : IIncrementalGenerator
                     """);
         foreach (var classToGenerate in classesToGenerate)
         {
+            if (classToGenerate.Accessibility == "private") 
+            {
+                var diag = Diagnostic.Create(new DiagnosticDescriptor(
+                                        id: "SEEK005",
+                                        title: "Private classes can't be used",
+                                        messageFormat: $"The class '{classToGenerate.Name}' is private",
+                                        category: "Usage",
+                                        defaultSeverity: DiagnosticSeverity.Warning,
+                                        isEnabledByDefault: true,
+                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                                     ), classToGenerate.Location);
+                context.ReportDiagnostic(diag);
+                continue; 
+            }
+
             int maxLen = 0;
             foreach (var member in classToGenerate.Values)
             {

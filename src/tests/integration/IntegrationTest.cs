@@ -1,6 +1,8 @@
 namespace Test;
 using Seekatar.OptionToStringGenerator;
+using System;
 using System.Globalization;
+using System.Reflection;
 using Test;
 
 [UsesVerify]
@@ -13,67 +15,35 @@ public class IntegrationTest
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // for date formatting since different on different OSes
     }
 
-    [Fact]
-    public Task TestPublicClass()
+    public static IEnumerable<object[]> TestFileData()
     {
-        var options = new PublicOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        yield return new object[] { new InternalOptions() };
+        yield return new object[] { new PublicOptions() };
+        yield return new object[] { new ObjectMasking() };
+        yield return new object[] { new NegativeBadOptions() };
+        yield return new object[] { new NegativeNoOptions() };
+        yield return new object[] { new JsonOptions() };
+        yield return new object[] { new TitleOptions() };
+        yield return new object[] { new FormattingOptions() };
+        yield return new object[] { new EscapeOptions() };
+        yield return new object[] { new MaskingOptions() };
+    }
+
+    [Theory]
+    [MemberData(nameof(TestFileData))]
+    public Task TestClasses(object options)
+    {
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() } );
+
+        Assert.True(method != null, "Could not find OptionsToString method");
+        var s = method.Invoke(options, new object[] { options });
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name); 
     }
 
     [Fact]
-    public Task TestInternalClass()
+    public Task NestedTest()
     {
-        var options = new InternalOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task TestObjectMasking()
-    {
-        var options = new ObjectMasking();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task BadOptionTest()
-    {
-        var options = new NegativeBadOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task NoOptionTest()
-    {
-        var options = new NegativeNoOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task JsonTest()
-    {
-        var options = new JsonOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task TitleTest()
-    {
-        var options = new TitleOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task FormatTest()
-    {
-        var options = new FormattingOptions();
-        var s = options.OptionsToString();
+        var s = Wrapper.GetOptionsString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
@@ -124,14 +94,6 @@ public class IntegrationTest
     }
 
     [Fact]
-    public Task EscapeTest()
-    {
-        var options = new EscapeOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
     public async Task MessagingClientTest()
     {
 
@@ -148,13 +110,5 @@ public class IntegrationTest
         };
         var s = options.OptionsToString();
         await Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task MaskTest()
-    {
-        var options = new MaskingOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 }

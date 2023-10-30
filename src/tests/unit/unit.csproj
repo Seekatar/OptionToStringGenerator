@@ -27,6 +27,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\NestedOptions.cs" Link="TestFiles\NestedOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="..\integration\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
