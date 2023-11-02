@@ -43,7 +43,7 @@ public static class TestHelper
 
     public static Task Verify(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null )
     {
-        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        var (diag, output) = GetGeneratedOutput<OptionPropertyToStringGenerator>(source);
         if (assertDiag != null)
         {
             assertDiag(diag);
@@ -57,7 +57,7 @@ public static class TestHelper
     public static Task VerifyFile(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null)
     {
         var source = File.ReadAllText(filename);
-        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        var (diag, output) = GetGeneratedOutput<OptionPropertyToStringGenerator>(source);
         if (assertDiag != null)
         {
             assertDiag(diag);

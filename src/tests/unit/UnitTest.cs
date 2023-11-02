@@ -24,6 +24,14 @@ public class UnitTests
         return TestHelper.VerifyFile(filename);
     }
 
+    [Theory]
+    [InlineData("TestFiles/ExternalClass.cs")]
+    public Task OneHappyPathFiles(string filename)
+    {
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.VerifyFile(filename);
+    }
+
     [Fact]
     public Task MultipleAttributesCauseWarning()
     {

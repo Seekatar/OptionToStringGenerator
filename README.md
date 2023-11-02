@@ -226,6 +226,14 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 3. When ready, create a PR to `main`
 4. To push to the NuGet Gallery create a `releases/vX.X.X` branch and push to it.
 
+## Debugging and Testing
+
+To debug the generator, the `unit` test project calls `RunGeneratorsAndUpdateCompilation` to run the generator and get the output. The unit test output will be the C# code for the extension method of the objects.
+
+The `integration` test project actually runs the generator and calls the extension methods and gets the output from it.
+
+In both cases the output is written to files and the Verify package is used to compare the output to a snapshot file.
+
 ## Links to Documentation
 
 These are links to the MS documentation for the items I used in the generator.
