@@ -19,7 +19,7 @@ record MyRecord
     public string SerialNo { get; set; } = "1234567890";
 }
 
-internal class MyExternalClassClass
+class MyExternalClassClass
 {
     [OutputPropertyMask(Name = nameof(ExternalClass.SerialNo), SuffixLen = 3)]
     [OutputPropertyMask(Name = nameof(ExternalClass.Name))]

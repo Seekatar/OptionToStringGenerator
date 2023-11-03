@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="TestFiles\ExternalClass.cs" />
 	  <Compile Remove="TestFiles\NegativeBadOptions.cs" />
 	  <Compile Remove="TestFiles\InternalOptions.cs" />
 	  <Compile Remove="TestFiles\JsonOptions.cs" />
@@ -22,12 +23,6 @@
 
 	<ItemGroup>
 	  <Content Include="TestFiles\*.cs">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="..\integration\TestFiles\ExternalClass.cs" Link="TestFiles\ExternalClass.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -95,6 +90,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Attributes\Attributes.csproj" />
 		<ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="TestFiles\ExternalClass.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>
