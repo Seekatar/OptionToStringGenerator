@@ -1,14 +1,14 @@
 ﻿#nullable enable
 namespace Seekatar.OptionToStringGenerator
 {
-    public static partial property PropertyExtensions
+    public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.MyExternalClassClass.MyExtClassProperty o)
+        internal static string OptionsToString(this Test.ExternalClass o)
         {
-            return $@"Test.MyExternalClassClass.MyExtClassProperty:
+            return $@"Test.ExternalClass:
   Number   : {OptionsToStringAttribute.Format(o.Number)}
-  Name     : {OptionsToStringAttribute.Format(o.Name)}
-  SerialNo : {OptionsToStringAttribute.Format(o.SerialNo)}
+  Name     : {OptionsToStringAttribute.Format(o.Name,prefixLen:0,suffixLen:0)}
+  SerialNo : {OptionsToStringAttribute.Format(o.SerialNo,prefixLen:0,suffixLen:3)}
 ";
         }
     }

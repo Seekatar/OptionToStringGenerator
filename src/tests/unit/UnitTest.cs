@@ -21,7 +21,7 @@ public class UnitTests
     public Task HappyPathFiles(string filename)
     {
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.VerifyFile(filename);
+        return TestHelper.VerifyFile<OptionToStringGenerator>(filename);
     }
 
     [Theory]
@@ -29,7 +29,7 @@ public class UnitTests
     public Task OneHappyPathFiles(string filename)
     {
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.VerifyFile(filename);
+        return TestHelper.VerifyFile<OptionPropertyToStringGenerator>(filename);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class UnitTests
                      ";
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source, (o) => {
+        return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
             o[0].Id.ShouldBe("SEEK002");
@@ -81,7 +81,7 @@ public class UnitTests
                      ";
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source, (o) => {
+        return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(2);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
             o[0].Id.ShouldBe("SEEK001");
@@ -105,7 +105,7 @@ public class UnitTests
                      ";
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source, (o) => {
+        return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
             o[0].Id.ShouldBe("SEEK005");
@@ -119,7 +119,7 @@ public class UnitTests
         var source = File.ReadAllText("TestFiles/NegativeNoOptions.cs");
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source, (o) => {
+        return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
             o[0].Id.ShouldBe("SEEK003");
@@ -141,7 +141,7 @@ public class UnitTests
                      "; 
 
         // Pass the source code to our helper and snapshot test the output
-        return TestHelper.Verify(source, (o) => {
+        return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
             o[0].Id.ShouldBe("SEEK004");

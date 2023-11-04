@@ -7,7 +7,9 @@ namespace Test;
 internal class ExternalClass
 {
     public int Number { get; set; } = 999;
+    [OutputMask]
     public string Name { get; set; } = "hi mom";
+    [OutputMask(SuffixLen = 3)]
     public string SerialNo { get; set; } = "1234567890";
 }
 
@@ -19,11 +21,11 @@ record MyRecord
     public string SerialNo { get; set; } = "1234567890";
 }
 
-internal class MyExternalClassClass
+internal class MyExternalClass
 {
     [OutputPropertyMask(Name = nameof(ExternalClass.SerialNo), SuffixLen = 3)]
     [OutputPropertyMask(Name = nameof(ExternalClass.Name))]
-    public ExternalClass MyExtClassProperty { get; set; }
+    public MyRecord MyExtClassProperty { get; set; } = new MyRecord();
 
     //[OutputPropertyMask(Name = nameof(ExternalClass.SerialNo))]
     //[OutputPropertyMask(Name = nameof(ExternalClass.Name))]

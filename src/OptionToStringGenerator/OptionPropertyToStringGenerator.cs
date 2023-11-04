@@ -218,6 +218,9 @@ public class OptionPropertyToStringGenerator : IIncrementalGenerator
             if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface)
                 continue; // int is struct
 
+            var className = typeSymbol.ContainingNamespace+"."+typeSymbol.Name;
+            var classAccessibility = typeSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
+
             // var members = typeSymbol.GetMembers();
             //var m2 = typeSymbol.GetMembers("Name");
             //var m3 = (m2!.ElementAt(0)! as IPropertySymbol)!.GetMethod;
@@ -253,7 +256,7 @@ public class OptionPropertyToStringGenerator : IIncrementalGenerator
             var jsonClose = "";
             var trailingComma = "";
             var haveJson = false;
-            var title = propertyToGenerate.Name;
+            var title = className;
             var titleText = "";
 
             if (propertyAttributeForClass is not null)
@@ -333,7 +336,7 @@ public class OptionPropertyToStringGenerator : IIncrementalGenerator
             }
 
             // method signature
-            sb.Append($"        {propertyToGenerate.Accessibility} static string OptionsToString(this ").Append(propertyToGenerate.Name).Append(
+            sb.Append($"        {classAccessibility} static string OptionsToString(this ").Append(className).Append(
                       $$""""
                        o)
                               {

@@ -27,7 +27,7 @@ public class IntegrationTest
         yield return new object[] { new FormattingOptions() };
         yield return new object[] { new EscapeOptions() };
         yield return new object[] { new MaskingOptions() };
-        yield return new object[] { new MyExternalClassClass() };
+        yield return new object[] { new ExternalClass() };
     }
 
     [Theory]
@@ -39,6 +39,14 @@ public class IntegrationTest
         Assert.True(method != null, "Could not find OptionsToString method");
         var s = method.Invoke(options, new object[] { options });
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name); 
+    }
+
+    [Fact]
+    public Task ExternalClass()
+    {
+        var o = new MyExternalClass();
+        var s = o.MyExtClassProperty.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
