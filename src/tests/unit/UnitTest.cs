@@ -1,7 +1,7 @@
 using Shouldly;
-using System.Collections;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
+using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 
 [UsesVerify] // Adds hooks for Verify into XUnit
 public class UnitTests
@@ -54,7 +54,7 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe("SEEK002");
+            o[0].Id.ShouldBe(SEEK002.ToString());
         });
 
     }
@@ -84,9 +84,11 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(2);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[0].Id.ShouldBe("SEEK001");
+            o[0].Id.ShouldBe(SEEK001.ToString());
+            o[0].GetMessage().ShouldBe("Bad Regex: You must specify a regex parameter");
             o[1].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[1].Id.ShouldBe("SEEK001");
+            o[1].Id.ShouldBe(SEEK001.ToString());
+            o[1].GetMessage().ShouldBe("Bad Regex: Invalid pattern 'User Id=([^;]+).*Password=([^;]+' at offset 32. Not enough )'s.");
         });
     }
 
@@ -108,7 +110,8 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe("SEEK005");
+            o[0].GetMessage().ShouldBe("The class 'MyAppOptions' is private");
+            o[0].Id.ShouldBe(SEEK005.ToString());
         });
     }
 
@@ -122,7 +125,7 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe("SEEK003");
+            o[0].Id.ShouldBe(SEEK003.ToString());
         });
     }
 
@@ -144,7 +147,8 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe("SEEK004");
+            o[0].GetMessage().ShouldBe("Property 'Thisdoesntexist' not found on BadTitleOptions");
+            o[0].Id.ShouldBe(SEEK004.ToString());
         });
     }
 

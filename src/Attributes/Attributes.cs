@@ -1,7 +1,4 @@
-﻿using Seekatar.OptionToStringGenerator;
-using System.Runtime.CompilerServices;
-
-namespace Seekatar.OptionToStringGenerator;
+﻿namespace Seekatar.OptionToStringGenerator;
 
 /// <summary>
 /// Marker attribute to indicate a OptionToString() extension method should be generated
@@ -150,6 +147,16 @@ public class OutputIgnoreAttribute : Attribute
 public interface IPropertyAttribute
 {
     string Name { get; set; }
+}
+
+
+/// <summary>
+/// Marker attribute for formatting the output
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public class OutputPropertyFormatAttribute : OptionsToStringAttribute, IPropertyAttribute
+{
+    public string Name { get; set; } = "";
 }
 
 /// <summary>

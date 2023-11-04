@@ -2,7 +2,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using VerifyXunit;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
 

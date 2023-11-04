@@ -3,7 +3,6 @@ using Seekatar.OptionToStringGenerator;
 using System;
 using System.Globalization;
 using System.Reflection;
-using Test;
 
 [UsesVerify]
 public class IntegrationTest

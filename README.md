@@ -234,6 +234,8 @@ The `integration` test project actually runs the generator and calls the extensi
 
 In both cases the output is written to files and the Verify package is used to compare the output to a snapshot file.
 
+For integration tests, if you make changes to the generator, you often have to restart Visual Studio to get it to load the new one.
+
 ## Links to Documentation
 
 These are links to the MS documentation for the items I used in the generator.
