@@ -1,7 +1,7 @@
 ﻿#nullable enable
 namespace Seekatar.OptionToStringGenerator
 {
-    public static partial class PropertyExtensions
+    public static partial class ClassExtensions
     {
         internal static string OptionsToString(this Test.MyRecord o)
         {

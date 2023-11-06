@@ -13,7 +13,7 @@ internal class ExternalClass
 }
 
 [OptionsToString]
-record MyRecord
+internal record MyRecord
 {
     public int Number { get; set; } = 999;
     public string Name { get; set; } = "hi mom";

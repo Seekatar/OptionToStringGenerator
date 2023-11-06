@@ -2,22 +2,29 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
 using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 namespace Seekatar.OptionToStringGenerator;
 
-public class ItemToGenerate
+public abstract class ItemToGenerate
 {
-    public string Name => Symbol.ToString();
+    public string Name { get; protected set; } 
     public Location Location => Symbol.Locations[0];
     public ISymbol Symbol { get; }
-    public string Accessibility => Symbol.DeclaredAccessibility.ToString().ToLowerInvariant();
+    public string Accessibility { get; protected set; } 
 
-    public ItemToGenerate(ISymbol propertySymbol)
+    public readonly List<IPropertySymbol> Values;
+    public abstract AttributeData? GetFormat();
+
+    public ItemToGenerate(ISymbol symbol, List<IPropertySymbol> values)
     {
-        Symbol = propertySymbol;
+        Values = values;
+        Symbol = symbol;
+        Name = Symbol.ToString();
+        Accessibility = Symbol.DeclaredAccessibility.ToString().ToLowerInvariant();
     }
 }
 
@@ -26,14 +33,23 @@ public class PropertyToGenerate :  ItemToGenerate
 {
     public Dictionary<string, AttributeData> Attributes { get; }
     public IPropertySymbol PropertySymbol { get; }
-    public PropertyToGenerate(IPropertySymbol propertySymbol, Dictionary<string, AttributeData> attrs ) : base(propertySymbol)
+    public override AttributeData? GetFormat() => Attributes.FirstOrDefault(a => a.Value.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute)).Value;
+    public PropertyToGenerate(IPropertySymbol propertySymbol, Dictionary<string, AttributeData> attrs, List<IPropertySymbol> values) : base(propertySymbol, values)
     {
         PropertySymbol = propertySymbol;
         Attributes = attrs;
+        var propertyType = PropertySymbol.Type;
+        if (propertyType is INamedTypeSymbol typeSymbol)
+        {
+            Name = typeSymbol.ContainingNamespace + "." + typeSymbol.Name;
+            Accessibility = typeSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
+        }
     }
 }
 
-public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncrementalGenerator where TSyntax : MemberDeclarationSyntax
+public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncrementalGenerator 
+    where TSyntax : MemberDeclarationSyntax
+    where TGeneratedItem : ItemToGenerate
 {
     public abstract void Initialize(IncrementalGeneratorInitializationContext context);
 
@@ -92,173 +108,38 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         }
     }
     protected abstract List<TGeneratedItem> GetTypesToGenerate(Compilation compilation, IEnumerable<TSyntax> distinctProperties, CancellationToken token, SourceProductionContext context);
-    protected abstract string GenerateExtensionClass(List<TGeneratedItem> propertiesToGenerate, SourceProductionContext context);
+
     protected abstract ImmutableArray<AttributeData> AttributesForMember(IPropertySymbol symbol, TGeneratedItem propertyToGenerate);
-}
 
-[Generator]
-public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDeclarationSyntax, PropertyToGenerate> 
-{
-    public const string FullAttributeName = "Seekatar.OptionToStringGenerator.OutputPropertyMaskAttribute";
-
-    public override void Initialize(IncrementalGeneratorInitializationContext context)
-    {
-        // Do a simple filter for properties
-        IncrementalValuesProvider<PropertyDeclarationSyntax> propertyDeclarations = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),        // get properties with an attribute, must be fast
-                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // get a property with the my attribute
-            .Where(static m => m is not null)!; // filter out attributed properties that we don't care about
-
-        // Combine the selected properties with the `Compilation`
-        IncrementalValueProvider<(Compilation, ImmutableArray<PropertyDeclarationSyntax>)> compilationAndProperties
-            = context.CompilationProvider.Combine(propertyDeclarations.Collect());
-
-        // Generate the source using the compilation and properties
-        context.RegisterSourceOutput(compilationAndProperties,
-            (spc, source) => Execute("PropertyExtensions", source.Item1, source.Item2, spc));
-    }
-    static bool IsSyntaxTargetForGeneration(SyntaxNode node)
-    => node is PropertyDeclarationSyntax m && m.AttributeLists.Count > 0;
-
-    static PropertyDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
-    {
-        // we know the node is a PropertyDeclarationSyntax thanks to IsSyntaxTargetForGeneration
-        var propertyDeclarationSyntax = (PropertyDeclarationSyntax)context.Node;
-
-        return HasAttribute(context, FullAttributeName, propertyDeclarationSyntax.AttributeLists) ? propertyDeclarationSyntax : null;
-    }
-
-    protected override List<PropertyToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<PropertyDeclarationSyntax> propertySyntax, CancellationToken ct, SourceProductionContext context)
-    {
-        var propertyToGenerate = new List<PropertyToGenerate>();
-
-        // Get the semantic representation of our marker attribute
-        INamedTypeSymbol? propertyAttribute = compilation.GetTypeByMetadataName(FullAttributeName);
-
-        if (propertyAttribute == null)
-        {
-            // If this is null, the compilation couldn't find the marker attribute type
-            // which suggests there's something very wrong! Bail out..
-            return propertyToGenerate;
-        }
-
-        foreach (PropertyDeclarationSyntax propertyDeclarationSyntax in propertySyntax)
-        {
-            // stop if we're asked to
-            ct.ThrowIfCancellationRequested();
-
-            // Get the semantic representation of the property syntax
-            SemanticModel semanticModel = compilation.GetSemanticModel(propertyDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(propertyDeclarationSyntax) is not IPropertySymbol propertySymbol)
-            {
-                // something went wrong, bail out
-                continue;
-            }
-            var propertyType = propertySymbol.Type;
-            if (propertyType is not INamedTypeSymbol typeSymbol)
-            {
-                continue;
-            }
-
-            // get all the attributes on the property
-            var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator");
-            attrs = attrs.Where(a => a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false);
-            var attrDict = new Dictionary<string, AttributeData>();
-            foreach ( var a in attrs)
-            {
-                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString();
-                if (name is null)
-                {
-                    var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                            id: "SEEK006",
-                                            title: "Name is required",
-                                            messageFormat: $"The attribute '{a}' didn't have a Name set",
-                                            category: "Usage",
-                                            defaultSeverity: DiagnosticSeverity.Warning,
-                                            isEnabledByDefault: true,
-                                            helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-properties-cant-be-used"
-                                         ), a.AttributeClass?.Locations[0]);
-                    context.ReportDiagnostic(diag);
-
-                }
-                else
-                {
-                    attrDict.Add(name, a);
-                }
-            }
-
-            propertyToGenerate.Add(new PropertyToGenerate(propertySymbol, attrDict));
-        }
-
-        return propertyToGenerate;
-    }
-
-    protected override string GenerateExtensionClass(List<PropertyToGenerate> propertiesToGenerate, SourceProductionContext context)
+    protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, SourceProductionContext context)
     {
         var sb = new StringBuilder();
         sb.Append("""
                     #nullable enable
                     namespace Seekatar.OptionToStringGenerator
                     {
-                        public static partial class PropertyExtensions
+                        public static partial class ClassExtensions
                         {
 
                     """);
-        foreach (var propertyToGenerate in propertiesToGenerate)
+        foreach (var itemToGenerate in itemsToGenerate)
         {
-            AttributeData? propertyAttribute = null;
-            AttributeData? formatAttribute = propertyToGenerate.Attributes.FirstOrDefault(a => a.Value.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute)).Value;
 
-            if (propertyToGenerate.Accessibility == "private")
+
+            var className = itemToGenerate.Name;
+            var classAccessibility = itemToGenerate.Accessibility;
+            var members = itemToGenerate.Values;
+            var formatAttribute = itemToGenerate.GetFormat();
+
+            if (itemToGenerate.Accessibility == "private")
             {
-                var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                        id: "SEEK005",
-                                        title: "Private properties can't be used",
-                                        messageFormat: $"The property '{propertyToGenerate.Name}' is private",
-                                        category: "Usage",
-                                        defaultSeverity: DiagnosticSeverity.Warning,
-                                        isEnabledByDefault: true,
-                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-properties-cant-be-used"
-                                     ), propertyToGenerate.Location);
-                context.ReportDiagnostic(diag);
+                context.Report(SEEK005, itemToGenerate.Location, itemToGenerate.Name);
                 continue;
             }
 
-            // get the type of the property and its members
-            var propertyType = propertyToGenerate.PropertySymbol.Type; 
-            if (propertyType is not INamedTypeSymbol typeSymbol)
-            {
-                continue;
-            }
-            if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface)
-                continue; // int is struct
-
-            var className = typeSymbol.ContainingNamespace+"."+typeSymbol.Name;
-            var classAccessibility = typeSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
-
-            // var members = typeSymbol.GetMembers();
-            //var m2 = typeSymbol.GetMembers("Name");
-            //var m3 = (m2!.ElementAt(0)! as IPropertySymbol)!.GetMethod;
-            ImmutableArray<ISymbol> classMembers = typeSymbol.GetMembers();
-            var members = new List<IPropertySymbol>(classMembers.Length);
-
-            // Get all the public properties with a get method
-            foreach (ISymbol member in classMembers)
-            {
-                if (member is IPropertySymbol property
-                    && property.GetMethod is not null
-                    && property.DeclaredAccessibility == Accessibility.Public)
-                {
-                    members.Add(property);
-                }
-            }
-            
             int maxLen = 0;
             foreach (var member in members)
             {
-                if (!propertyToGenerate.Attributes.TryGetValue(member.Name, out propertyAttribute))
-                    continue; // TODO warning
                 if (member.Name.Length > maxLen)
                 {
                     maxLen = member.Name.Length;
@@ -307,7 +188,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                             var member = members.Where(m => m.Name == memberName).FirstOrDefault();
                             if (member is null)
                             {
-                                context.Report(SEEK004, propertyToGenerate.Location, memberName, propertyToGenerate.Name);
+                                context.Report(SEEK004, itemToGenerate.Location, memberName, itemToGenerate.Name);
                                 titleString = titleString.Replace($"{{{memberName}}}", memberName);
                             }
                             else
@@ -331,7 +212,8 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                 }
             }
 
-            if (haveJson) {
+            if (haveJson)
+            {
                 titleText = $$$"""
                               {{
                                 {{{nameQuote}}}{{{title}}}{{{nameQuote}}} {{{nameSuffix}}} {{
@@ -354,7 +236,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
 
             if (!members.Any())
             {
-                context.Report(SEEK003, propertyToGenerate.Location);
+                context.Report(SEEK003, itemToGenerate.Location);
                 sb.AppendLine($"{indent}No properties to display");
             }
 
@@ -367,7 +249,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                     trailingComma = "";
 
                 bool ignored = false;
-                ImmutableArray<AttributeData> attributes = AttributesForMember(member, propertyToGenerate);
+                ImmutableArray<AttributeData> attributes = AttributesForMember(member, itemToGenerate);
                 var formatParameters = haveJson ? $",asJson:{haveJson.ToString().ToLowerInvariant()}" : "";
                 var attributeCount = 0;
                 for (int i = 0; i < attributes.Length; i++)
@@ -382,7 +264,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                         {
                             var prefixLen = "0";
                             var suffixLen = "0";
-                            for ( int k = 0; k < attribute.NamedArguments.Length; k++)
+                            for (int k = 0; k < attribute.NamedArguments.Length; k++)
                             {
                                 if (attribute.NamedArguments[k].Key == nameof(OutputMaskAttribute.PrefixLen))
                                     prefixLen = attribute.NamedArguments[k].Value.Value?.ToString() ?? "0";
@@ -447,6 +329,114 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
 }");
 
         return sb.ToString();
+    }
+
+}
+
+[Generator]
+public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDeclarationSyntax, PropertyToGenerate> 
+{
+    public const string FullAttributeName = "Seekatar.OptionToStringGenerator.OutputPropertyMaskAttribute";
+
+    public override void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        // Do a simple filter for properties
+        IncrementalValuesProvider<PropertyDeclarationSyntax> propertyDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),        // get properties with an attribute, must be fast
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx)) // get a property with the my attribute
+            .Where(static m => m is not null)!; // filter out attributed properties that we don't care about
+
+        // Combine the selected properties with the `Compilation`
+        IncrementalValueProvider<(Compilation, ImmutableArray<PropertyDeclarationSyntax>)> compilationAndProperties
+            = context.CompilationProvider.Combine(propertyDeclarations.Collect());
+
+        // Generate the source using the compilation and properties
+        context.RegisterSourceOutput(compilationAndProperties,
+            (spc, source) => Execute("PropertyExtensions", source.Item1, source.Item2, spc));
+    }
+    static bool IsSyntaxTargetForGeneration(SyntaxNode node)
+    => node is PropertyDeclarationSyntax m && m.AttributeLists.Count > 0;
+
+    static PropertyDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    {
+        // we know the node is a PropertyDeclarationSyntax thanks to IsSyntaxTargetForGeneration
+        var propertyDeclarationSyntax = (PropertyDeclarationSyntax)context.Node;
+
+        return HasAttribute(context, FullAttributeName, propertyDeclarationSyntax.AttributeLists) ? propertyDeclarationSyntax : null;
+    }
+
+    protected override List<PropertyToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<PropertyDeclarationSyntax> propertySyntax, CancellationToken ct, SourceProductionContext context)
+    {
+        var propertyToGenerate = new List<PropertyToGenerate>();
+
+        // Get the semantic representation of our marker attribute
+        INamedTypeSymbol? propertyAttribute = compilation.GetTypeByMetadataName(FullAttributeName);
+
+
+        if (propertyAttribute == null)
+        {
+            // If this is null, the compilation couldn't find the marker attribute type
+            // which suggests there's something very wrong! Bail out..
+            return propertyToGenerate;
+        }
+
+        foreach (PropertyDeclarationSyntax propertyDeclarationSyntax in propertySyntax)
+        {
+            // stop if we're asked to
+            ct.ThrowIfCancellationRequested();
+
+            // Get the semantic representation of the property syntax
+            SemanticModel semanticModel = compilation.GetSemanticModel(propertyDeclarationSyntax.SyntaxTree);
+            if (semanticModel.GetDeclaredSymbol(propertyDeclarationSyntax) is not IPropertySymbol propertySymbol)
+            {
+                // something went wrong, bail out
+                continue;
+            }
+            var propertyType = propertySymbol.Type;
+            if (propertyType is not INamedTypeSymbol typeSymbol)
+            {
+                continue;
+            }
+
+            // get all the attributes on the property
+            var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator");
+            attrs = attrs.Where(a => a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false);
+            var attrDict = new Dictionary<string, AttributeData>();
+            foreach ( var a in attrs)
+            {
+                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString();
+                if (name is null)
+                {
+                    context.Report(SEEK007, a.AttributeClass?.Locations[0], a.ToString());
+                }
+                else
+                {
+                    attrDict.Add(name, a);
+                }
+            }
+
+            if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface)
+                continue; // int is struct
+
+            ImmutableArray<ISymbol> classMembers = typeSymbol.GetMembers();
+            var members = new List<IPropertySymbol>(classMembers.Length);
+
+            // Get all the public properties with a get method
+            foreach (ISymbol member in classMembers)
+            {
+                if (member is IPropertySymbol property
+                    && property.GetMethod is not null
+                    && property.DeclaredAccessibility == Accessibility.Public)
+                {
+                    members.Add(property);
+                }
+            }
+
+            propertyToGenerate.Add(new PropertyToGenerate(propertySymbol, attrDict, members));
+        }
+
+        return propertyToGenerate;
     }
 
     protected override ImmutableArray<AttributeData> AttributesForMember(IPropertySymbol symbol, PropertyToGenerate propertyToGenerate)

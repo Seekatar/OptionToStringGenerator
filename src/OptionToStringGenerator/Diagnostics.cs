@@ -10,7 +10,9 @@ public static class DiagnosticTemplates
         SEEK002,
         SEEK003,
         SEEK004,
-        SEEK005
+        SEEK005,
+        SEEK006,
+        SEEK007,
     }
     static List<DiagnosticDescriptor> _diagnostics = new() {
         new DiagnosticDescriptor(
@@ -57,10 +59,28 @@ public static class DiagnosticTemplates
                 defaultSeverity: DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
                 helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                ),
+        new DiagnosticDescriptor(
+                id: Ids.SEEK006.ToString(),
+                title: "Member not found on class",
+                messageFormat: "The member '{0}' in the attribute isn't in the class '{1}'",
+                category: "Usage",
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                ),
+        new DiagnosticDescriptor(
+                id: Ids.SEEK007.ToString(),
+                title: "Name is required",
+                messageFormat: "The attribute '{0}' didn't have a Name set",
+                category: "Usage",
+                defaultSeverity: DiagnosticSeverity.Warning,
+                isEnabledByDefault: true,
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
                 )
     };
 
-    public static void Report(this SourceProductionContext context, Ids id, Location location, params string[] args)
+    public static void Report(this SourceProductionContext context, Ids id, Location? location, params string[] args)
     {
         var d = _diagnostics.FirstOrDefault(o => id.ToString() == o.Id);
         if (d is null) throw new Exception($"Unknown diagnostic id {id}");
