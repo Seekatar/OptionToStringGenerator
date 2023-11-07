@@ -1,4 +1,4 @@
-﻿Test.PropertyTestRecord:
+﻿Test.PropertyTestClass:
   Number   : 999
   Name     : "******"
   SerialNo : "*******890"

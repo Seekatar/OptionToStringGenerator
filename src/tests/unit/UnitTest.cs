@@ -171,9 +171,9 @@ public class UnitTests
 
                         public class BadType
                         {
-                            [OutputPropertyMask(Name = nameof(ExternalClass.SerialNo))]
+                            [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
                             public Guid Name { get; set; };
-                            [OutputPropertyMask(Name = nameof(ExternalClass.SerialNo))]
+                            [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
                             public DateTime Name { get; set; };
                         }
                     ";
@@ -202,7 +202,7 @@ public class UnitTests
                         }
                         public class BadType
                         {
-                            [OutputPropertyMask]
+                            [OutputPropertyMask("""")]
                             public FakeOptions NoName { get; set; };
                         }
                     ";
@@ -211,7 +211,7 @@ public class UnitTests
         return TestHelper.Verify<OptionPropertyToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[0].GetMessage().ShouldBe("The attribute 'NoName' didn't have a Name set");
+            o[0].GetMessage().ShouldBe("The attribute 'OutputPropertyMaskAttribute' didn't have a Name set");
             o[0].Id.ShouldBe(SEEK007.ToString());
         });
     }

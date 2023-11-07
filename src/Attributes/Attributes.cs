@@ -1,4 +1,6 @@
-﻿namespace Seekatar.OptionToStringGenerator;
+﻿using System.Xml.Linq;
+
+namespace Seekatar.OptionToStringGenerator;
 
 /// <summary>
 /// Marker attribute to indicate a OptionToString() extension method should be generated
@@ -156,6 +158,10 @@ public interface IPropertyAttribute
 [AttributeUsage(AttributeTargets.Property)]
 public class OutputPropertyFormatAttribute : OptionsToStringAttribute, IPropertyAttribute
 {
+    public OutputPropertyFormatAttribute(string name)
+    {
+        Name = name;
+    }
     public string Name { get; set; } = "";
 }
 
@@ -165,6 +171,10 @@ public class OutputPropertyFormatAttribute : OptionsToStringAttribute, IProperty
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribute
 {
+    public OutputPropertyMaskAttribute(string name)
+    {
+        Name = name;
+    }
     public string Name { get; set; } = "";
 }
 
@@ -174,6 +184,10 @@ public class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribu
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttribute
 {
+    public OutputPropertyRegexAttribute(string name)
+    {
+        Name = name;
+    }
     public string Name { get; set; } = "";
 }
 
@@ -183,6 +197,10 @@ public class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttri
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPropertyAttribute
 {
+    public OutputPropertyLengthOnlyAttribute(string name)
+    {
+        Name = name;
+    }
     public string Name { get; set; } = "";
 }
 
@@ -192,5 +210,9 @@ public class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPro
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public class OutputPropertyIgnoreAttribute : OutputIgnoreAttribute, IPropertyAttribute
 {
+    public OutputPropertyIgnoreAttribute(string name)
+    {
+        Name = name;
+    }
     public string Name { get; set; } = "";
 }

@@ -96,14 +96,15 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             var attrDict = new Dictionary<string, AttributeData>();
             foreach ( var a in attrs)
             {
-                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString();
-                if (name is null)
+                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString() ?? a.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                
+                if (string.IsNullOrEmpty(name))
                 {
-                    context.Report(SEEK007, a.AttributeClass?.Locations[0], propertySymbol.Name);
+                    context.Report(SEEK007, a.AttributeClass?.Locations[0], a.AttributeClass?.Name ?? propertySymbol.Name);
                 }
                 else
                 {
-                    attrDict.Add(name, a);
+                    attrDict.Add(name!, a);
                 }
             }
 

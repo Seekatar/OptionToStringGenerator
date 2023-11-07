@@ -11,7 +11,7 @@ internal record PropertyTestRecord
 
 internal class MyExternalClass
 {
-    [OutputPropertyMask(Name = nameof(PropertyTestRecord.SerialNo), SuffixLen = 3)]
-    [OutputPropertyMask(Name = nameof(PropertyTestRecord.Name))]
+    [OutputPropertyMask(nameof(PropertyTestRecord.SerialNo), SuffixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyTestRecord.Name))]
     public PropertyTestRecord MyExtClassProperty { get; set; } = new PropertyTestRecord();
 }
