@@ -1,10 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
-using System.Text;
-using System.Text.RegularExpressions;
-
-using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 namespace Seekatar.OptionToStringGenerator;
 
 public class ClassToGenerate : ItemToGenerate

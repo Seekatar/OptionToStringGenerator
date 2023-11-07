@@ -26,7 +26,7 @@ public class IntegrationTest
         yield return new object[] { new FormattingOptions() };
         yield return new object[] { new EscapeOptions() };
         yield return new object[] { new MaskingOptions() };
-        yield return new object[] { new ExternalClass() };
+        yield return new object[] { new PropertyTestClass() };
     }
 
     [Theory]

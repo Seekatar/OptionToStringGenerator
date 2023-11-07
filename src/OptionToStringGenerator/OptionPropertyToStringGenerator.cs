@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
-using System.Reflection;
 
 using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 namespace Seekatar.OptionToStringGenerator;
@@ -19,7 +18,7 @@ public class PropertyToGenerate :  ItemToGenerate
         var propertyType = PropertySymbol.Type;
         if (propertyType is INamedTypeSymbol typeSymbol)
         {
-            Name = typeSymbol.ContainingNamespace + "." + typeSymbol.Name;
+            Name = (typeSymbol.ContainingNamespace.IsGlobalNamespace ? "global::" : typeSymbol.ContainingNamespace.Name + ".") + typeSymbol.Name;
             Accessibility = typeSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
         }
     }
@@ -100,7 +99,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                 var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString();
                 if (name is null)
                 {
-                    context.Report(SEEK007, a.AttributeClass?.Locations[0], a.ToString());
+                    context.Report(SEEK007, a.AttributeClass?.Locations[0], propertySymbol.Name);
                 }
                 else
                 {
@@ -108,8 +107,11 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                 }
             }
 
-            if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface)
-                continue; // int is struct
+            if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface or TypeKind.Struct)
+            {
+                context.Report(SEEK008, propertySymbol.Locations[0], propertySymbol.Name, propertyType.Name);
+                continue; // int is struct, string is class
+            }
 
             ImmutableArray<ISymbol> classMembers = typeSymbol.GetMembers();
             var members = new List<IPropertySymbol>(classMembers.Length);

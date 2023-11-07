@@ -3,9 +3,9 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.MyRecord o)
+        internal static string OptionsToString(this Test.PropertyTestClass o)
         {
-            return $@"Test.MyRecord:
+            return $@"Test.PropertyTestClass:
   Number   : {OptionsToStringAttribute.Format(o.Number)}
   Name     : {OptionsToStringAttribute.Format(o.Name,prefixLen:0,suffixLen:0)}
   SerialNo : {OptionsToStringAttribute.Format(o.SerialNo,prefixLen:0,suffixLen:3)}

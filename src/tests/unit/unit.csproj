@@ -27,7 +27,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="..\integration\TestFiles\ExternalClass.cs" Link="TestFiles\ExternalClass.cs">
+	  <Content Include="..\integration\TestFiles\PropertyTestRecord.cs" Link="PropertyTestFiles\PropertyTestRecord.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\PropertyTestClass.cs" Link="TestFiles\PropertyTestClass.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
@@ -95,6 +101,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Attributes\Attributes.csproj" />
 		<ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="PropertyTestFiles\" />
+	  <Folder Include="Snapshots\" />
 	</ItemGroup>
 
 </Project>

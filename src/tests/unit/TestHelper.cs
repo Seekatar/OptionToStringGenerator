@@ -46,6 +46,10 @@ public static class TestHelper
         if (assertDiag != null)
         {
             assertDiag(diag);
+            if (diag.Any(o => o.Severity == DiagnosticSeverity.Error))
+            {
+                return Task.CompletedTask;
+            }
         }
         else
         {

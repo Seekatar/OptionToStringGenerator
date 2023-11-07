@@ -13,6 +13,7 @@ public static class DiagnosticTemplates
         SEEK005,
         SEEK006,
         SEEK007,
+        SEEK008
     }
     static List<DiagnosticDescriptor> _diagnostics = new() {
         new DiagnosticDescriptor(
@@ -74,7 +75,16 @@ public static class DiagnosticTemplates
                 title: "Name is required",
                 messageFormat: "The attribute '{0}' didn't have a Name set",
                 category: "Usage",
-                defaultSeverity: DiagnosticSeverity.Warning,
+                defaultSeverity: DiagnosticSeverity.Error,
+                isEnabledByDefault: true,
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                ),
+        new DiagnosticDescriptor(
+                id: Ids.SEEK008.ToString(),
+                title: "Invalid Type for Property",
+                messageFormat: "The Property '{0}' has invalid type of {1}. Must be class, record, or interface",
+                category: "Usage",
+                defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
                 helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
                 )
