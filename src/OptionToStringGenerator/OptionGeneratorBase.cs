@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -149,7 +150,15 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                             var member = members.Where(m => m.Name == memberName).FirstOrDefault();
                             if (member is null)
                             {
-                                context.Report(SEEK004, itemToGenerate.Location, memberName, itemToGenerate.Name);
+                                if (formatAttribute.ApplicationSyntaxReference is not null)
+                                {
+                                    context.Report(SEEK004, Location.Create(formatAttribute.ApplicationSyntaxReference.SyntaxTree, formatAttribute.ApplicationSyntaxReference.Span), memberName, itemToGenerate.Name);
+                                }
+                                else
+                                {
+                                    context.Report(SEEK004, itemToGenerate.Location, memberName, itemToGenerate.Name);
+                                }
+
                                 titleString = titleString.Replace($"{{{memberName}}}", memberName);
                             }
                             else
@@ -218,6 +227,12 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     var attribute = attributes[i];
                     if (attribute.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator")
                     {
+                        if (attributeCount > 0)
+                        {
+                            context.Report(SEEK002, member.Locations[0]);
+                            continue;
+                        }
+
                         attributeCount++;
                         if (attribute.AttributeClass?.Name.EndsWith("IgnoreAttribute") ?? false)
                             ignored = true;
@@ -264,16 +279,19 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                             }
                             if (!regexOk)
                             {
-                                context.Report(SEEK001, member.Locations[0], message);
+                                if (attribute.ApplicationSyntaxReference is not null)
+                                {
+                                    context.Report(SEEK001, Location.Create(attribute.ApplicationSyntaxReference.SyntaxTree, attribute.ApplicationSyntaxReference.Span), message);
+                                } 
+                                else
+                                {
+                                    context.Report(SEEK001, member.Locations[0], message);
+                                }
                             }
                         }
                     }
                 }
 
-                if (attributeCount > 1)
-                {
-                    context.Report(SEEK002, member.Locations[0]);
-                }
                 if (!ignored)
                     sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }

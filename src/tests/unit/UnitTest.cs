@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Shouldly;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
@@ -54,8 +55,8 @@ public class UnitTests
                         {
                             public string Name { get; set; } = ""hi mom"";
 
-                            [OutputMask]
                             [OutputMask(PrefixLen=3)]
+                            [OutputRegex(Regex = ""."")]
                             public string Password { get; set; } = ""thisisasecret"";
                         }
                      ";
@@ -63,8 +64,12 @@ public class UnitTests
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe(SEEK002.ToString());
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Warning),
+                () => o[0].Id.ShouldBe(SEEK002.ToString()),
+                () => o[0].GetMessage().ShouldBe("Multiple format attributes found. Using first one"),
+                () => GetLocationText(o[0].Location).ShouldBe("Password")
+            );
         });
 
     }
@@ -93,13 +98,26 @@ public class UnitTests
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(2);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[0].Id.ShouldBe(SEEK001.ToString());
-            o[0].GetMessage().ShouldBe("Bad Regex: You must specify a regex parameter");
-            o[1].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[1].Id.ShouldBe(SEEK001.ToString());
-            o[1].GetMessage().ShouldBe("Bad Regex: Invalid pattern 'User Id=([^;]+).*Password=([^;]+' at offset 32. Not enough )'s.");
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
+                () => o[0].Id.ShouldBe(SEEK001.ToString()),
+                () => o[0].GetMessage().ShouldBe("Bad Regex: You must specify a regex parameter"),
+                () => GetLocationText(o[0].Location).ShouldStartWith("OutputRegex"),
+                () => o[1].Severity.ShouldBe(DiagnosticSeverity.Error),
+                () => o[1].Id.ShouldBe(SEEK001.ToString()),
+                () => o[1].GetMessage().ShouldBe("Bad Regex: Invalid pattern 'User Id=([^;]+).*Password=([^;]+' at offset 32. Not enough )'s."),
+                () => GetLocationText(o[1].Location).ShouldStartWith("OutputRegex")
+            );
         });
+    }
+
+    static string GetLocationText(Location location)
+    {
+        var tree = location.SourceTree;
+        if (tree is null) return string.Empty;
+        var text = tree.GetText();
+        var span = location.SourceSpan;
+        return text.GetSubText(span).ToString();
     }
 
     [Fact]
@@ -119,9 +137,12 @@ public class UnitTests
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].GetMessage().ShouldBe("The class 'MyAppOptions' is private");
-            o[0].Id.ShouldBe(SEEK005.ToString());
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Warning),
+                () => o[0].GetMessage().ShouldBe("The class 'MyAppOptions' is private"),
+                () => o[0].Id.ShouldBe(SEEK005.ToString()),
+                () => GetLocationText(o[0].Location).ShouldStartWith("MyAppOptions")
+            );
         });
     }
 
@@ -134,8 +155,10 @@ public class UnitTests
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].Id.ShouldBe(SEEK003.ToString());
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Warning),
+                () => o[0].Id.ShouldBe(SEEK003.ToString())
+            );
         });
     }
 
@@ -151,14 +174,17 @@ public class UnitTests
                         {
                             public string Name { get; set; } = ""hi mom"";
                         }
-                     "; 
+                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning);
-            o[0].GetMessage().ShouldBe("Property 'Thisdoesntexist' not found on BadTitleOptions");
-            o[0].Id.ShouldBe(SEEK004.ToString());
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Warning),
+                () => o[0].GetMessage().ShouldBe("Property 'Thisdoesntexist' not found on BadTitleOptions"),
+                () => o[0].Id.ShouldBe(SEEK004.ToString()),
+                () => GetLocationText(o[0].Location).ShouldStartWith("OptionsToString")
+            );
         });
     }
 
@@ -172,23 +198,28 @@ public class UnitTests
                         public class BadType
                         {
                             [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
-                            public Guid Name { get; set; };
+                            public Guid BadGuid { get; set; }
                             [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
-                            public DateTime Name { get; set; };
+                            public DateTime Name { get; set; }
                         }
                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionPropertyToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(2);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[0].GetMessage().ShouldBe("The Property 'Name' has invalid type of Guid. Must be class, record, or interface");
-            o[0].Id.ShouldBe(SEEK008.ToString());
-            o[1].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[1].GetMessage().ShouldBe("The Property 'Name' has invalid type of DateTime. Must be class, record, or interface");
-            o[1].Id.ShouldBe(SEEK008.ToString());
+            o.ShouldSatisfyAllConditions(
+                    () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
+                    () => o[0].GetMessage().ShouldBe("The Property 'BadGuid' has invalid type of Guid. Must be class, record, or interface"),
+                    () => o[0].Id.ShouldBe(SEEK008.ToString()),
+                    () => GetLocationText(o[0].Location).ShouldBe("BadGuid"),
+                    () => o[1].Severity.ShouldBe(DiagnosticSeverity.Error),
+                    () => o[1].GetMessage().ShouldBe("The Property 'Name' has invalid type of DateTime. Must be class, record, or interface"),
+                    () => o[1].Id.ShouldBe(SEEK008.ToString()),
+                    () => GetLocationText(o[1].Location).ShouldBe("Name")
+                );
         });
     }
+
     [Fact]
     public Task MissingName()
     {
@@ -198,23 +229,57 @@ public class UnitTests
 
                         public class FakeOptions
                         {
-                            public string Name { get; set; };
+                            public string Name { get; set; }
                         }
                         public class BadType
                         {
                             [OutputPropertyMask("""")]
-                            public FakeOptions NoName { get; set; };
+                            public FakeOptions NoName { get; set; }
                         }
                     ";
 
         // Pass the source code to our helper and snapshot test the output
         return TestHelper.Verify<OptionPropertyToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
-            o[0].Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-            o[0].GetMessage().ShouldBe("The attribute 'OutputPropertyMaskAttribute' didn't have a Name set");
-            o[0].Id.ShouldBe(SEEK007.ToString());
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
+                () => o[0].GetMessage().ShouldBe("The attribute 'OutputPropertyMaskAttribute' has an empty Name"),
+                () => o[0].Id.ShouldBe(SEEK007.ToString()),
+                () => GetLocationText(o[0].Location).ShouldStartWith("OutputPropertyMask")
+            );
         });
     }
+
+    [Fact]
+    public Task BadPropertyName()
+    {
+        // The source code to test
+        var source = @"
+                        using Seekatar.OptionToStringGenerator;
+
+                        public class FakeOptions
+                        {
+                            public string Name { get; set; }
+                        }
+                        public class BadType
+                        {
+                            [OutputPropertyMask(""BadName"")]
+                            public FakeOptions NoName { get; set; }
+                        }
+                    ";
+
+        // Pass the source code to our helper and snapshot test the output
+        return TestHelper.Verify<OptionPropertyToStringGenerator>(source, (o) => {
+            o.Count().ShouldBe(1);
+            o.ShouldSatisfyAllConditions(
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
+                () => o[0].GetMessage().ShouldBe("The member 'BadName' in the attribute isn't in the class 'FakeOptions'"),
+                () => o[0].Id.ShouldBe(SEEK006.ToString()),
+                () => GetLocationText(o[0].Location).ShouldStartWith("OutputPropertyMask")
+            );
+        });
+    }
+
 
 
 }

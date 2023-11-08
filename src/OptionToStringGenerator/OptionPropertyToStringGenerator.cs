@@ -89,25 +89,6 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             {
                 continue;
             }
-
-            // get all the attributes on the property
-            var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator");
-            attrs = attrs.Where(a => a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false);
-            var attrDict = new Dictionary<string, AttributeData>();
-            foreach ( var a in attrs)
-            {
-                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString() ?? a.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                
-                if (string.IsNullOrEmpty(name))
-                {
-                    context.Report(SEEK007, a.AttributeClass?.Locations[0], a.AttributeClass?.Name ?? propertySymbol.Name);
-                }
-                else
-                {
-                    attrDict.Add(name!, a);
-                }
-            }
-
             if (propertyType.TypeKind is not TypeKind.Class or TypeKind.Interface or TypeKind.Struct)
             {
                 context.Report(SEEK008, propertySymbol.Locations[0], propertySymbol.Name, propertyType.Name);
@@ -117,6 +98,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             ImmutableArray<ISymbol> classMembers = typeSymbol.GetMembers();
             var members = new List<IPropertySymbol>(classMembers.Length);
 
+
             // Get all the public properties with a get method
             foreach (ISymbol member in classMembers)
             {
@@ -125,6 +107,43 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                     && property.DeclaredAccessibility == Accessibility.Public)
                 {
                     members.Add(property);
+                }
+            }
+
+            // get all the attributes on the property
+            var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator"
+                                                                  && (a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false));
+            var attrDict = new Dictionary<string, AttributeData>();
+            foreach ( var a in attrs)
+            {
+                var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString() ?? a.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                
+                if (string.IsNullOrEmpty(name))
+                {
+                    if (a.ApplicationSyntaxReference is not null)
+                    {
+                        context.Report(SEEK007, Location.Create(a.ApplicationSyntaxReference.SyntaxTree, a.ApplicationSyntaxReference.Span), a.AttributeClass?.Name ?? propertySymbol.Name);
+                    }
+                    else
+                    {
+                        context.Report(SEEK007, null, a.AttributeClass?.Name ?? propertySymbol.Name);
+                    }
+
+                }
+                else if (!members.Any(o => string.Equals(o.Name, name)))
+                {
+                    if (a.ApplicationSyntaxReference is not null)
+                    {
+                        context.Report(SEEK006, Location.Create(a.ApplicationSyntaxReference.SyntaxTree, a.ApplicationSyntaxReference.Span), name!, typeSymbol.Name);
+                    }
+                    else
+                    {
+                        context.Report(SEEK006, a.AttributeClass?.Locations[0], name!, typeSymbol.Name);
+                    }
+                }
+                else
+                {
+                    attrDict.Add(name!, a);
                 }
             }
 

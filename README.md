@@ -8,15 +8,19 @@
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
 This package generates an `OptionToString`
-extension method for your classes. By marking properties in the class you can control how the values are masked. It was created for dumping out classes used by [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) or [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) when the application starts.
+extension method for a class. By marking properties in the class you can control how the values are masked. It was created for dumping out classes used by [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) or [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) when the application starts. If you own the class, you can add the attributes to the class. If you don't own the class, you can decorate a property of a Type you want to log.
 
 ## Usage
 
 1. Add the [OptionToString](https://www.nuget.org/packages/OptionToString/) NuGet package to your project.
-2. Decorate a class with the `OptionToString` attribute.
-3. Optionally decorate properties with how you want them to be you want to dump out. If you don't decorate a property, its full text is dumped out.
+2. If you can update the class
+    1. Decorate a class with the `OptionToString` attribute.
+    1. Optionally decorate properties with how you want them to be you want to dump out. If you don't decorate a property, its full text is dumped out.
+3. If you don't want to update the class
+    1. Add a property to your class of the Type you want to dump out.
+    2. Decorate the property with multiple `Output*` attributes to control how the properties are dumped out.
 
-### Example
+### Example of Editing a Class
 
 Here's an example class of the various options with values set in the class for illustration purposes. The output follows.
 
@@ -126,6 +130,29 @@ Test.PublicOptions:
   RegexNotMatched               : "***Regex no match***!"
   Color                         : Red
   ```
+
+### Example of Using a Property
+
+Here's an example where you don't have the source for the class, or don't want to change it. In this case you add a property to your class, and decorate it in a similar fashion as in the class above. For each of the masking attributes there is an analogous one with `Property` in the name that takes the name of the property to mask as a parameter.
+
+```csharp
+namespace Test;
+using Seekatar.OptionToStringGenerator;
+
+public MyClass
+{
+    public MyClass(IOption<DbOptions> dbOptions)
+    {
+        _dbOptions = dbOptions.Value;
+    }
+
+    // use a Regex mask on _dbOptions.ConnectionString
+    [OutputPropertyRegex(nameof(DbOptions.ConnectionString,Regex="User Id=([^;]+).*Password=([^;]+)")]
+    // Completely mask the _dbOptions.Secret property
+    [OutputPropertyMask(nameof(PropertyTestRecord.Secret))]
+    private DbOptions _dbOptions { get; }
+}
+```
 
 ### Notes
 

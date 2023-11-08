@@ -5,8 +5,8 @@ using Seekatar.OptionToStringGenerator;
 class NegativeBadOptions
 {
     // shows warning about two attributes
-    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     [OutputLengthOnly]
+    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     public string Name { get; set; } = "hi mom";
 
     private string NotShown1 { get; set; } = "bye mom";

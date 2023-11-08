@@ -28,7 +28,7 @@ public static class DiagnosticTemplates
          new DiagnosticDescriptor(
                 id: Ids.SEEK002.ToString(),
                 title: "Multiple format attributes",
-                messageFormat: "You can only use one formatting attribute on a property",
+                messageFormat: "Multiple format attributes found. Using first one",
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
@@ -66,18 +66,18 @@ public static class DiagnosticTemplates
                 title: "Member not found on class",
                 messageFormat: "The member '{0}' in the attribute isn't in the class '{1}'",
                 category: "Usage",
-                defaultSeverity: DiagnosticSeverity.Warning,
+                defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek006-member-not-found-on-class"
                 ),
         new DiagnosticDescriptor(
                 id: Ids.SEEK007.ToString(),
                 title: "Name is required",
-                messageFormat: "The attribute '{0}' didn't have a Name set",
+                messageFormat: "The attribute '{0}' has an empty Name",
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek007-name-is-required"
                 ),
         new DiagnosticDescriptor(
                 id: Ids.SEEK008.ToString(),
@@ -86,15 +86,13 @@ public static class DiagnosticTemplates
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek005-private-classes-cant-be-used"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek008-invalid-type-for-property"
                 )
     };
 
     public static void Report(this SourceProductionContext context, Ids id, Location? location, params string[] args)
     {
-        var d = _diagnostics.FirstOrDefault(o => id.ToString() == o.Id);
-        if (d is null) throw new Exception($"Unknown diagnostic id {id}");
-
+        var d = _diagnostics.FirstOrDefault(o => id.ToString() == o.Id) ?? throw new Exception($"Unknown diagnostic id {id}");
         context.ReportDiagnostic(Diagnostic.Create(d, location, args));
     }
 }
