@@ -5,10 +5,10 @@ namespace Seekatar.OptionToStringGenerator
     {
         internal static string OptionsToString(this Test.PropertyTestRecord o)
         {
-            return $@"Test.PropertyTestRecord:
-  Number   : {OptionsToStringAttribute.Format(o.Number)}
-  Name     : {OptionsToStringAttribute.Format(o.Name,prefixLen:0,suffixLen:0)}
-  SerialNo : {OptionsToStringAttribute.Format(o.SerialNo,prefixLen:0,suffixLen:3)}
+            return $@"Custom Title {o.Name}:
+>   Number   - {OptionsToStringAttribute.Format(o.Number)}
+>   Name     - {OptionsToStringAttribute.Format(o.Name,prefixLen:0,suffixLen:0)}
+>   SerialNo - {OptionsToStringAttribute.Format(o.SerialNo,prefixLen:0,suffixLen:3)}
 ";
         }
     }

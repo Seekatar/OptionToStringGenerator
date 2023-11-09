@@ -8,13 +8,16 @@ namespace Seekatar.OptionToStringGenerator;
 
 public class PropertyToGenerate :  ItemToGenerate
 {
+    private readonly AttributeData? _formatAttr;
+
     public Dictionary<string, AttributeData> Attributes { get; }
     public IPropertySymbol PropertySymbol { get; }
-    public override AttributeData? GetFormat() => Attributes.FirstOrDefault(a => a.Value.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute)).Value;
-    public PropertyToGenerate(IPropertySymbol propertySymbol, Dictionary<string, AttributeData> attrs, List<IPropertySymbol> values) : base(propertySymbol, values)
+    public override AttributeData? GetFormat() => _formatAttr;
+    public PropertyToGenerate(IPropertySymbol propertySymbol, Dictionary<string, AttributeData> attrs, List<IPropertySymbol> values, AttributeData? formatAttr) : base(propertySymbol, values)
     {
         PropertySymbol = propertySymbol;
         Attributes = attrs;
+        _formatAttr = formatAttr;
         var propertyType = PropertySymbol.Type;
         if (propertyType is INamedTypeSymbol typeSymbol)
         {
@@ -114,10 +117,15 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator"
                                                                   && (a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false));
             var attrDict = new Dictionary<string, AttributeData>();
+            AttributeData? formatAttr = null;
             foreach ( var a in attrs)
             {
                 var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString() ?? a.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                
+                if (a.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute)) 
+                { 
+                    formatAttr = a; continue; 
+                }
+
                 if (string.IsNullOrEmpty(name))
                 {
                     if (a.ApplicationSyntaxReference is not null)
@@ -147,7 +155,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                 }
             }
 
-            propertyToGenerate.Add(new PropertyToGenerate(propertySymbol, attrDict, members));
+            propertyToGenerate.Add(new PropertyToGenerate(propertySymbol, attrDict, members, formatAttr));
         }
 
         return propertyToGenerate;

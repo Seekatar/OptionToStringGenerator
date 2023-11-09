@@ -43,8 +43,16 @@ public class IntegrationTest
     [Fact]
     public Task ExternalClass()
     {
-        var o = new MyExternalClass();
+        var o = new PropertyTestSimple();
         var s = o.MyExtClassProperty.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task PropertyPublicTest()
+    {
+        var o = new PropertyPublicTest();
+        var s = o.PublicOptions.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 

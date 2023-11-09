@@ -2,7 +2,7 @@
 
 namespace Test;
 
-// mimics the record below just to make sure OutputPropertyMaskAttribute generates the same code as this 
+// mimics the test record just to make sure OutputPropertyMaskAttribute generates the same code as this 
 [OptionsToString]
 internal class PropertyTestClass
 {

@@ -8,21 +8,21 @@
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
 This package generates an `OptionToString`
-extension method for a class. By marking properties in the class you can control how the values are masked. It was created for dumping out classes used by [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) or [IConfiguration](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.iconfiguration) when the application starts. If you own the class, you can add the attributes to the class. If you don't own the class, you can decorate a property of a Type you want to log.
+extension method for a class. By marking properties in the class you can control how the values are masked. It was created for safely dumping out configuration data when the application starts. If you own the class, you can add the attributes to the class. If you don't own the class, you can decorate a property of a Type you want to log.
 
 ## Usage
 
 1. Add the [OptionToString](https://www.nuget.org/packages/OptionToString/) NuGet package to your project.
 2. If you can update the class
     1. Decorate a class with the `OptionToString` attribute.
-    1. Optionally decorate properties with how you want them to be you want to dump out. If you don't decorate a property, its full text is dumped out.
+    1. Optionally decorate properties with how you want them to be you want to be masked. If you don't decorate a property, its full text is dumped out.
 3. If you don't want to update the class
     1. Add a property to your class of the Type you want to dump out.
-    2. Decorate the property with multiple `Output*` attributes to control how the properties are dumped out.
+    2. Decorate the property with multiple `OutputProperty*` attributes to control how the properties are masked.
 
 ### Example of Editing a Class
 
-Here's an example class of the various options with values set in the class for illustration purposes. The output follows.
+Here's an example class of the various options with values set in the class for illustration purposes. Anything without an attribute has its value written out in the clear. The output follows.
 
 ```csharp
 namespace Test;
@@ -133,25 +133,36 @@ Test.PublicOptions:
 
 ### Example of Using a Property
 
-Here's an example where you don't have the source for the class, or don't want to change it. In this case you add a property to your class, and decorate it in a similar fashion as in the class above. For each of the masking attributes there is an analogous one with `Property` in the name that takes the name of the property to mask as a parameter.
+Here's a similar example where you don't have the source for the class, or don't want to change it. In this case you add a property to your class, and decorate like the example above. All of the `OutputProperty*` attributes are identical to the ones above, only they take a name as the first parameter.
+
+This is from the tests where `PropertyPublicClass` is identical to `PublicOptions`, so the output will be the same aside from the class name.
 
 ```csharp
 namespace Test;
 using Seekatar.OptionToStringGenerator;
 
-public MyClass
+public class PropertyTestOptions
 {
-    public MyClass(IOption<DbOptions> dbOptions)
+    public MyClass(IOption<PropertyPublicClass> options, ILogger<PropertyTestOptions> logger)
     {
-        _dbOptions = dbOptions.Value;
+        _options =options.Value;
+        logger.LogInformation(options.OptionToString());
     }
 
-    // use a Regex mask on _dbOptions.ConnectionString
-    [OutputPropertyRegex(nameof(DbOptions.ConnectionString,Regex="User Id=([^;]+).*Password=([^;]+)")]
-    // Completely mask the _dbOptions.Secret property
-    [OutputPropertyMask(nameof(PropertyTestRecord.Secret))]
-    private DbOptions _dbOptions { get; }
+    [OutputPropertyRegex(nameof(PropertyPublicClass.AMaskedObject), Regex = @"AClass\:\s+(.*)")]
+    [OutputPropertyMask(nameof(PropertyPublicClass.FullyMasked))]
+    [OutputPropertyMask(nameof(PropertyPublicClass.FirstThreeNotMasked), PrefixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicClass.LastThreeNotMasked), SuffixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicClass.FirstAndLastThreeNotMasked), PrefixLen = 3, SuffixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicClass.NotMaskedSinceLongLength), PrefixLen = 100)]
+    [OutputPropertyLengthOnly(nameof(PropertyPublicClass.LengthOnly))]
+    [OutputPropertyRegex(nameof(PropertyPublicClass.MaskUserAndPassword), Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    [OutputPropertyRegex(nameof(PropertyPublicClass.MaskUserAndPasswordIgnoreCase), Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
+    [OutputPropertyRegex(nameof(PropertyPublicClass.RegexNotMatched), Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    [OutputPropertyIgnore(nameof(PropertyPublicClass.IgnoreMe) )]
+    public PropertyPublicClass? PublicClass { get; set; }
 }
+
 ```
 
 ### Notes
@@ -159,7 +170,7 @@ public MyClass
 - All public properties are included by default and output as plain text.
 - Use the `OutputIgnore` attribute to exclude a property.
 - `ToString()` is called on the property's value, then the mask is applied. You can have a custom `ToString()` method on a class to format its output then it will be masked as the `AClass` example above.
-- Only one `Output*` attribute is allowed per property. If more than one is set, you'll get a compile warning, and the last attribute set will be used.
+- When editing the class, only one `Output*` attribute is allowed per property. If more than one is set, you'll get a compile warning, and the last attribute set will be used.
 - Regex strings with back slashes need to use a verbatim string or escape the back slashes (e.g.  `@"\s+"`  or `"\\s+"`).
 - `OutputRegex` must have a `Regex` parameter, or you'll get a compile error.
 - If the regex doesn't match the value, the output will be `***Regex no match***!` to indicate it didn't match.
@@ -188,33 +199,63 @@ public override string ToString()
 
 ### Formatting Options
 
-There are some properties on the `OptionToStringAttribute` to control how the output is generated.
+There are some properties on the `OptionToStringAttribute` for classes and `OutputPropertyFormat` to control how the output is generated.
 
 | Name        | Description                                | Default           |
 | ----------- | ------------------------------------------ | ----------------- |
 | `Indent`    | The indenting string                       | "  " (Two spaces) |
-| `Separator` | the name, value separator                  | ":"               |
+| `Separator` | The name-value separator                   | ":"               |
 | `Title`     | The title to use for the output. See below | Class name        |
 | `Json`      | Format the output as JSON                  | false             |
 
 In addition to literal text, the `Title` parameter can include property names in braces. For example
 
 ```csharp
+// for a class
 [OptionsToString(Title = nameof(TitleOptions) + "_{StringProp}_{IntProp}")]
 public class TitleOptions
 {
     public int IntProp { get; set; } = 42;
     public string StringProp { get; set; } = "hi mom";
 }
+
+// for a property
+internal class PropertyTestSimple
+{
+    [OutputPropertyFormat(Title = nameof(TitleOptions) + "_{StringProp}_{IntProp}")]
+    public TitleOptions TitleOptions { get; set; } = new ();
+}
 ```
 
-Will output
+Both will output
 
 ```text
 TitleOptions_hi mom_42:
   IntProp    : 42
   StringProp : "hi mom"
 ```
+
+## Attributes
+
+When changing the class
+
+| Name             | On     | Description                                                    |
+| ---------------- | ------ | -------------------------------------------------------------- |
+| OptionsToString  | Class  | Marker for the class, and has formatting options               |
+| OutputMask       | Member | Mask the value with asterisks, with optional prefix and suffix |
+| OutputRegex      | Member | Mask the value with a regex                                    |
+| OutputLengthOnly | Member | Only output the length of the value                            |
+| OutputIgnore     | Member | Ignore the property                                            |
+
+When using class as property, use these attributes on the property
+
+| Name                     | Description                                                    |
+| ------------------------ | -------------------------------------------------------------- |
+| OutputPropertyFormat     | Optional Formatting options                                    |
+| OutputPropertyMask       | Mask the value with asterisks, with optional prefix and suffix |
+| OutputPropertyRegex      | Mask the value with a regex                                    |
+| OutputPropertyLengthOnly | Only output the length of the value                            |
+| OutputPropertyIgnore     | Ignore the property                                            |
 
 ## Warnings and Errors
 

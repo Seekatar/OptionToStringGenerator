@@ -156,13 +156,9 @@ public interface IPropertyAttribute
 /// Marker attribute for formatting the output
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class OutputPropertyFormatAttribute : OptionsToStringAttribute, IPropertyAttribute
+public class OutputPropertyFormatAttribute : OptionsToStringAttribute
 {
-    public OutputPropertyFormatAttribute(string name)
-    {
-        Name = name;
-    }
-    public string Name { get; set; } = "";
+    public OutputPropertyFormatAttribute() { }
 }
 
 /// <summary>
