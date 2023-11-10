@@ -27,6 +27,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include="..\integration\TestFiles\PropertyInterface.cs" Link="PropertyTestFiles\PropertyInterface.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="..\integration\TestFiles\PropertyPublicOptons.cs" Link="PropertyTestFiles\PropertyPublicOptons.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

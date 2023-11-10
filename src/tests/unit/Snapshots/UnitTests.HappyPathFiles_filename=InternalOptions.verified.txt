@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this Test.InternalOptions o)
         {
             return $@"Test.InternalOptions:
-  Name : {OptionsToStringAttribute.Format(o.Name)}
+  Name : {OptionsToStringAttribute.Format(o?.Name)}
 ";
         }
     }

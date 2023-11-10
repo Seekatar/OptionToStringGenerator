@@ -6,8 +6,8 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this MyAppOptions o)
         {
             return $@"MyAppOptions:
-  Name     : {OptionsToStringAttribute.Format(o.Name)}
-  Password : {OptionsToStringAttribute.Format(o.Password,prefixLen:3,suffixLen:0)}
+  Name     : {OptionsToStringAttribute.Format(o?.Name)}
+  Password : {OptionsToStringAttribute.Format(o?.Password,prefixLen:3,suffixLen:0)}
 ";
         }
     }

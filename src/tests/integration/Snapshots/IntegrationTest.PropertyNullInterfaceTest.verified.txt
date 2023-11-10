@@ -1,0 +1,2 @@
+﻿Test.IPropertySimple:
+  Secret : null

@@ -49,5 +49,5 @@ class PropertyPublicTest
     [OutputPropertyRegex(nameof(PropertyPublicOptions.MaskUserAndPasswordIgnoreCase), Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     [OutputPropertyRegex(nameof(PropertyPublicOptions.RegexNotMatched), Regex = "User Id=([^;]+).*Password=([^;]+)")]
     [OutputPropertyIgnore(nameof(PropertyPublicOptions.IgnoreMe))]
-    public PropertyPublicOptions PublicOptions { get; set; } = new PropertyPublicOptions();
+    public PropertyPublicOptions? PublicOptions { get; set; } = new PropertyPublicOptions();
 }

@@ -6,8 +6,8 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this Test.Wrapper.NestedOptions o)
         {
             return $@"Test.Wrapper.NestedOptions:
-  IntProp    : {OptionsToStringAttribute.Format(o.IntProp)}
-  StringProp : {OptionsToStringAttribute.Format(o.StringProp)}
+  IntProp    : {OptionsToStringAttribute.Format(o?.IntProp)}
+  StringProp : {OptionsToStringAttribute.Format(o?.StringProp)}
 ";
         }
     }

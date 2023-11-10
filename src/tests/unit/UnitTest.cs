@@ -209,11 +209,11 @@ public class UnitTests
             o.Count().ShouldBe(2);
             o.ShouldSatisfyAllConditions(
                     () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
-                    () => o[0].GetMessage().ShouldBe("The Property 'BadGuid' has invalid type of Guid. Must be class, record, or interface"),
+                    () => o[0].GetMessage().ShouldBe("The Property 'BadGuid' of Guid is Error. Must be class, record, or interface"),
                     () => o[0].Id.ShouldBe(SEEK008.ToString()),
                     () => GetLocationText(o[0].Location).ShouldBe("BadGuid"),
                     () => o[1].Severity.ShouldBe(DiagnosticSeverity.Error),
-                    () => o[1].GetMessage().ShouldBe("The Property 'Name' has invalid type of DateTime. Must be class, record, or interface"),
+                    () => o[1].GetMessage().ShouldBe("The Property 'Name' of DateTime is Error. Must be class, record, or interface"),
                     () => o[1].Id.ShouldBe(SEEK008.ToString()),
                     () => GetLocationText(o[1].Location).ShouldBe("Name")
                 );

@@ -163,7 +163,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                             }
                             else
                             {
-                                titleString = titleString.Replace($"{{{memberName}}}", $"{{o.{memberName}}}");
+                                titleString = titleString.Replace($"{{{memberName}}}", $"{{o?.{memberName}}}");
                             }
                         }
                         title = titleString;
@@ -211,7 +211,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             }
 
             // each property
-            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o.";
+            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o?.";
             int j = 0;
             foreach (var member in members)
             {

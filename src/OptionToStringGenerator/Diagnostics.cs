@@ -82,7 +82,7 @@ public static class DiagnosticTemplates
         new DiagnosticDescriptor(
                 id: Ids.SEEK008.ToString(),
                 title: "Invalid Type for Property",
-                messageFormat: "The Property '{0}' has invalid type of {1}. Must be class, record, or interface",
+                messageFormat: "The Property '{0}' of {1} is {2}. Must be class, record, or interface",
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,

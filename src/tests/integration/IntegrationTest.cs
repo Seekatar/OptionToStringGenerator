@@ -1,4 +1,5 @@
 namespace Test;
+
 using Seekatar.OptionToStringGenerator;
 using System;
 using System.Globalization;
@@ -33,11 +34,11 @@ public class IntegrationTest
     [MemberData(nameof(TestFileData))]
     public Task TestClasses(object options)
     {
-        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() } );
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() });
 
-        Assert.True(method != null, "Could not find OptionsToString method");
+        Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
         var s = method.Invoke(options, new object[] { options });
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name); 
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
     }
 
     [Fact]
@@ -55,6 +56,22 @@ public class IntegrationTest
         var s = o.PublicOptions.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
+    [Fact]
+    public Task PropertyNullInterfaceTest()
+    {
+        var o = new PropertyInterface();
+        var s = o.PropertySimple!.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task PropertyInterfaceTest()
+    {
+        var o = new PropertyInterface() { PropertySimple = new PropertySimple() { Secret = "this is secret" } };
+        var s = o.PropertySimple!.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
 
     [Fact]
     public Task NestedTest()

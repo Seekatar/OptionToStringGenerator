@@ -6,29 +6,29 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.PropertyPublicOptions o)
         {
             return $@"Test.PropertyPublicOptions:
-  PlainText                     : {OptionsToStringAttribute.Format(o.PlainText)}
-  Why                           : {OptionsToStringAttribute.Format(o.Why)}
-  PlainInt                      : {OptionsToStringAttribute.Format(o.PlainInt)}
-  PlainDouble                   : {OptionsToStringAttribute.Format(o.PlainDouble)}
-  PlainDecimal                  : {OptionsToStringAttribute.Format(o.PlainDecimal)}
-  PlainDateTime                 : {OptionsToStringAttribute.Format(o.PlainDateTime)}
-  PlainDatOnly                  : {OptionsToStringAttribute.Format(o.PlainDatOnly)}
-  PlainTimeOnly                 : {OptionsToStringAttribute.Format(o.PlainTimeOnly)}
-  TimeSpan                      : {OptionsToStringAttribute.Format(o.TimeSpan)}
-  UUID                          : {OptionsToStringAttribute.Format(o.UUID)}
-  NullItem                      : {OptionsToStringAttribute.Format(o.NullItem)}
-  AnObject                      : {OptionsToStringAttribute.Format(o.AnObject)}
-  AMaskedObject                 : {OptionsToStringAttribute.Format(o.AMaskedObject,regex:"AClass\\:\\s+(.*)")}
-  FullyMasked                   : {OptionsToStringAttribute.Format(o.FullyMasked,prefixLen:0,suffixLen:0)}
-  FirstThreeNotMasked           : {OptionsToStringAttribute.Format(o.FirstThreeNotMasked,prefixLen:3,suffixLen:0)}
-  LastThreeNotMasked            : {OptionsToStringAttribute.Format(o.LastThreeNotMasked,prefixLen:0,suffixLen:3)}
-  FirstAndLastThreeNotMasked    : {OptionsToStringAttribute.Format(o.FirstAndLastThreeNotMasked,prefixLen:3,suffixLen:3)}
-  NotMaskedSinceLongLength      : {OptionsToStringAttribute.Format(o.NotMaskedSinceLongLength,prefixLen:100,suffixLen:0)}
-  LengthOnly                    : {OptionsToStringAttribute.Format(o.LengthOnly,lengthOnly:true)}
-  MaskUserAndPassword           : {OptionsToStringAttribute.Format(o.MaskUserAndPassword,regex:"User Id=([^;]+).*Password=([^;]+)")}
-  MaskUserAndPasswordIgnoreCase : {OptionsToStringAttribute.Format(o.MaskUserAndPasswordIgnoreCase,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
-  RegexNotMatched               : {OptionsToStringAttribute.Format(o.RegexNotMatched,regex:"User Id=([^;]+).*Password=([^;]+)")}
-  Color                         : {OptionsToStringAttribute.Format(o.Color)}
+  PlainText                     : {OptionsToStringAttribute.Format(o?.PlainText)}
+  Why                           : {OptionsToStringAttribute.Format(o?.Why)}
+  PlainInt                      : {OptionsToStringAttribute.Format(o?.PlainInt)}
+  PlainDouble                   : {OptionsToStringAttribute.Format(o?.PlainDouble)}
+  PlainDecimal                  : {OptionsToStringAttribute.Format(o?.PlainDecimal)}
+  PlainDateTime                 : {OptionsToStringAttribute.Format(o?.PlainDateTime)}
+  PlainDatOnly                  : {OptionsToStringAttribute.Format(o?.PlainDatOnly)}
+  PlainTimeOnly                 : {OptionsToStringAttribute.Format(o?.PlainTimeOnly)}
+  TimeSpan                      : {OptionsToStringAttribute.Format(o?.TimeSpan)}
+  UUID                          : {OptionsToStringAttribute.Format(o?.UUID)}
+  NullItem                      : {OptionsToStringAttribute.Format(o?.NullItem)}
+  AnObject                      : {OptionsToStringAttribute.Format(o?.AnObject)}
+  AMaskedObject                 : {OptionsToStringAttribute.Format(o?.AMaskedObject,regex:"AClass\\:\\s+(.*)")}
+  FullyMasked                   : {OptionsToStringAttribute.Format(o?.FullyMasked,prefixLen:0,suffixLen:0)}
+  FirstThreeNotMasked           : {OptionsToStringAttribute.Format(o?.FirstThreeNotMasked,prefixLen:3,suffixLen:0)}
+  LastThreeNotMasked            : {OptionsToStringAttribute.Format(o?.LastThreeNotMasked,prefixLen:0,suffixLen:3)}
+  FirstAndLastThreeNotMasked    : {OptionsToStringAttribute.Format(o?.FirstAndLastThreeNotMasked,prefixLen:3,suffixLen:3)}
+  NotMaskedSinceLongLength      : {OptionsToStringAttribute.Format(o?.NotMaskedSinceLongLength,prefixLen:100,suffixLen:0)}
+  LengthOnly                    : {OptionsToStringAttribute.Format(o?.LengthOnly,lengthOnly:true)}
+  MaskUserAndPassword           : {OptionsToStringAttribute.Format(o?.MaskUserAndPassword,regex:"User Id=([^;]+).*Password=([^;]+)")}
+  MaskUserAndPasswordIgnoreCase : {OptionsToStringAttribute.Format(o?.MaskUserAndPasswordIgnoreCase,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+  RegexNotMatched               : {OptionsToStringAttribute.Format(o?.RegexNotMatched,regex:"User Id=([^;]+).*Password=([^;]+)")}
+  Color                         : {OptionsToStringAttribute.Format(o?.Color)}
 ";
         }
     }

@@ -1,0 +1,13 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this TestFiles.IPropertySimple o)
+        {
+            return $@"TestFiles.IPropertySimple:
+  Secret : {OptionsToStringAttribute.Format(o?.Secret,prefixLen:0,suffixLen:0)}
+";
+        }
+    }
+}
