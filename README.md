@@ -8,7 +8,7 @@
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
 This package generates an `OptionToString`
-extension method for a class. By marking properties in the class you can control how the values are masked. It was created for safely dumping out configuration data when the application starts. If you own the class, you can add the attributes to the class. If you don't own the class, you can decorate a property of a Type you want to log.
+extension method for a class. Using attributes you can control how the values are masked. It was created for safely dumping out configuration data when the application starts.
 
 ## Usage
 
@@ -22,7 +22,7 @@ extension method for a class. By marking properties in the class you can control
 
 ### Example of Editing a Class
 
-Here's an example class of the various options with values set in the class for illustration purposes. Anything without an attribute has its value written out in the clear. The output follows.
+Here's an sample class that uses all the different types of masking. Anything without an attribute has its value written out in the clear. The output follows.
 
 ```csharp
 namespace Test;
@@ -83,13 +83,13 @@ public class PublicOptions
     public string LengthOnly { get; set; } = "thisisasecretthatonlyshowsthelength";
 
     [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)")]
-    public string MaskUserAndPassword { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+    public string MaskUserAndPassword { get; set; } = "Server=server;Database=db;User Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex="User Id=([^;]+).*Password=([^;]+)",IgnoreCase=true)]
-    public string MaskUserAndPasswordIgnoreCase { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+    public string MaskUserAndPasswordIgnoreCase { get; set; } = "Server=server;Database=db;user Id=myUsername;Password=myPassword;";
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)")]
-    public string RegexNotMatched { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
+    public string RegexNotMatched { get; set; } = "Server=server;Database=db;user Id=myUsername;Password=myPassword;";
 
     public ConsoleColor Color { get; set; } = ConsoleColor.Red;
 
@@ -102,7 +102,7 @@ var options = new PublicOptions();
 _logger.LogInformation(options.OptionToString());
 ```
 
-The output has the class name followed by an indented list of all the properties' values masked as specified.
+The output has the class name (by default) followed by an indented list of all the properties' values masked as specified.
 
 ```text
 Test.PublicOptions:
@@ -125,15 +125,15 @@ Test.PublicOptions:
   FirstAndLastThreeNotMasked    : "abc*******667"
   NotMaskedSinceLongLength      : "abc1233435667"
   LengthOnly                    : Len = 35
-  MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
-  MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+  MaskUserAndPassword           : "Server=server;Database=db;User Id=***;Password=***;"
+  MaskUserAndPasswordIgnoreCase : "Server=server;Database=db;user Id=***;Password=***;"
   RegexNotMatched               : "***Regex no match***!"
   Color                         : Red
   ```
 
 ### Example of Using a Property
 
-Here's a similar example where you don't have the source for the class, or don't want to change it. In this case you add a property to your class, and decorate like the example above. All of the `OutputProperty*` attributes are identical to the ones above, only they take a name as the first parameter.
+Here's a similar example where you don't have the source for the class, or don't want to change it. In this case all the attribute are on the one property using `OutputProperty*` attributes analogous the the ones used above.
 
 This is from the tests where `PropertyPublicClass` is identical to `PublicOptions`, so the output will be the same aside from the class name.
 
@@ -237,17 +237,17 @@ TitleOptions_hi mom_42:
 
 ## Attributes
 
-When changing the class
+For a class use these attributes.
 
 | Name             | On     | Description                                                    |
 | ---------------- | ------ | -------------------------------------------------------------- |
 | OptionsToString  | Class  | Marker for the class, and has formatting options               |
-| OutputMask       | Member | Mask the value with asterisks, with optional prefix and suffix |
+| OutputMask       | Member | Mask the value with asterisks, with optional prefix and suffix clear |
 | OutputRegex      | Member | Mask the value with a regex                                    |
 | OutputLengthOnly | Member | Only output the length of the value                            |
 | OutputIgnore     | Member | Ignore the property                                            |
 
-When using class as property, use these attributes on the property
+For a property, use these attributes on the property
 
 | Name                     | Description                                                    |
 | ------------------------ | -------------------------------------------------------------- |
