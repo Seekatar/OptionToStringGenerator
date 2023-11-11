@@ -3,10 +3,12 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this TestFiles.IPropertySimple o)
+        internal static string OptionsToString(this Test.IOptionsSimple o)
         {
-            return $@"TestFiles.IPropertySimple:
-  Secret : {OptionsToStringAttribute.Format(o?.Secret,prefixLen:0,suffixLen:0)}
+            return $@"Test.IOptionsSimple:
+  Secret           : {OptionsToStringAttribute.Format(o?.Secret,prefixLen:0,suffixLen:0)}
+  RetryLimit       : {OptionsToStringAttribute.Format(o?.RetryLimit)}
+  ConnectionString : {OptionsToStringAttribute.Format(o?.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }
     }

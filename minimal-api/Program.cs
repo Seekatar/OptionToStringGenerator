@@ -1,3 +1,5 @@
+using Seekatar.OptionToStringGenerator;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,7 +16,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 var summaries = new[]
 {
@@ -35,9 +37,28 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapGet("/options", () =>
+{
+    return new WeatherOptions().OptionsToString();
+})
+.WithName("GetOptions");
+
 app.Run();
 
 record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+[OptionsToString]
+class WeatherOptions
+{
+    public int ForecastDays { get; set; } = 5;
+
+    [OutputMask]
+    public string ForecastSecret { get; set; } = "Secret!";
+
+    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
+    public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+}
+

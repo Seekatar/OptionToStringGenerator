@@ -1,12 +1,29 @@
 # docker build --tag testapi .
-# docker run -p 7175:80 testapi
+# docker run --rm -p 7175:80 testapi
 # irm http://localhost:7175/weatherforecast
 
 # Use the .NET SDK image as the base image
-FROM mcr.microsoft.com/dotnet/sdk:7.0.101 AS build-env
+
+# Justin error about 4.4 but want 4.6 of compiler
+# UPDATE -- changed generator csproj to Microsoft.CodeAnalysis.CSharp 4.4.0 and don't get
+#           error, Alan has this version, gets a not found error on Microsoft.CodeAnalysis
+# builds
+FROM mcr.microsoft.com/dotnet/sdk:7.0.201 AS build-env
+
+# builds
+# FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS build-env
+
+# builds
+# FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+# builds
+# FROM mcr.microsoft.com/dotnet/sdk:7.0.403 AS build-env
 
 # Set the working directory to /app
 WORKDIR /app
+
+COPY packages packages
+
+RUN dotnet nuget add source /app/packages --name Local
 
 # Copy the .csproj file to the container
 COPY minimal-api.csproj .

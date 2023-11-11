@@ -1,2 +1,4 @@
-﻿Test.IPropertySimple:
-  Secret : null
+﻿Test.IOptionsSimple:
+  Secret           : null
+  RetryLimit       : null
+  ConnectionString : null

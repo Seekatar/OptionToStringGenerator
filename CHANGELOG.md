@@ -6,6 +6,12 @@
 
 - OptionPropertyToStringGenerator that allows masking of a class that you don't own
 - SuffixLen to the OutputMaskAttribute
+- minimal-api sample, with Dockerfile for testing different SDKs
+
+## Changed
+
+- Downgraded the Microsoft.CodeAnalysis.CSharp NuGet package to run with .NET SDK 7.1.201
+- Change Regex error text from `***!` to `"***Regex no match***!`
 
 ## [0.1.4] 2023-10-11
 

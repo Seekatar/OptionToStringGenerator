@@ -1,28 +1,74 @@
-# OptionToString Incremental Source Generator
+# OptionsToString Incremental Source Generator
 
 [![OptionToStringGenerator](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml)
 [![codecov](https://codecov.io/gh/Seekatar/OptionToStringGenerator/branch/main/graph/badge.svg?token=X3J5MU9T3C)](https://codecov.io/gh/Seekatar/OptionToStringGenerator)
 
-**Problem:** I have configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime.
+**Problem:** I have a configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime.
 
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
 This package generates an `OptionToString`
-extension method for a class. Using attributes you can control how the values are masked. It was created for safely dumping out configuration data when the application starts.
+extension method for a class. Using attributes you can control how the values are masked. You can use this to log out the values of your configuration at startup, or via a REST endpoint.
+
+## Quick Example
+
+Edit the source of your configuration class and decorate it with attributes.
+
+```csharp
+namespace Test;
+
+[OptionsToString]
+internal class PropertySimple
+{
+    [OutputMask]
+    public string Secret { get; set; } = "Secret";
+
+    public int RetryLimit { get; set; } = 5;
+
+    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    public string ConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+}
+
+// usage
+_logger.LogInformation(new PropertySimple().OptionToString());
+```
+
+Output:
+
+```text
+Test.PropertySimple:
+  Secret           : "******"
+  RetryLimit       : 5
+  ConnectionString : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
+```
+
+Alternatively, if you don't have the code for `PropertySimple` this will produce the same output.
+
+```csharp
+internal class PropertyConfig
+{
+    [OutputPropertyMask(nameof(IOptionsSimple.Secret))]
+    [OutputPropertyRegex(nameof(IOptionsSimple.ConnectionString), Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    public PropertySimple? PropertySimple { get; set; }
+}
+
+// usage
+_logger.LogInformation(new PropertyConfig().PropertySimple.OptionToString());
+```
 
 ## Usage
 
-1. Add the [OptionToString](https://www.nuget.org/packages/OptionToString/) NuGet package to your project.
+1. Add the [OptionToStringGenerator](https://www.nuget.org/packages/Seekatar.OptionToStringGenerator) NuGet package to your project.
 2. If you can update the class
-    1. Decorate a class with the `OptionToString` attribute.
-    1. Optionally decorate properties with how you want them to be you want to be masked. If you don't decorate a property, its full text is dumped out.
-3. If you don't want to update the class
+    1. Decorate a class with the `OptionsToString` attribute.
+    1. Optionally decorate properties with how you want them to be masked. If you don't decorate a property, its full text is dumped out.
+3. If you don't want to or can't update the class
     1. Add a property to your class of the Type you want to dump out.
     2. Decorate the property with multiple `OutputProperty*` attributes to control how the properties are masked.
 
 ### Example of Editing a Class
 
-Here's an sample class that uses all the different types of masking. Anything without an attribute has its value written out in the clear. The output follows.
+Here's a larger sample class that uses all the different types of masking. Anything without an attribute has its value written out in the clear. The output follows.
 
 ```csharp
 namespace Test;
@@ -133,7 +179,7 @@ Test.PublicOptions:
 
 ### Example of Using a Property
 
-Here's a similar example where you don't have the source for the class, or don't want to change it. In this case all the attribute are on the one property using `OutputProperty*` attributes analogous the the ones used above.
+Here's a similar example where you don't have the source for the class, or don't want to change it. In this case, you use multiple `OutputProperty*`  attributes, one for each property you want to mask.
 
 This is from the tests where `PropertyPublicClass` is identical to `PublicOptions`, so the output will be the same aside from the class name.
 
@@ -177,7 +223,7 @@ public class PropertyTestOptions
 
 ### Collections
 
-Currently you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options, and all the children.
+Currently. you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
 
 ```csharp
 public override string ToString()
@@ -287,6 +333,14 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
     1. Take the syntax and get the semantic model of the class, extracting the name, accessibility, and list of properties with a `get`
     2. Generate the code for the extension method
 
+## Trouble Shooting
+
+### error CS9057
+
+`##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
+
+This version corresponds to the version of `Microsoft.CodeAnalysis.CSharp` in the generator's [csproj](src/OptionToStringGenerator/OptionToStringGenerator.csproj) file. I bumped it down to 4.4.0 so it would run with .NET SDK 7.0.201. See the [Dockerfile](minimal-api/Dockerfile) for testing different versions of the SDK and generator in a sample app.
+
 ## Branching Strategy
 
 1. Branch from `main` for new features
@@ -298,9 +352,9 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 
 To debug the generator, the `unit` test project calls `RunGeneratorsAndUpdateCompilation` to run the generator and get the output. The unit test output will be the C# code for the extension method of the objects.
 
-The `integration` test project actually runs the generator and calls the extension methods and gets the output from it.
+The `integration` test project runs the generator then calls the extension methods and gets the output from it.
 
-In both cases the output is written to files and the Verify package is used to compare the output to a snapshot file.
+In both cases, the output is written to files and the Verify package is used to compare the output to a snapshot file.
 
 For integration tests, if you make changes to the generator, you often have to restart Visual Studio to get it to load the new one.
 
@@ -326,3 +380,4 @@ These are links to the MS documentation for the items I used in the generator.
 
 - [Andrew Lock's blog series on incremental generators (Part 1)](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
 - [Verify snapshot test tool](https://github.com/VerifyTests/Verify)
+-
