@@ -337,6 +337,8 @@ This has the implementation of [IIncrementalGenerator](https://learn.microsoft.c
 
 ### error CS9057
 
+You may get an error when compiling your code that uses this package.
+
 `##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
 
 This version corresponds to the version of `Microsoft.CodeAnalysis.CSharp` in the generator's [csproj](src/OptionToStringGenerator/OptionToStringGenerator.csproj) file. I bumped it down to 4.4.0 so it would run with .NET SDK 7.0.201. See the [Dockerfile](minimal-api/Dockerfile) for testing different versions of the SDK and generator in a sample app.
@@ -380,4 +382,3 @@ These are links to the MS documentation for the items I used in the generator.
 
 - [Andrew Lock's blog series on incremental generators (Part 1)](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
 - [Verify snapshot test tool](https://github.com/VerifyTests/Verify)
--
