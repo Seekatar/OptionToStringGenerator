@@ -11,7 +11,8 @@ internal interface IPropertySimple
 [OptionsToString]
 internal class PropertySimple : IPropertySimple
 {
-    public string Secret { get; set; } = "";
+    [OutputMask]
+    public string Secret { get; set; } = "Secret";
 }
 
 internal class PropertyInterface

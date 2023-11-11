@@ -15,7 +15,7 @@ public class IntegrationTest
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // for date formatting since different on different OSes
     }
 
-    public static IEnumerable<object[]> TestFileData()
+    public static IEnumerable<object[]> TestObjects()
     {
         yield return new object[] { new InternalOptions() };
         yield return new object[] { new PublicOptions() };
@@ -28,10 +28,11 @@ public class IntegrationTest
         yield return new object[] { new EscapeOptions() };
         yield return new object[] { new MaskingOptions() };
         yield return new object[] { new PropertyTestClass() };
+        yield return new object[] { new PropertySimple() };
     }
 
     [Theory]
-    [MemberData(nameof(TestFileData))]
+    [MemberData(nameof(TestObjects))]
     public Task TestClasses(object options)
     {
         var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() });
@@ -53,9 +54,14 @@ public class IntegrationTest
     public Task PropertyPublicTest()
     {
         var o = new PropertyPublicTest();
+        if (o.PublicOptions == null)
+        {
+            throw new Exception("PublicOptions is null");
+        }
         var s = o.PublicOptions.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
+
     [Fact]
     public Task PropertyNullInterfaceTest()
     {
@@ -67,7 +73,7 @@ public class IntegrationTest
     [Fact]
     public Task PropertyInterfaceTest()
     {
-        var o = new PropertyInterface() { PropertySimple = new PropertySimple() { Secret = "this is secret" } };
+        var o = new PropertyInterface() { PropertySimple = new PropertySimple() };
         var s = o.PropertySimple!.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }

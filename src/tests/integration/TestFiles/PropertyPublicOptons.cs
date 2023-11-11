@@ -1,6 +1,7 @@
 ﻿using Seekatar.OptionToStringGenerator;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,5 +50,6 @@ class PropertyPublicTest
     [OutputPropertyRegex(nameof(PropertyPublicOptions.MaskUserAndPasswordIgnoreCase), Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     [OutputPropertyRegex(nameof(PropertyPublicOptions.RegexNotMatched), Regex = "User Id=([^;]+).*Password=([^;]+)")]
     [OutputPropertyIgnore(nameof(PropertyPublicOptions.IgnoreMe))]
+    [MemberNotNull(nameof(PublicOptions))]
     public PropertyPublicOptions? PublicOptions { get; set; } = new PropertyPublicOptions();
 }
