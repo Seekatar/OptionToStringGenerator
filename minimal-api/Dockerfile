@@ -7,8 +7,11 @@
 # Justin error about 4.4 but want 4.6 of compiler
 # UPDATE -- changed generator csproj to Microsoft.CodeAnalysis.CSharp 4.4.0 and don't get
 #           error, Alan has this version, gets a not found error on Microsoft.CodeAnalysis
-# builds
-FROM mcr.microsoft.com/dotnet/sdk:7.0.201 AS build-env
+# builds if use 4.3.0
+FROM mcr.microsoft.com/dotnet/sdk:6.0.416 AS build-env
+
+# builds if use 4.4.0
+# FROM mcr.microsoft.com/dotnet/sdk:7.0.201 AS build-env
 
 # builds
 # FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS build-env

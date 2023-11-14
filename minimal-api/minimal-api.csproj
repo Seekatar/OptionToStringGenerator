@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="0.1.4.1" />
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="0.1.5.1" />
   </ItemGroup>
 
 </Project>
