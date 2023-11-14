@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.2.1] 2023-11-14
+
+## Changed
+
+- Downgraded the Microsoft.CodeAnalysis.CSharp NuGet package to run with .NET SDK 6.0.416
+
 ## [0.2.0] 2023-11-06
 
 ## Added
