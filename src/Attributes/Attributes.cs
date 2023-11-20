@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Xml.Linq;
 
 namespace Seekatar.OptionToStringGenerator;
 
@@ -47,7 +47,7 @@ public class OptionsToStringAttribute : Attribute
             {
                 suffix = s.Substring(s.Length - suffixLen);
             }
-            
+
             return "\"" + prefix + middle + suffix + "\"";
         }
 
@@ -96,7 +96,7 @@ public class OptionsToStringAttribute : Attribute
 }
 
 /// <summary>
-/// Marker attribute to should show only prefixLen characters and mask the rest
+/// Marker attribute to should show only prefixLen or suffixLen characters and mask the rest
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 public class OutputMaskAttribute : Attribute
@@ -110,6 +110,8 @@ public class OutputMaskAttribute : Attribute
     /// </summary>
     public int SuffixLen { get; set; }
 }
+
+
 
 /// <summary>
 /// Marker attribute to should mask any captures of this regex
@@ -142,4 +144,71 @@ public class OutputLengthOnlyAttribute : Attribute
 [AttributeUsage(AttributeTargets.Property)]
 public class OutputIgnoreAttribute : Attribute
 {
+}
+
+public interface IPropertyAttribute
+{
+    string Name { get; set; }
+}
+
+
+/// <summary>
+/// Marker attribute for formatting the output
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public class OutputPropertyFormatAttribute : OptionsToStringAttribute
+{
+    public OutputPropertyFormatAttribute() { }
+}
+
+/// <summary>
+/// Marker attribute to should show only prefixLen or suffixLen characters and mask the rest
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+public class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribute
+{
+    public OutputPropertyMaskAttribute(string name)
+    {
+        Name = name;
+    }
+    public string Name { get; set; } = "";
+}
+
+/// <summary>
+/// Marker attribute to should mask any captures of this regex
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+public class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttribute
+{
+    public OutputPropertyRegexAttribute(string name)
+    {
+        Name = name;
+    }
+    public string Name { get; set; } = "";
+}
+
+/// <summary>
+/// Marker to only show the length of the string
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+public class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPropertyAttribute
+{
+    public OutputPropertyLengthOnlyAttribute(string name)
+    {
+        Name = name;
+    }
+    public string Name { get; set; } = "";
+}
+
+/// <summary>
+/// Marker to totally ignore this property
+/// </summary>
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+public class OutputPropertyIgnoreAttribute : OutputIgnoreAttribute, IPropertyAttribute
+{
+    public OutputPropertyIgnoreAttribute(string name)
+    {
+        Name = name;
+    }
+    public string Name { get; set; } = "";
 }

@@ -2,7 +2,7 @@
 
 namespace Test;
 
-[OptionsToString()]
+[OptionsToString]
 internal class MaskingOptions
 {
     private const string alphabet = "abcdefghijklmnopqrstuvwxyz";

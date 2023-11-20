@@ -1,0 +1,4 @@
+﻿Test.IOptionsSimple:
+  Secret           : null
+  RetryLimit       : null
+  ConnectionString : null

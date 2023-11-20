@@ -27,6 +27,36 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include="..\integration\TestFiles\PropertyInterface.cs" Link="PropertyTestFiles\PropertyInterface.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\PropertyPublicOptons.cs" Link="PropertyTestFiles\PropertyPublicOptons.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\PropertyTestRecord.cs" Link="PropertyTestFiles\PropertyTestRecord.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\PropertyTestClass.cs" Link="TestFiles\PropertyTestClass.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\NestedOptions.cs" Link="TestFiles\NestedOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="..\integration\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
@@ -83,6 +113,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Attributes\Attributes.csproj" />
 		<ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Snapshots\" />
 	</ItemGroup>
 
 </Project>

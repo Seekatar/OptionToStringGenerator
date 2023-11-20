@@ -1,7 +1,9 @@
 namespace Test;
+
 using Seekatar.OptionToStringGenerator;
+using System;
 using System.Globalization;
-using Test;
+using System.Reflection;
 
 [UsesVerify]
 public class IntegrationTest
@@ -13,67 +15,74 @@ public class IntegrationTest
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture; // for date formatting since different on different OSes
     }
 
-    [Fact]
-    public Task TestPublicClass()
+    public static IEnumerable<object[]> TestObjects()
     {
-        var options = new PublicOptions();
-        var s = options.OptionsToString();
+        yield return new object[] { new InternalOptions() };
+        yield return new object[] { new PublicOptions() };
+        yield return new object[] { new ObjectMasking() };
+        yield return new object[] { new NegativeBadOptions() };
+        yield return new object[] { new NegativeNoOptions() };
+        yield return new object[] { new JsonOptions() };
+        yield return new object[] { new TitleOptions() };
+        yield return new object[] { new FormattingOptions() };
+        yield return new object[] { new EscapeOptions() };
+        yield return new object[] { new MaskingOptions() };
+        yield return new object[] { new PropertyTestClass() };
+        yield return new object[] { new PropertySimple() };
+    }
+
+    [Theory]
+    [MemberData(nameof(TestObjects))]
+    public Task TestClasses(object options)
+    {
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() });
+
+        Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
+        var s = method.Invoke(options, new object[] { options });
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
+    }
+
+    [Fact]
+    public Task ExternalClass()
+    {
+        var o = new PropertyTestSimple();
+        var s = o.MyExtClassProperty.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
-    public Task TestInternalClass()
+    public Task PropertyPublicTest()
     {
-        var options = new InternalOptions();
-        var s = options.OptionsToString();
+        var o = new PropertyPublicTest();
+        if (o.PublicOptions == null)
+        {
+            throw new Exception("PublicOptions is null");
+        }
+        var s = o.PublicOptions.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
-    public Task TestObjectMasking()
+    public Task PropertyNullInterfaceTest()
     {
-        var options = new ObjectMasking();
-        var s = options.OptionsToString();
+        var o = new PropertyInterface();
+        var s = o.PropertySimple!.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
-    public Task BadOptionTest()
+    public Task PropertyInterfaceTest()
     {
-        var options = new NegativeBadOptions();
-        var s = options.OptionsToString();
+        var o = new PropertyInterface() { PropertySimple = new PropertySimple() };
+        var s = o.PropertySimple!.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-    [Fact]
-    public Task NoOptionTest()
-    {
-        var options = new NegativeNoOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
 
     [Fact]
-    public Task JsonTest()
+    public Task NestedTest()
     {
-        var options = new JsonOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task TitleTest()
-    {
-        var options = new TitleOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task FormatTest()
-    {
-        var options = new FormattingOptions();
-        var s = options.OptionsToString();
+        var s = Wrapper.GetOptionsString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
@@ -124,14 +133,6 @@ public class IntegrationTest
     }
 
     [Fact]
-    public Task EscapeTest()
-    {
-        var options = new EscapeOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
     public async Task MessagingClientTest()
     {
 
@@ -148,13 +149,5 @@ public class IntegrationTest
         };
         var s = options.OptionsToString();
         await Verify(s).UseDirectory(SnapshotDirectory);
-    }
-
-    [Fact]
-    public Task MaskTest()
-    {
-        var options = new MaskingOptions();
-        var s = options.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
     }
 }

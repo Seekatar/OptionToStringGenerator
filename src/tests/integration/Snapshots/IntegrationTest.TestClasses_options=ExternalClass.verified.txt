@@ -1,0 +1,4 @@
+﻿Test.ExternalClass:
+  Number   : 999
+  Name     : "******"
+  SerialNo : "*******890"

@@ -1,0 +1,4 @@
+﻿Test.IOptionsSimple:
+  Secret           : "******"
+  RetryLimit       : 5
+  ConnectionString : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"

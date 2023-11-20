@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this Test.ObjectMasking o)
         {
             return $@"Test.ObjectMasking:
-  AnObject : {OptionsToStringAttribute.Format(o.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+  AnObject : {OptionsToStringAttribute.Format(o?.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }
     }

@@ -1,35 +1,27 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-using System;
 using System.Collections.Immutable;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml.Schema;
-
 namespace Seekatar.OptionToStringGenerator;
 
-public readonly struct ClassToGenerate
+public class ClassToGenerate : ItemToGenerate
 {
-    public string Name => ClassSymbol.ToString();
-    public readonly List<IPropertySymbol> Values;
-    public Location Location => ClassSymbol.Locations[0];
-    public readonly INamedTypeSymbol ClassSymbol { get; }
-    public string Accessibility => ClassSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
-
-    public ClassToGenerate(INamedTypeSymbol classSymbol, List<IPropertySymbol> values)
+    public ClassToGenerate(INamedTypeSymbol classSymbol, List<IPropertySymbol> values) : base(classSymbol, values)
     {
         ClassSymbol = classSymbol;
-        Values = values;
     }
+
+    public INamedTypeSymbol ClassSymbol {  get; }
+
+    public override AttributeData? GetFormat() => ClassSymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault();
+
 }
 
 [Generator]
-public class OptionToStringGenerator : IIncrementalGenerator
+public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSyntax,ClassToGenerate>
 {
     public const string FullAttributeName = "Seekatar.OptionToStringGenerator.OptionsToStringAttribute";
 
-    public void Initialize(IncrementalGeneratorInitializationContext context)
+    public override void Initialize(IncrementalGeneratorInitializationContext context)
     {
         // Do a simple filter for classes
         IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
@@ -44,7 +36,7 @@ public class OptionToStringGenerator : IIncrementalGenerator
 
         // Generate the source using the compilation and classes
         context.RegisterSourceOutput(compilationAndClasses,
-            static (spc, source) => Execute(source.Item1, source.Item2, spc));
+            (spc, source) => Execute("ClassExtensions", source.Item1, source.Item2, spc));
     }
     static bool IsSyntaxTargetForGeneration(SyntaxNode node)
     => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
@@ -53,59 +45,12 @@ public class OptionToStringGenerator : IIncrementalGenerator
     {
         // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+		
+        return HasAttribute(context, FullAttributeName, classDeclarationSyntax.AttributeLists) ? classDeclarationSyntax : null;
 
-        // loop through all the attributes
-        foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
-        {
-            foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
-            {
-                if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeSymbol)
-                {
-                    // weird, we couldn't get the symbol, ignore it
-                    continue;
-                }
-
-                INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
-                string fullName = attributeContainingTypeSymbol.ToDisplayString();
-
-                // Is the attribute my attribute?
-                if (fullName == FullAttributeName)
-                {
-                    // return the class
-                    return classDeclarationSyntax;
-                }
-            }
-        }
-
-        // we didn't find the attribute we were looking for
-        return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
-    {
-        if (classes.IsDefaultOrEmpty)
-        {
-            // nothing to do yet
-            return;
-        }
-
-        // I'm not sure if this is actually necessary, but `[LoggerMessage]` does it, so seems like a good idea!
-        IEnumerable<ClassDeclarationSyntax> distinctClasses = classes.Distinct();
-
-        // Convert each ClassDeclarationSyntax to an ClassToGenerate
-        List<ClassToGenerate> classesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
-
-        // If there were errors in the ClassDeclarationSyntax, we won't create an
-        // ClassToGenerate for it, so make sure we have something to generate
-        if (classesToGenerate.Count > 0)
-        {
-            // generate the source code and add it to the output
-            string result = GenerateExtensionClass(classesToGenerate, context);
-            context.AddSource("ClassExtensions.g.cs", SourceText.From(result, Encoding.UTF8));
-        }
-    }
-
-    static List<ClassToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classSyntax, CancellationToken ct)
+    protected override List<ClassToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classSyntax, CancellationToken ct, SourceProductionContext context)
     {
         var classToGenerate = new List<ClassToGenerate>();
 
@@ -154,243 +99,8 @@ public class OptionToStringGenerator : IIncrementalGenerator
         return classToGenerate;
     }
 
-    public static string GenerateExtensionClass(List<ClassToGenerate> classesToGenerate, SourceProductionContext context)
+    protected override ImmutableArray<AttributeData> AttributesForMember(IPropertySymbol symbol, ClassToGenerate propertyToGenerate)
     {
-        var sb = new StringBuilder();
-        sb.Append("""
-                    #nullable enable
-                    namespace Seekatar.OptionToStringGenerator
-                    {
-                        public static partial class ClassExtensions
-                        {
-
-                    """);
-        foreach (var classToGenerate in classesToGenerate)
-        {
-            int maxLen = 0;
-            foreach (var member in classToGenerate.Values)
-            {
-                if (member.Name.Length > maxLen)
-                {
-                    maxLen = member.Name.Length;
-                }
-            }
-
-            var classAttribute = classToGenerate.ClassSymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault();
-            if (classAttribute is null) { continue; } // can't get here if it doesn't have the attribute, but just in case
-
-            var nameSuffix = ":";
-            var indent = "  ";
-            var separator = ":";
-            var nameQuote = "";
-            var jsonClose = "";
-            var trailingComma = "";
-            var haveJson = false;
-            var title = classToGenerate.Name;
-            var titleText = "";
-
-            foreach (var n in classAttribute.NamedArguments)
-            {
-                if (n.Key == nameof(OptionsToStringAttribute.Json)
-                    && n.Value.Value is not null
-                    && (bool)n.Value.Value)
-                {
-                    haveJson = true;
-                    separator = " :";
-                    nameQuote = "\"\"";
-                    jsonClose = """
-                                  }}
-                                }}
-                                """;
-                    maxLen += 4; // for the quotes
-                    trailingComma = ",";
-                    haveJson = true;
-                }
-                else if (n.Key == nameof(OptionsToStringAttribute.Title)
-                    && n.Value.Value is not null)
-                {
-                    Regex regex = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
-                    // loop over all the  regex matches, and see if the string is a member of the class
-                    var titleString = n.Value.Value.ToString();
-                    var matches = regex.Matches(titleString);
-                    foreach (Match match in matches)
-                    {
-                        var memberName = match.Groups[1].Value;
-                        var member = classToGenerate.Values.Where(m => m.Name == memberName).FirstOrDefault();
-                        if (member is null)
-                        {
-                            var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                                    id: "SEEK004",
-                                                    title: "Member in Title not found",
-                                                    messageFormat: $"Property '{memberName}' not found on {classToGenerate.Name}",
-                                                    category: "Usage",
-                                                    defaultSeverity: DiagnosticSeverity.Warning,
-                                                    isEnabledByDefault: true,
-                                                    helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek004-member-in-title-not-found"
-                                                 ), classToGenerate.Location);
-                            context.ReportDiagnostic(diag);
-                            titleString = titleString.Replace($"{{{memberName}}}", memberName);
-                        }
-                        else
-                        {
-                            titleString = titleString.Replace($"{{{memberName}}}", $"{{o.{memberName}}}");
-                        }
-                    }
-                    title = titleString;
-                }
-                else if (!haveJson) {
-                    if (n.Key == nameof(OptionsToStringAttribute.Indent) && n.Value.Value is not null)
-                    {
-                        indent = n.Value.Value.ToString();
-                    }
-                    else if (n.Key == nameof(OptionsToStringAttribute.Separator) && n.Value.Value is not null)
-                    {
-                        separator = n.Value.Value.ToString();
-                    }
-                }
-            }
-            if (haveJson) {
-                titleText = $$$"""
-                              {{
-                                {{{nameQuote}}}{{{title}}}{{{nameQuote}}} {{{nameSuffix}}} {{
-                              """;
-            }
-            else
-            {
-                titleText = $"{title}{nameSuffix}";
-            }
-
-            // method signature
-            sb.Append($"        {classToGenerate.Accessibility} static string OptionsToString(this ").Append(classToGenerate.Name).Append(
-                      $$""""
-                       o)
-                              {
-                                  return $@"
-                      """");
-
-            sb.Append($"{titleText}").AppendLine();
-
-            if (!classToGenerate.Values.Any())
-            {
-                var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                        id: "SEEK003",
-                                        title: "No properties found",
-                                        messageFormat: "No public properties have an Output* attribute",
-                                        category: "Usage",
-                                        defaultSeverity: DiagnosticSeverity.Warning,
-                                        isEnabledByDefault: true,
-                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek003-no-properties-found"
-                                     ), classToGenerate.Location );
-                context.ReportDiagnostic(diag);
-                sb.AppendLine($"{indent}No properties to display");
-            }
-
-            // each property
-            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o.";
-            int j = 0;
-            foreach (var member in classToGenerate.Values)
-            {
-                if (++j == classToGenerate.Values.Count)
-                    trailingComma = "";
-
-                bool ignored = false;
-                var formatParameters = haveJson ? $",asJson:{haveJson.ToString().ToLowerInvariant()}" : "";
-                var attributeCount = 0;
-                for (int i = 0; i < member.GetAttributes().Length; i++)
-                {
-                    var attribute = member.GetAttributes()[i];
-                    if (attribute.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator")
-                    {
-                        attributeCount++;
-                        if (attribute.AttributeClass?.Name == "OutputIgnoreAttribute")
-                            ignored = true;
-                        else if (attribute.AttributeClass?.Name == "OutputMaskAttribute")
-                        {
-                            var prefixLen = "0";
-                            var suffixLen = "0";
-                            for ( int k = 0; k < attribute.NamedArguments.Length; k++)
-                            {
-                                if (attribute.NamedArguments[k].Key == nameof(OutputMaskAttribute.PrefixLen))
-                                    prefixLen = attribute.NamedArguments[k].Value.Value?.ToString() ?? "0";
-                                else if (attribute.NamedArguments[k].Key == nameof(OutputMaskAttribute.SuffixLen))
-                                    suffixLen = attribute.NamedArguments[k].Value.Value?.ToString() ?? "0";
-                            }
-                            formatParameters += ",prefixLen:" + prefixLen + ",suffixLen:" + suffixLen;
-                        }
-                        else if (attribute.AttributeClass?.Name == "OutputLengthOnlyAttribute")
-                            formatParameters += $",lengthOnly:true";
-                        else if (attribute.AttributeClass?.Name == "OutputRegexAttribute")
-                        {
-                            var regexOk = false;
-                            var message = "You must specify a regex parameter";
-                            foreach (var n in attribute.NamedArguments)
-                            {
-                                if (n.Key == "Regex" && n.Value.Value is not null)
-                                {
-                                    var regex = n.Value.Value.ToString().Replace("\\", "\\\\");
-                                    try
-                                    {
-                                        var r = new Regex(regex);
-                                        formatParameters += ",regex:\"" + regex + "\"";
-                                        regexOk = true;
-                                    }
-                                    catch (ArgumentException e)
-                                    {
-                                        message = "Bad regex: " + e.Message;
-                                        break;
-                                    }
-                                }
-                                else if (n.Key == "IgnoreCase" && n.Value.Value is not null)
-                                {
-                                    formatParameters += ",ignoreCase:" + n.Value.Value.ToString().ToLowerInvariant();
-                                }
-                            }
-                            if (!regexOk)
-                            {
-                                var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                                                        id: "SEEK001",
-                                                        title: "Missing or invalid regex parameter",
-                                                        messageFormat: message,
-                                                        category: "Usage",
-                                                        defaultSeverity: DiagnosticSeverity.Error,
-                                                        isEnabledByDefault: true,
-                                                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek001-missing-or-invalid-regex-parameter"
-                                                     ), member.Locations[0]);
-                                context.ReportDiagnostic(diag);
-                            }
-                        }
-                    }
-                }
-
-                if (attributeCount > 1)
-                {
-                    var diag = Diagnostic.Create(new DiagnosticDescriptor(
-                        id: "SEEK002",
-                        title: "Multiple format attributes",
-                        messageFormat: "You can only use one formatting attribute on a property",
-                        category: "Usage",
-                        defaultSeverity: DiagnosticSeverity.Warning,
-                        isEnabledByDefault: true,
-                        helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek002-multiple-format-attributes"
-                        ), member.Locations[0]);
-                    context.ReportDiagnostic(diag);
-                }
-                if (!ignored)
-                    sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
-            }
-
-            // end of method
-            sb.Append($$"""
-                      {{jsonClose}}";
-                              }
-                      """);
-
-        }
-
-        sb.Append(@"
-    }
-}");
-
-        return sb.ToString();
+        return symbol.GetAttributes();
     }
 }

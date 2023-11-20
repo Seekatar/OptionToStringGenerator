@@ -2,7 +2,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using VerifyXunit;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
 
@@ -41,12 +40,16 @@ public static class TestHelper
         return (diagnostics, output);
     }
 
-    public static Task Verify(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null )
+    public static Task Verify<T>(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null ) where T : IIncrementalGenerator, new()
     {
-        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        var (diag, output) = GetGeneratedOutput<T>(source);
         if (assertDiag != null)
         {
             assertDiag(diag);
+            if (diag.Any(o => o.Severity == DiagnosticSeverity.Error))
+            {
+                return Task.CompletedTask;
+            }
         }
         else
         {
@@ -54,10 +57,11 @@ public static class TestHelper
         }
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
-    public static Task VerifyFile(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null)
+
+    public static Task VerifyFile<T>(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null) where T : IIncrementalGenerator, new()
     {
         var source = File.ReadAllText(filename);
-        var (diag, output) = GetGeneratedOutput<OptionToStringGenerator>(source);
+        var (diag, output) = GetGeneratedOutput<T>(source);
         if (assertDiag != null)
         {
             assertDiag(diag);

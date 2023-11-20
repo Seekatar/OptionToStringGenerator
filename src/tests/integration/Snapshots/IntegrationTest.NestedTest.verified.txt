@@ -1,0 +1,3 @@
+﻿Test.Wrapper.NestedOptions:
+  IntProp    : 42
+  StringProp : "hi mom"

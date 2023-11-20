@@ -6,7 +6,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this BadTitleOptions o)
         {
             return $@"HiThisdoesntexist:
-  Name : {OptionsToStringAttribute.Format(o.Name)}
+  Name : {OptionsToStringAttribute.Format(o?.Name)}
 ";
         }
     }
