@@ -13,6 +13,9 @@ on:
   # workflow_dispatch: allows manually kicking off a build
   workflow_dispatch:
 
+env:
+  VERSION_PREFIX: "0.2."
+
 defaults:
   run:
     shell: pwsh
@@ -40,11 +43,10 @@ jobs:
 
     - name: Determine Version
       run: |
-        if ('${{ github.ref }}' -match ".*/v{0,1}(?<ver>\d\.\d\.\d)(?:(?<prerelease>-[0-9a-z]+)(?<rest>.*))?" `
-            -and (!$matches['rest'] -or !$matches['rest'].StartsWith('-'))) {
-            $newVersion = $matches['ver']+$matches['prerelease']
-        } else {
-            $newVersion = "1.0.$env:GITHUB_RUN_NUMBER"
+        $newVersion = $env:VERSION_PREFIX + $env:GITHUB_RUN_NUMBER
+
+        if (!'${{ github.ref }}'.StartsWith('refs/heads/main/')) {
+            $newVersion += '-prerelease'
         }
         "Version=$newVersion written to $env:GITHUB_ENV"
         "Version=$newVersion" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
@@ -58,6 +60,9 @@ jobs:
        "::group::Environment Variables"
        gci env: | ft -wrap
        "::endgroup::"
+
+    - run: env
+      name: Dump Environment via run
 
     - name: Do CI Build and Test
       run: |
