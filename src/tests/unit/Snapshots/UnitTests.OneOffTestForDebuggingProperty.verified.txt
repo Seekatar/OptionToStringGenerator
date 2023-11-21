@@ -1,0 +1,20 @@
+﻿#nullable enable
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Test.PropertyChildOptions o)
+        {
+            return $@"Test.PropertyChildOptions:
+  ChildSecret   : {OptionsToStringAttribute.Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+  ParentSecret  : {OptionsToStringAttribute.Format(o?.ParentSecret,prefixLen:0,suffixLen:0)}
+";
+        }
+        internal static string OptionsToString(this Test.PropertyChildOnlyOptions o)
+        {
+            return $@"Test.PropertyChildOnlyOptions:
+  ChildSecret : {OptionsToStringAttribute.Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+";
+        }
+    }
+}

@@ -3,6 +3,5 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-
     }
 }

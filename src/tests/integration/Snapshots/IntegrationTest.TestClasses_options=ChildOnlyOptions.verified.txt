@@ -1,0 +1,2 @@
+﻿Test.ChildOnlyOptions:
+  ChildSecret : "ch**********"

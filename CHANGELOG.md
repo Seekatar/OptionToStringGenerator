@@ -1,10 +1,18 @@
 # Change Log
 
+## [0.2.2] 2023-11-21
+
+## Added
+
+- Support for getting the properties of the parent class, too.
+
+## Changed
+
 ## [0.2.1] 2023-11-14
 
 ## Changed
 
-- Downgraded the Microsoft.CodeAnalysis.CSharp NuGet package to run with .NET SDK 6.0.416
+- Downgraded the Microsoft.CodeAnalysis.CSharp NuGet package to `4.3.0` to run with .NET SDK 6.0.416
 
 ## [0.2.0] 2023-11-06
 

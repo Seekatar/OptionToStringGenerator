@@ -44,6 +44,17 @@ public class UnitTests
     }
 
     [Fact]
+    public Task OneOffTestForDebugging()
+    {
+        return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/InheritanceOptions.cs");
+    }
+    [Fact]
+    public Task OneOffTestForDebuggingProperty()
+    {
+        return TestHelper.VerifyFile<OptionPropertyToStringGenerator>("PropertyTestFiles/PropertyInheritance.cs");
+    }
+
+    [Fact]
     public Task MultipleAttributesCauseWarning()
     {
         // The source code to test

@@ -309,10 +309,10 @@ If attributes have invalid parameters you will get warnings or errors from the c
 
 ## Trouble Shooting
 
-### error CS9057
+### Error CS9057
 
 You may get an error when compiling your code that uses this package.
 
 `##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
 
-You must use the .NET SDK 7.0.201 or higher. You can check your version with `dotnet --list-sdks`.
+You must use the .NET SDK 6.0.416 or higher. You can check your version with `dotnet --list-sdks`.
