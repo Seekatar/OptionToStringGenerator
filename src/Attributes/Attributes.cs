@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
 
 namespace Seekatar.OptionToStringGenerator;
 
@@ -35,7 +36,7 @@ public class OptionsToStringAttribute : Attribute
         {
             var s = value;
             var middleLen = Math.Max(0, s.Length - prefixLen - suffixLen);
-            if (middleLen == 0) return "\"" + s + "\"";
+            if (middleLen == 0) return asJson ? JsonSerializer.Serialize(s) : "\"" + s + "\"";
             var middle = new string('*', middleLen);
 
             var prefix = "";
@@ -49,7 +50,7 @@ public class OptionsToStringAttribute : Attribute
                 suffix = s.Substring(s.Length - suffixLen);
             }
 
-            return "\"" + prefix + middle + suffix + "\"";
+            return asJson ? JsonSerializer.Serialize(prefix + middle + suffix) : "\"" + prefix + middle + suffix + "\"";
         }
 
         if (regex is not null)
@@ -71,7 +72,8 @@ public class OptionsToStringAttribute : Attribute
                 }
                 m = m.NextMatch();
             }
-            return $"\"{(matchCount > 0 ? s : "***Regex no match***!")}\""; // if not matches, return mask
+            if (matchCount ==  0) s = "***Regex no match***!";
+            return asJson ? JsonSerializer.Serialize(s) : "\"" + s + "\"";
         }
 
         if (o is bool)
@@ -81,18 +83,17 @@ public class OptionsToStringAttribute : Attribute
             || o.GetType().IsClass
             || (asJson && (o is Guid or DateTime or TimeSpan
                   || o.GetType().IsEnum
-                  || o.GetType().Name == "DateOnly" // can't use these types in .NET Standard 2.0
+                  || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can use nameof
                   || o.GetType().Name == "TimeOnly"))
            )
-            return "\"" + value + "\"";
+            return asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"";
 
         if (o.GetType().IsPrimitive)
         {
             return value;
         }
 
-
-        return value;
+        return asJson ? JsonSerializer.Serialize(value) : value; 
     }
 }
 

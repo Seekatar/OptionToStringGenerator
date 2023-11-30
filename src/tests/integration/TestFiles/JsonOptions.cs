@@ -51,4 +51,19 @@ class JsonOptions
     public string AnotherConnectionString { get; set; } = "Server=myServerAddress;Database=myDataBase;user Id=myUsername;Password=myPassword;";
 
     public FileAttributes AnEum { get; set; } = FileAttributes.Hidden | FileAttributes.ReadOnly;
+
+    public string SpecialCharacters { get {
+            string printableCharacters = "";
+            for (int i = 32; i < 127; i++)
+            {
+                printableCharacters += (char)i;
+            }
+            return printableCharacters; 
+        } }
+
+    [OutputMask(PrefixLen = 3, SuffixLen = 3)]
+    public string NoMiddle { get; set; } = "%$^%^#";
+
+    [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
+    public string RegexNoMatch { get; set; } = "%$^%^#";
 }

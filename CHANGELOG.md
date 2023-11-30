@@ -1,10 +1,14 @@
 # Change Log
 
-## [0.2.2] 2023-11-21
+## [0.2.x] 2023-11-30
 
 ## Added
 
 - Support for getting the properties of the parent class, too.
+
+## Fixed
+
+- Encoding of values for JSON output
 
 ## Changed
 

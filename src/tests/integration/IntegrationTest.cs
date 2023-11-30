@@ -22,7 +22,6 @@ public class IntegrationTest
         yield return new object[] { new ObjectMasking() };
         yield return new object[] { new NegativeBadOptions() };
         yield return new object[] { new NegativeNoOptions() };
-        yield return new object[] { new JsonOptions() };
         yield return new object[] { new TitleOptions() };
         yield return new object[] { new FormattingOptions() };
         yield return new object[] { new EscapeOptions() };
@@ -43,6 +42,15 @@ public class IntegrationTest
         Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
         var s = method.Invoke(options, new object[] { options });
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
+    }
+
+    [Fact]
+    public async Task ValidateJson()
+    {
+        var o = new JsonOptions();
+        var s = o.OptionsToString();
+        System.Text.Json.JsonSerializer.Deserialize<JsonOptions>(s);
+        await Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
