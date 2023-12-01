@@ -77,20 +77,12 @@ public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSynta
                 continue;
             }
 
-            // Get all the members in the class
-            ImmutableArray<ISymbol> classMembers = classSymbol.GetMembers();
-            var members = new List<IPropertySymbol>(classMembers.Length);
-
-            // Get all the public properties with a get method
-            foreach (ISymbol member in classMembers)
-            {
-                if (member is IPropertySymbol property
-                    && property.GetMethod is not null
-                    && property.DeclaredAccessibility == Accessibility.Public)
-                {
-                    members.Add(property);
-                }
-            }
+            var excludeParent = classSymbol.GetAttributes()
+                    .Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault()?
+                    .NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
+                                             && n.Value.Value is not null
+                                             && (bool)n.Value.Value);
+            var members = GetAllPublicProperties(classSymbol, excludeParent);
 
             // Create an ClassToGenerate for use in the generation phase
             classToGenerate.Add(new ClassToGenerate(classSymbol, members));

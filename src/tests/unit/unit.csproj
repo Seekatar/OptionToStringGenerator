@@ -48,6 +48,9 @@
 	  <Content Include="..\integration\TestFiles\PropertyTestClass.cs" Link="TestFiles\PropertyTestClass.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="..\integration\TestFiles\PropertyInheritance.cs" Link="PropertyTestFiles\PropertyInheritance.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,6 +88,9 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="..\integration\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\InheritanceOptions.cs" Link="TestFiles\InheritanceOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>

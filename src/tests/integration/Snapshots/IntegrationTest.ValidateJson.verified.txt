@@ -18,6 +18,9 @@
   "Secret"                   : { "Len": 35 },
   "ConnectionString"         : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;",
   "AnotherConnectionString"  : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;",
-  "AnEum"                    : "ReadOnly, Hidden"
+  "AnEum"                    : "ReadOnly, Hidden",
+  "SpecialCharacters"        : " !\u0022#$%\u0026\u0027()*\u002B,-./0123456789:;\u003C=\u003E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\u0060abcdefghijklmnopqrstuvwxyz{|}~",
+  "NoMiddle"                 : "%$^%^#",
+  "RegexNoMatch"             : "***Regex no match***!"
   }
 }

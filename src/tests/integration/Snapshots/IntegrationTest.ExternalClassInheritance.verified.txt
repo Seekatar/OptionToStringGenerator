@@ -1,0 +1,6 @@
+﻿Test.PropertyChildOptions:
+  ChildSecret   : "ch**********"
+  ParentSecret  : "*************"
+
+Test.PropertyChildOnlyOptions:
+  ChildSecret : "ch**********"

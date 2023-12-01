@@ -73,6 +73,31 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
 
     protected abstract ImmutableArray<AttributeData> AttributesForMember(IPropertySymbol symbol, TGeneratedItem propertyToGenerate);
 
+    protected List<IPropertySymbol> GetAllPublicProperties(INamedTypeSymbol classSymbol, bool? excludeParent, List<IPropertySymbol>? members = null)
+    {
+        if (members is null)
+        {
+            members = new List<IPropertySymbol>();
+        }
+        var classMembers = classSymbol.GetMembers();
+        foreach (ISymbol member in classMembers)
+        {
+            if (member is IPropertySymbol property
+                && property.GetMethod is not null
+                && property.DeclaredAccessibility == Accessibility.Public)
+            {
+                members.Add(property);
+            }
+        }
+
+        if (!(excludeParent ?? false) && classSymbol.BaseType is INamedTypeSymbol baseType && baseType.Name != nameof(Object))
+        {
+            GetAllPublicProperties(baseType, false, members);
+        }
+        return members;
+    }
+
+
     protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, SourceProductionContext context)
     {
         var sb = new StringBuilder();
@@ -179,8 +204,8 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                             separator = n.Value.Value.ToString();
                         }
                     }
+                    }
                 }
-            }
 
             if (haveJson)
             {
@@ -296,16 +321,18 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }
 
-            // end of method
+            // end of method brace
             sb.Append($$"""
                       {{jsonClose}}";
                               }
+                      
                       """);
         }
 
-        sb.Append(@"
-    }
-}");
+        // end of class and namespace braces
+        sb.Append(@"    }
+}
+");
 
         return sb.ToString();
     }

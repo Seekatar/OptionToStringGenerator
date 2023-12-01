@@ -22,11 +22,13 @@ public class IntegrationTest
         yield return new object[] { new ObjectMasking() };
         yield return new object[] { new NegativeBadOptions() };
         yield return new object[] { new NegativeNoOptions() };
-        yield return new object[] { new JsonOptions() };
         yield return new object[] { new TitleOptions() };
         yield return new object[] { new FormattingOptions() };
         yield return new object[] { new EscapeOptions() };
         yield return new object[] { new MaskingOptions() };
+        yield return new object[] { new ChildOptions() };
+        yield return new object[] { new ChildOnlyOptions() };
+
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
     }
@@ -43,11 +45,30 @@ public class IntegrationTest
     }
 
     [Fact]
+    public async Task ValidateJson()
+    {
+        var o = new JsonOptions();
+        var s = o.OptionsToString();
+        System.Text.Json.JsonSerializer.Deserialize<JsonOptions>(s);
+        await Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
     public Task ExternalClass()
     {
         var o = new PropertyTestSimple();
         var s = o.MyExtClassProperty.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public async Task ExternalClassInheritance()
+    {
+        var o = new PropertyInheritance();
+        var s = o.ChildOptions.OptionsToString();
+        s += Environment.NewLine;
+        s += o.ChildOnlyOptions.OptionsToString();
+        await Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]

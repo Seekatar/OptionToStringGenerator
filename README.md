@@ -382,3 +382,6 @@ These are links to the MS documentation for the items I used in the generator.
 
 - [Andrew Lock's blog series on incremental generators (Part 1)](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
 - [Verify snapshot test tool](https://github.com/VerifyTests/Verify)
+- [MS Build (csproj) Pack Doc](https://learn.microsoft.com/en-us/nuget/reference/msbuild-targets) covers some of the less frequently used options
+- [MS LoggerMessage source generator source code](https://github.com/dotnet/runtime/tree/25c675ff78e0446fe596cea25c7e3969b0936a33/src/libraries/Microsoft.Extensions.Logging.Abstractions/gen) referenced by Andrew.
+- [MS .NET Generators' source code](https://github.com/dotnet/extensions/tree/f34d120d2654057a31dc96d7f86dc42629044472/src/Generators)

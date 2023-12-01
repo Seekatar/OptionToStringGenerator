@@ -98,32 +98,24 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
                 continue; // int is struct, string is class
             }
 
-            ImmutableArray<ISymbol> classMembers = typeSymbol.GetMembers();
-            var members = new List<IPropertySymbol>(classMembers.Length);
-
-
-            // Get all the public properties with a get method
-            foreach (ISymbol member in classMembers)
-            {
-                if (member is IPropertySymbol property
-                    && property.GetMethod is not null
-                    && property.DeclaredAccessibility == Accessibility.Public)
-                {
-                    members.Add(property);
-                }
-            }
-
             // get all the attributes on the property
             var attrs = propertySymbol.GetAttributes().Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator"
                                                                   && (a.AttributeClass?.Name.StartsWith("OutputProperty") ?? false));
             var attrDict = new Dictionary<string, AttributeData>();
-            AttributeData? formatAttr = null;
+            AttributeData? formatAttr = attrs.FirstOrDefault(a => a.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute));
+
+            var excludeParent = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
+                                             && n.Value.Value is not null
+                                             && (bool)n.Value.Value);
+
+            var members = GetAllPublicProperties(typeSymbol, excludeParent);
+
             foreach ( var a in attrs)
             {
                 var name = a.NamedArguments.FirstOrDefault(o => o.Key == nameof(IPropertyAttribute.Name)).Value.Value?.ToString() ?? a.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                if (a.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute)) 
-                { 
-                    formatAttr = a; continue; 
+                if (a.AttributeClass?.Name == nameof(OutputPropertyFormatAttribute))
+                {
+                    continue; // we got it above and it doesn't have name
                 }
 
                 if (string.IsNullOrEmpty(name))

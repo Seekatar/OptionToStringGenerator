@@ -1,13 +1,10 @@
 # OptionsToString Incremental Source Generator
 
-[![OptionToStringGenerator](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml)
-[![codecov](https://codecov.io/gh/Seekatar/OptionToStringGenerator/branch/main/graph/badge.svg?token=X3J5MU9T3C)](https://codecov.io/gh/Seekatar/OptionToStringGenerator)
-
 **Problem:** I have a configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime.
 
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
-This package generates an `OptionToString`
+This package generates an `OptionsToString`
 extension method for a class. Using attributes you can control how the values are masked. You can use this to log out the values of your configuration at startup, or via a REST endpoint.
 
 ## Quick Example
@@ -30,7 +27,7 @@ internal class PropertySimple
 }
 
 // usage
-_logger.LogInformation(new PropertySimple().OptionToString());
+_logger.LogInformation(new PropertySimple().OptionsToString());
 ```
 
 Output:
@@ -53,7 +50,7 @@ internal class PropertyConfig
 }
 
 // usage
-_logger.LogInformation(new PropertyConfig().PropertySimple.OptionToString());
+_logger.LogInformation(new PropertyConfig().PropertySimple.OptionsToString());
 ```
 
 ## Usage
@@ -61,7 +58,7 @@ _logger.LogInformation(new PropertyConfig().PropertySimple.OptionToString());
 1. Add the [OptionToStringGenerator](https://www.nuget.org/packages/Seekatar.OptionToStringGenerator) NuGet package to your project.
 2. If you can update the class
     1. Decorate a class with the `OptionsToString` attribute.
-    1. Optionally decorate properties with how you want them to be masked. If you don't decorate a property, its full text is dumped out.
+    1. Optionally decorate properties with an `Output*` attribute to specify how you want them to be masked. If you don't decorate a property, its full text is dumped out.
 3. If you don't want to or can't update the class
     1. Add a property to your class of the Type you want to dump out.
     2. Decorate the property with multiple `OutputProperty*` attributes to control how the properties are masked.
@@ -145,7 +142,7 @@ public class PublicOptions
 
 // usage
 var options = new PublicOptions();
-_logger.LogInformation(options.OptionToString());
+_logger.LogInformation(options.OptionsToString());
 ```
 
 The output has the class name (by default) followed by an indented list of all the properties' values masked as specified.
@@ -192,7 +189,7 @@ public class PropertyTestOptions
     public MyClass(IOption<PropertyPublicClass> options, ILogger<PropertyTestOptions> logger)
     {
         _options =options.Value;
-        logger.LogInformation(options.OptionToString());
+        logger.LogInformation(options.OptionsToString());
     }
 
     [OutputPropertyRegex(nameof(PropertyPublicClass.AMaskedObject), Regex = @"AClass\:\s+(.*)")]
@@ -214,6 +211,7 @@ public class PropertyTestOptions
 ### Notes
 
 - All public properties are included by default and output as plain text.
+- Parent class properties are included by default. Use `ExcludeParents = true` on the `OptionsToString` attribute to exclude them.
 - Use the `OutputIgnore` attribute to exclude a property.
 - `ToString()` is called on the property's value, then the mask is applied. You can have a custom `ToString()` method on a class to format its output then it will be masked as the `AClass` example above.
 - When editing the class, only one `Output*` attribute is allowed per property. If more than one is set, you'll get a compile warning, and the last attribute set will be used.
@@ -223,7 +221,7 @@ public class PropertyTestOptions
 
 ### Collections
 
-Currently. you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
+Currently, you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
 
 ```csharp
 public override string ToString()
@@ -245,7 +243,7 @@ public override string ToString()
 
 ### Formatting Options
 
-There are some properties on the `OptionToStringAttribute` for classes and `OutputPropertyFormat` to control how the output is generated.
+There are some properties on the `OptionsToStringAttribute` for classes and `OutputPropertyFormat` to control how the output is generated.
 
 | Name        | Description                                | Default           |
 | ----------- | ------------------------------------------ | ----------------- |
@@ -309,10 +307,10 @@ If attributes have invalid parameters you will get warnings or errors from the c
 
 ## Trouble Shooting
 
-### error CS9057
+### Error CS9057
 
 You may get an error when compiling your code that uses this package.
 
 `##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
 
-You must use the .NET SDK 7.0.201 or higher. You can check your version with `dotnet --list-sdks`.
+You must use the .NET SDK 6.0.416 or higher. You can check your version with `dotnet --list-sdks`.

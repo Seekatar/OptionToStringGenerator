@@ -25,7 +25,10 @@ namespace Seekatar.OptionToStringGenerator
   ""Secret""                   : {OptionsToStringAttribute.Format(o?.Secret,asJson:true,lengthOnly:true)},
   ""ConnectionString""         : {OptionsToStringAttribute.Format(o?.ConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)")},
   ""AnotherConnectionString""  : {OptionsToStringAttribute.Format(o?.AnotherConnectionString,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)},
-  ""AnEum""                    : {OptionsToStringAttribute.Format(o?.AnEum,asJson:true)}
+  ""AnEum""                    : {OptionsToStringAttribute.Format(o?.AnEum,asJson:true)},
+  ""SpecialCharacters""        : {OptionsToStringAttribute.Format(o?.SpecialCharacters,asJson:true)},
+  ""NoMiddle""                 : {OptionsToStringAttribute.Format(o?.NoMiddle,asJson:true,prefixLen:3,suffixLen:3)},
+  ""RegexNoMatch""             : {OptionsToStringAttribute.Format(o?.RegexNoMatch,asJson:true,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
   }}
 }}";
         }
