@@ -13,9 +13,6 @@ on:
   # workflow_dispatch: allows manually kicking off a build
   workflow_dispatch:
 
-env:
-  VERSION_PREFIX: "0.2."
-
 defaults:
   run:
     shell: pwsh
@@ -41,38 +38,60 @@ jobs:
       run: |
        dotnet nuget add source --username $env:GITHUB_REPOSITORY_OWNER --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$($env:GITHUB_REPOSITORY_OWNER.ToLower())/index.json"
 
-    - name: Determine Version
-      run: |
-        $newVersion = $env:VERSION_PREFIX + $env:GITHUB_RUN_NUMBER
-
-        if (!'${{ github.ref }}'.StartsWith('refs/heads/main/')) {
-            $newVersion += '-prerelease'
-        }
-        "Version=$newVersion written to $env:GITHUB_ENV"
-        "Version=$newVersion" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
-
     - name: Dump Environment
       run: |
        "::group::Pwsh Version"
        $PSVersionTable
        "::endgroup::"
 
+       if (Get-Command "dotnet") {
+           "::group::dotnet Version & SDKs"
+           dotnet --version
+           "::endgroup::"
+           "::group::dotnet SDKs"
+           dotnet --list-sdks
+           "::endgroup::"
+       }
+
        "::group::Environment Variables"
-       gci env: | ft -wrap
+       Get-ChildItem env: | Select-Object key,value | Out-String -width 1000 | Sort-Object
        "::endgroup::"
 
-    - run: env
-      name: Dump Environment via run
+    - name: Get version and release notes
+      run: |
+        $inVersion = $false
+        $version = ''
+        'releaseNotes<<EOF_EOF_EOF' >> $env:GITHUB_ENV
+        $releaseNotes = ''
+        foreach ( $line in (Get-Content .\CHANGELOG.md)) {
+            if ($line -match '^## \[([\d\.]+)\]') {
+                if ($inVersion) {break}
+                $version = $Matches[1]
+                $inVersion = $true;
+            }
+            if ($inVersion) {$releaseNotes += $line + "`n"}
+        }
+        $releaseNotes >> $env:GITHUB_ENV
+        "EOF_EOF_EOF" >> $env:GITHUB_ENV
+
+        if ($env:branch -ne 'refs/heads/main') {
+            $version += '-prerelease'
+        }
+        "version=$version written to `$env:GITHUB_ENV"
+        "version=$version" >> $env:GITHUB_ENV
+      id: releaseNotes
+      env:
+        branch: ${{ github.ref }}
 
     - name: Do CI Build and Test
       run: |
-        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:Version
+        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:version
         "::group::Files"
         "Current directory is $PWD"
         gci ./ -r | select-object fullname | ft -wrap
         "::endgroup::"
       env:
-       Version: ${{ env.Version }}
+       version: ${{ env.version }}
 
     # https://github.com/dorny/test-reporter/issues/149
     # permissions:
@@ -95,10 +114,19 @@ jobs:
         export CODECOV_TOKEN="${{ secrets.CODECOV }}"
         bash <(curl -s https://codecov.io/bash)
 
-    - name: Publish to NuGet.org
-      if: startsWith(github.ref, 'refs/heads/releases/') && matrix.os == 'ubuntu-latest'
+    - name: Create a GitHub release
+      if: startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
       run: |
-       "Publishing ./packages/Seekatar.OptionToStringGenerator.$env:Version.nupkg to Nuget.org"
-       dotnet nuget push "./packages/Seekatar.OptionToStringGenerator.$env:Version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
+        "Creating release $env:version"
+        gh release create $env:version --title $env:version --notes $env:releaseNotes CHANGELOG.md
       env:
-       Version: ${{ env.Version }}
+        version: ${{ env.version }}
+        releaseNotes: ${{ env.releaseNotes }}
+
+    - name: Publish to NuGet.org
+      if: startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
+      run: |
+       "Publishing ./packages/Seekatar.OptionToStringGenerator.$env:version.nupkg to Nuget.org"
+       dotnet nuget push "./packages/Seekatar.OptionToStringGenerator.$env:version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
+      env:
+       version: ${{ env.version }}
