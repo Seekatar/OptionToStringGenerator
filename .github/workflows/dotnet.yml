@@ -19,6 +19,8 @@ defaults:
 
 jobs:
   buildAndDeploy:
+    permissions:
+      contents: write # Needed to create release
 
     strategy:
       matrix:
