@@ -61,7 +61,7 @@ jobs:
       run: |
         $inVersion = $false
         $version = ''
-        'releaseNotes<<EOF_EOF_EOF' >> $env:GITHUB_ENV
+        'releaseNotes<<EOF_EOF_EOF' | Out-File $env:GITHUB_ENV -Append -Encoding utf8
         $releaseNotes = ''
         foreach ( $line in (Get-Content .\CHANGELOG.md)) {
             if ($line -match '^## \[([\d\.]+)\]') {
@@ -71,14 +71,14 @@ jobs:
             }
             if ($inVersion) {$releaseNotes += $line + "`n"}
         }
-        $releaseNotes >> $env:GITHUB_ENV
-        "EOF_EOF_EOF" >> $env:GITHUB_ENV
+        $releaseNotes | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+        "EOF_EOF_EOF" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
         if ($env:branch -ne 'refs/heads/main') {
             $version += '-prerelease'
         }
-        "version=$version written to `$env:GITHUB_ENV"
-        "version=$version" >> $env:GITHUB_ENV
+        "version=$version written to $env:GITHUB_ENV"
+        "version=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
       id: releaseNotes
       env:
         branch: ${{ github.ref }}
@@ -118,8 +118,10 @@ jobs:
       if: startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
       run: |
         "Creating release $env:version"
+        "Creating notes $env:releaseNotes"
         gh release create $env:version --title $env:version --notes $env:releaseNotes CHANGELOG.md
       env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         version: ${{ env.version }}
         releaseNotes: ${{ env.releaseNotes }}
 
