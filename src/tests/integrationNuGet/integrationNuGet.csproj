@@ -12,19 +12,29 @@
   <ItemGroup>
     <Compile Include="..\integration\IntegrationTest.cs" Link="IntegrationTest.cs" />
     <Compile Include="..\integration\Usings.cs" Link="Usings.cs" />
-    <Compile Include="..\unit\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs" />
-    <Compile Include="..\unit\TestFiles\FormattingOptions.cs" Link="TestFiles\FormattingOptions.cs" />
-    <Compile Include="..\unit\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs" />
-    <Compile Include="..\unit\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
-    <Compile Include="..\unit\TestFiles\NegativeNoOptions.cs" Link="TestFiles\NegativeNoOptions.cs" />
-    <Compile Include="..\unit\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
-    <Compile Include="..\unit\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
-    <Compile Include="..\unit\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
+    <Compile Include="..\integration\TestFiles\EscapeOptions.cs" Link="TestFiles\EscapeOptions.cs" />
+    <Compile Include="..\integration\TestFiles\FormattingOptions.cs" Link="TestFiles\FormattingOptions.cs" />
+    <Compile Include="..\integration\TestFiles\InheritanceOptions.cs" Link="TestFiles\InheritanceOptions.cs" />
+    <Compile Include="..\integration\TestFiles\InternalOptions.cs" Link="TestFiles\InternalOptions.cs" />
+    <Compile Include="..\integration\TestFiles\JsonOptions.cs" Link="TestFiles\JsonOptions.cs" />
+    <Compile Include="..\integration\TestFiles\MaskingOptions.cs" Link="TestFiles\MaskingOptions.cs" />
+    <Compile Include="..\integration\TestFiles\MessagingOptions.cs" Link="TestFiles\MessagingOptions.cs" />
+    <Compile Include="..\integration\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs" />
+    <Compile Include="..\integration\TestFiles\NegativeNoOptions.cs" Link="TestFiles\NegativeNoOptions.cs" />
+    <Compile Include="..\integration\TestFiles\NestedOptions.cs" Link="TestFiles\NestedOptions.cs" />
+    <Compile Include="..\integration\TestFiles\ObjectMasking.cs" Link="TestFiles\ObjectMasking.cs" />
+    <Compile Include="..\integration\TestFiles\PropertyInheritance.cs" Link="TestFiles\PropertyInheritance.cs" />
+    <Compile Include="..\integration\TestFiles\PropertyInterface.cs" Link="TestFiles\PropertyInterface.cs" />
+    <Compile Include="..\integration\TestFiles\PropertyPublicOptons.cs" Link="TestFiles\PropertyPublicOptons.cs" />
+    <Compile Include="..\integration\TestFiles\PropertyTestClass.cs" Link="TestFiles\PropertyTestClass.cs" />
+    <Compile Include="..\integration\TestFiles\PropertyTestRecord.cs" Link="TestFiles\PropertyTestRecord.cs" />
+    <Compile Include="..\integration\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
+    <Compile Include="..\integration\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="1.0.16" />
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="0.2.2" />
 		<PackageReference Include="Verify.XUnit" Version="20.8.0" />
 		<PackageReference Include="xunit" Version="2.5.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
