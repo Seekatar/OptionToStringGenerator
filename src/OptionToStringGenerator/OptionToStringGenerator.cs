@@ -77,12 +77,16 @@ public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSynta
                 continue;
             }
 
-            var excludeParent = classSymbol.GetAttributes()
+            var namedArguments = classSymbol.GetAttributes()
                     .Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault()?
-                    .NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
+                    .NamedArguments;
+            var excludeParent = namedArguments?.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
-            var members = GetAllPublicProperties(classSymbol, excludeParent);
+            var sort = namedArguments?.Any(n => n.Key == nameof(OptionsToStringAttribute.SortMembers)
+                                             && n.Value.Value is not null
+                                             && (bool)n.Value.Value);
+            var members = GetAllPublicProperties(classSymbol, excludeParent, sort);
 
             // Create an ClassToGenerate for use in the generation phase
             classToGenerate.Add(new ClassToGenerate(classSymbol, members));

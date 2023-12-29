@@ -32,5 +32,33 @@ namespace Seekatar.OptionToStringGenerator
   Color                         : {Format(o?.Color)}
 ";
         }
+        public static string OptionsToString(this Test.PropertyPublicOptionsSorted o)
+        {
+            return $@"Test.PropertyPublicOptionsSorted:
+  AMaskedObject                 : {Format(o?.AMaskedObject,regex:"AClass\\:\\s+(.*)")}
+  AnObject                      : {Format(o?.AnObject)}
+  Color                         : {Format(o?.Color)}
+  FirstAndLastThreeNotMasked    : {Format(o?.FirstAndLastThreeNotMasked,prefixLen:3,suffixLen:3)}
+  FirstThreeNotMasked           : {Format(o?.FirstThreeNotMasked,prefixLen:3,suffixLen:0)}
+  FullyMasked                   : {Format(o?.FullyMasked,prefixLen:0,suffixLen:0)}
+  LastThreeNotMasked            : {Format(o?.LastThreeNotMasked,prefixLen:0,suffixLen:3)}
+  LengthOnly                    : {Format(o?.LengthOnly,lengthOnly:true)}
+  MaskUserAndPassword           : {Format(o?.MaskUserAndPassword,regex:"User Id=([^;]+).*Password=([^;]+)")}
+  MaskUserAndPasswordIgnoreCase : {Format(o?.MaskUserAndPasswordIgnoreCase,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+  NotMaskedSinceLongLength      : {Format(o?.NotMaskedSinceLongLength,prefixLen:100,suffixLen:0)}
+  NullItem                      : {Format(o?.NullItem)}
+  PlainDateTime                 : {Format(o?.PlainDateTime)}
+  PlainDatOnly                  : {Format(o?.PlainDatOnly)}
+  PlainDecimal                  : {Format(o?.PlainDecimal)}
+  PlainDouble                   : {Format(o?.PlainDouble)}
+  PlainInt                      : {Format(o?.PlainInt)}
+  PlainText                     : {Format(o?.PlainText)}
+  PlainTimeOnly                 : {Format(o?.PlainTimeOnly)}
+  RegexNotMatched               : {Format(o?.RegexNotMatched,regex:"User Id=([^;]+).*Password=([^;]+)")}
+  TimeSpan                      : {Format(o?.TimeSpan)}
+  UUID                          : {Format(o?.UUID)}
+  Why                           : {Format(o?.Why)}
+";
+        }
     }
 }

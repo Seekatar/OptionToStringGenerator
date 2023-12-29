@@ -19,6 +19,7 @@ public class IntegrationTest
     {
         yield return new object[] { new InternalOptions() };
         yield return new object[] { new PublicOptions() };
+        yield return new object[] { new PublicOptionsSorted() };
         yield return new object[] { new ObjectMasking() };
         yield return new object[] { new NegativeBadOptions() };
         yield return new object[] { new NegativeNoOptions() };
@@ -80,6 +81,18 @@ public class IntegrationTest
             throw new Exception("PublicOptions is null");
         }
         var s = o.PublicOptions.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory);
+    }
+
+    [Fact]
+    public Task PropertyPublicTestSorted()
+    {
+        var o = new PropertyPublicTestSorted();
+        if (o.PublicOptionsSorted == null)
+        {
+            throw new Exception("PublicOptions is null");
+        }
+        var s = o.PublicOptionsSorted.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 

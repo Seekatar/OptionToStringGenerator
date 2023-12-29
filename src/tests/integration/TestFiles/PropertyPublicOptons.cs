@@ -53,3 +53,22 @@ class PropertyPublicTest
     [MemberNotNull(nameof(PublicOptions))]
     public PropertyPublicOptions? PublicOptions { get; set; } = new PropertyPublicOptions();
 }
+
+public class PropertyPublicOptionsSorted : PropertyPublicOptions { }
+class PropertyPublicTestSorted
+{
+    [OutputPropertyRegex(nameof(PropertyPublicOptions.AMaskedObject), Regex = @"AClass\:\s+(.*)")]
+    [OutputPropertyMask(nameof(PropertyPublicOptions.FullyMasked))]
+    [OutputPropertyMask(nameof(PropertyPublicOptions.FirstThreeNotMasked), PrefixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicOptions.LastThreeNotMasked), SuffixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicOptions.FirstAndLastThreeNotMasked), PrefixLen = 3, SuffixLen = 3)]
+    [OutputPropertyMask(nameof(PropertyPublicOptions.NotMaskedSinceLongLength), PrefixLen = 100)]
+    [OutputPropertyLengthOnly(nameof(PropertyPublicOptions.LengthOnly))]
+    [OutputPropertyRegex(nameof(PropertyPublicOptions.MaskUserAndPassword), Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    [OutputPropertyRegex(nameof(PropertyPublicOptions.MaskUserAndPasswordIgnoreCase), Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
+    [OutputPropertyRegex(nameof(PropertyPublicOptions.RegexNotMatched), Regex = "User Id=([^;]+).*Password=([^;]+)")]
+    [OutputPropertyIgnore(nameof(PropertyPublicOptions.IgnoreMe))]
+    [MemberNotNull(nameof(PublicOptions))]
+    [OutputPropertyFormat(SortMembers = true)]
+    public PropertyPublicOptionsSorted? PublicOptionsSorted { get; set; } = new PropertyPublicOptionsSorted();
+}

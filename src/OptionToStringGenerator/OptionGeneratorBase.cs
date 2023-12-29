@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 namespace Seekatar.OptionToStringGenerator;
 
-public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncrementalGenerator 
+public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncrementalGenerator
     where TSyntax : MemberDeclarationSyntax
     where TGeneratedItem : ItemToGenerate
 {
@@ -46,7 +46,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         return false;
     }
 
-    protected void Execute(string sourceName, Compilation compilation, ImmutableArray<TSyntax> properties, SourceProductionContext context) 
+    protected void Execute(string sourceName, Compilation compilation, ImmutableArray<TSyntax> properties, SourceProductionContext context)
     {
         if (properties.IsDefaultOrEmpty)
         {
@@ -73,7 +73,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
 
     protected abstract ImmutableArray<AttributeData> AttributesForMember(IPropertySymbol symbol, TGeneratedItem propertyToGenerate);
 
-    protected List<IPropertySymbol> GetAllPublicProperties(INamedTypeSymbol classSymbol, bool? excludeParent, List<IPropertySymbol>? members = null)
+    protected List<IPropertySymbol> GetAllPublicProperties(INamedTypeSymbol classSymbol, bool? excludeParent, bool? sort = null, List<IPropertySymbol>? members = null)
     {
         if (members is null)
         {
@@ -92,7 +92,12 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
 
         if (!(excludeParent ?? false) && classSymbol.BaseType is INamedTypeSymbol baseType && baseType.Name != nameof(Object))
         {
-            GetAllPublicProperties(baseType, false, members);
+            GetAllPublicProperties(baseType, excludeParent:false, sort:false, members);
+        }
+
+        if (sort ?? false) // only set sort to true on the top level call
+        {
+                        members = members.OrderBy(m => m.Name).ToList();
         }
         return members;
     }
@@ -308,7 +313,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                 if (attribute.ApplicationSyntaxReference is not null)
                                 {
                                     context.Report(SEEK001, Location.Create(attribute.ApplicationSyntaxReference.SyntaxTree, attribute.ApplicationSyntaxReference.Span), message);
-                                } 
+                                }
                                 else
                                 {
                                     context.Report(SEEK001, member.Locations[0], message);
@@ -326,7 +331,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             sb.Append($$"""
                       {{jsonClose}}";
                               }
-                      
+
                       """);
         }
 
