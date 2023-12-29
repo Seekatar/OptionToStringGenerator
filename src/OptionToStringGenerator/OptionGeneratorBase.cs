@@ -103,6 +103,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         var sb = new StringBuilder();
         sb.Append("""
                     #nullable enable
+                    using static Seekatar.Mask;
                     namespace Seekatar.OptionToStringGenerator
                     {
                         public static partial class ClassExtensions
@@ -236,7 +237,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             }
 
             // each property
-            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{OptionsToStringAttribute.Format(o?.";
+            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{Format(o?.";
             int j = 0;
             foreach (var member in members)
             {

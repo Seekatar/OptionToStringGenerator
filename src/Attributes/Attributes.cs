@@ -4,7 +4,7 @@ using System.Xml.Linq;
 namespace Seekatar.OptionToStringGenerator;
 
 /// <summary>
-/// Marker attribute to indicate a OptionToString() extension method should be generated
+/// Marker attribute to indicate a OptionsToString() extension method should be generated
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public class OptionsToStringAttribute : Attribute
@@ -14,87 +14,6 @@ public class OptionsToStringAttribute : Attribute
     public bool Json { get; set; } = false;
     public string? Title { get; set; }
     public bool ExcludeParents { get; set; } = false;
-
-    /// <summary>
-    /// Helper for formatting objects for output, called by generated code
-    /// </summary>
-    /// <param name="o">object to do ToString() on</param>
-    /// <param name="lengthOnly">only show length</param>
-    /// <param name="prefixLen">mask all but prefix</param>
-    /// <param name="regex">Regex to mask</param>
-    /// <param name="ignoreCase">ignore case on regex</param>
-    /// <param name="asJson">for lengthOnly, render as JSON</param>
-    /// <returns></returns>
-    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
-    {
-        if (o is null) return "null";
-
-        var value = o.ToString() ?? "";
-        if (lengthOnly) return asJson ? ($"{{ \"Len\": {(value).Length} }}") : ("Len = " + (value).Length.ToString());
-
-        if (prefixLen >= 0 || suffixLen >= 0)
-        {
-            var s = value;
-            var middleLen = Math.Max(0, s.Length - prefixLen - suffixLen);
-            if (middleLen == 0) return asJson ? JsonSerializer.Serialize(s) : "\"" + s + "\"";
-            var middle = new string('*', middleLen);
-
-            var prefix = "";
-            var suffix = "";
-            if (prefixLen > 0 && prefixLen < s.Length)
-            {
-                prefix = s.Substring(0, prefixLen);
-            }
-            if (suffixLen > 0 && suffixLen < s.Length)
-            {
-                suffix = s.Substring(s.Length - suffixLen);
-            }
-
-            return asJson ? JsonSerializer.Serialize(prefix + middle + suffix) : "\"" + prefix + middle + suffix + "\"";
-        }
-
-        if (regex is not null)
-        {
-            var r = new System.Text.RegularExpressions.Regex(regex, ignoreCase ? System.Text.RegularExpressions.RegexOptions.IgnoreCase : System.Text.RegularExpressions.RegexOptions.None);
-            var s = value;
-            var matchCount = 0;
-            var m = r.Match(s);
-            while (m.Success)
-            {
-                matchCount++;
-                for (int i = 1; i < m.Groups.Count; i++)
-                {
-                    var cc = m.Groups[i].Captures;
-                    for (int j = 0; j < cc.Count; j++)
-                    {
-                        s = s.Replace(cc[j].ToString(), "***");
-                    }
-                }
-                m = m.NextMatch();
-            }
-            if (matchCount ==  0) s = "***Regex no match***!";
-            return asJson ? JsonSerializer.Serialize(s) : "\"" + s + "\"";
-        }
-
-        if (o is bool)
-            return (value).ToLowerInvariant();
-
-        if (o is string or char
-            || o.GetType().IsClass
-            || (asJson && (o is Guid or DateTime or TimeSpan
-                  || o.GetType().IsEnum
-                  || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can use nameof
-                  || o.GetType().Name == "TimeOnly"))
-           )
-            return asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"";
-
-        if (o.GetType().IsPrimitive)
-        {
-            return value;
-        }
-
-        return asJson ? JsonSerializer.Serialize(value) : value; 
-    }
 }
 
 /// <summary>

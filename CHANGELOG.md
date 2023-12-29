@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.2.3] 2023-12-29
+
+### Added
+
+- Source Links in csproj to allow debugging of NuGet package
+
+### Changed
+
+- Split out the formatting method into Seekatar.Mask.Mask* methods to make it easier to use outside of generated code.
+
 ## [0.2.2] 2023-11-30
 
 ### Added

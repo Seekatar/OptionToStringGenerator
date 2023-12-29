@@ -4,6 +4,8 @@
 
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
+> The methods to mask the values can be used outside of the generated code, too. See [below](#using-seekatarmask) for details.
+
 This package generates an `OptionsToString`
 extension method for a class. Using attributes you can control how the values are masked. You can use this to log out the values of your configuration at startup, or via a REST endpoint.
 
@@ -283,13 +285,13 @@ TitleOptions_hi mom_42:
 
 For a class use these attributes.
 
-| Name             | On     | Description                                                    |
-| ---------------- | ------ | -------------------------------------------------------------- |
-| OptionsToString  | Class  | Marker for the class, and has formatting options               |
+| Name             | On     | Description                                                          |
+| ---------------- | ------ | -------------------------------------------------------------------- |
+| OptionsToString  | Class  | Marker for the class, and has formatting options                     |
 | OutputMask       | Member | Mask the value with asterisks, with optional prefix and suffix clear |
-| OutputRegex      | Member | Mask the value with a regex                                    |
-| OutputLengthOnly | Member | Only output the length of the value                            |
-| OutputIgnore     | Member | Ignore the property                                            |
+| OutputRegex      | Member | Mask the value with a regex                                          |
+| OutputLengthOnly | Member | Only output the length of the value                                  |
+| OutputIgnore     | Member | Ignore the property                                                  |
 
 For a property, use these attributes on the property
 
@@ -314,3 +316,25 @@ You may get an error when compiling your code that uses this package.
 `##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
 
 You must use the .NET SDK 6.0.416 or higher. You can check your version with `dotnet --list-sdks`.
+
+## Using Seekatar.Mask
+
+The methods used by the generated code to mask a value are available when you include the source generator NuGet package. They are in the `Seekatar.Mask` namespace.
+
+```csharp
+using static Seekatar.Mask;
+
+...
+MaskSuffix("abc123", 3) // returns "abc***"
+```
+
+Methods are as follows. Each of these corresponds to an attribute as described [above](#attributes). All take `object?` and return `string?`. Check each for parameters that control usage.
+
+| Method           | Description                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| MaskAll          | Return a string of the same length as the input, with all characters masked |
+| MaskLengthOnly   | Return `Len <length>`                                                       |
+| MaskPrefix       | Mask the prefix of the string, showing only a few suffix characters         |
+| MaskPrefixSuffix | Show only a few prefix and suffix characters                                |
+| MaskRegex        | Mask capture groups of a regex                                              |
+| MaskSuffix       | Mask the suffix of the string, showing only a few prefix characters         |
