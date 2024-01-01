@@ -14,7 +14,7 @@ public class OptionsToStringAttribute : Attribute
     public bool Json { get; set; } = false;
     public string? Title { get; set; }
     public bool ExcludeParents { get; set; } = false;
-    public bool SortMembers { get; set; } = false;
+    public bool Sort { get; set; } = false;
 }
 
 /// <summary>

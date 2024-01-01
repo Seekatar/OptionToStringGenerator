@@ -4,6 +4,7 @@
 
 ### Added
 
+- Sort option for sorting properties in output
 - Source Links in csproj to allow debugging of NuGet package
 
 ### Changed

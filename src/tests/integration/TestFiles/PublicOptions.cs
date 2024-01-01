@@ -70,7 +70,7 @@ public class PublicOptions
     public string IgnoreMe { get; set; } = "abc1233435667";
 }
 
-[OptionsToString(SortMembers = true)]
+[OptionsToString(Sort = true)]
 public class PublicOptionsSorted : PublicOptions
 {
     public string cLittleC { get; set; } = "abc1233435667";

@@ -216,6 +216,7 @@ public class PropertyTestOptions
 ### Notes
 
 - All public properties are included by default and output as plain text.
+- Properties will be in the order they are defined in the class, unless `Sort=true` is set on the `OptionsToString` attribute.
 - Parent class properties are included by default. Use `ExcludeParents = true` on the `OptionsToString` attribute to exclude them.
 - Use the `OutputIgnore` attribute to exclude a property.
 - `ToString()` is called on the property's value, then the mask is applied. You can have a custom `ToString()` method on a class to format its output then it will be masked as the `AClass` example above.
@@ -256,6 +257,7 @@ There are some properties on the `OptionsToStringAttribute` for classes and `Out
 | `Separator` | The name-value separator                   | ":"               |
 | `Title`     | The title to use for the output. See below | Class name        |
 | `Json`      | Format the output as JSON                  | false             |
+| `Sort`      | Sort the properties                        | false             |
 
 In addition to literal text, the `Title` parameter can include property names in braces. For example
 
@@ -318,7 +320,7 @@ You may get an error when compiling your code that uses this package.
 
 `##[error]#15 7.135 CSC : error CS9057: The analyzer assembly '/root/.nuget/packages/seekatar.optiontostringgenerator/0.1.4/analyzers/dotnet/cs/Seekatar.OptionToStringGenerator.dll' references version '4.6.0.0' of the compiler, which is newer than the currently running version '4.4.0.0'.`
 
-This version corresponds to the version of `Microsoft.CodeAnalysis.CSharp` in the generator's [csproj](src/OptionToStringGenerator/OptionToStringGenerator.csproj) file. I bumped it down to 4.4.0 so it would run with .NET SDK 7.0.201. See the [Dockerfile](minimal-api/Dockerfile) for testing different versions of the SDK and generator in a sample app.
+You must use the .NET SDK 6.0.416 or higher. You can check your version with `dotnet --list-sdks`.
 
 ## Using Seekatar.Mask
 

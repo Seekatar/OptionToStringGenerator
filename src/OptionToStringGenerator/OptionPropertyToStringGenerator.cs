@@ -107,7 +107,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             var excludeParent = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
-            var sort = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.SortMembers)
+            var sort = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.Sort)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
 

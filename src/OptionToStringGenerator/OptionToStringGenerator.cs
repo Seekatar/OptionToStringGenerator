@@ -45,7 +45,7 @@ public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSynta
     {
         // we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
-		
+
         return HasAttribute(context, FullAttributeName, classDeclarationSyntax.AttributeLists) ? classDeclarationSyntax : null;
 
     }
@@ -83,7 +83,7 @@ public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSynta
             var excludeParent = namedArguments?.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
-            var sort = namedArguments?.Any(n => n.Key == nameof(OptionsToStringAttribute.SortMembers)
+            var sort = namedArguments?.Any(n => n.Key == nameof(OptionsToStringAttribute.Sort)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
             var members = GetAllPublicProperties(classSymbol, excludeParent, sort);
