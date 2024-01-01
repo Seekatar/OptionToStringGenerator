@@ -9,12 +9,29 @@ namespace Seekatar.OptionToStringGenerator;
 [AttributeUsage(AttributeTargets.Class)]
 public class OptionsToStringAttribute : Attribute
 {
+    public const string NullLiteral = "null";
     public string Indent { get; set; } = "  ";
     public string Separator { get; set; } = ":";
     public bool Json { get; set; } = false;
     public string? Title { get; set; }
     public bool ExcludeParents { get; set; } = false;
     public bool Sort { get; set; } = false;
+
+    /// <summary>
+    /// Helper for formatting objects for output, called by generated code
+    /// </summary>
+    /// <param name="o">object to do ToString() on</param>
+    /// <param name="lengthOnly">only show length</param>
+    /// <param name="prefixLen">mask all but prefix</param>
+    /// <param name="regex">Regex to mask</param>
+    /// <param name="ignoreCase">ignore case on regex</param>
+    /// <param name="asJson">for lengthOnly, render as JSON</param>
+    /// <returns></returns>
+    [Obsolete("Use Mask.Format or Mask.Mask* instead")]
+    public static string Format(object? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false)
+    {
+        return Mask.Format(o, lengthOnly, prefixLen, suffixLen, regex, ignoreCase, asJson) ?? (o?.ToString() ?? NullLiteral);
+    }
 }
 
 /// <summary>

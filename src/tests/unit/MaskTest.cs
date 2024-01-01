@@ -4,11 +4,29 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
-using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 
 
 public class MaskTests
 {
+    [Theory]
+    [InlineData(null, false, OptionsToStringAttribute.NullLiteral)]
+    [InlineData("", false, "Len = 0")]
+    [InlineData("test", false, "Len = 4")]
+    [InlineData(null, true, OptionsToStringAttribute.NullLiteral)]
+    [InlineData("", true, "{ \"Len\": 0 }")]
+    [InlineData("test", true, "{ \"Len\": 4 }")]
+    public void FormatLengthOnly_MultipleInputs_ReturnsExpectedResults(object? input, bool asJson, string? expected)
+    {
+        // call old one to ensure backwards compatibility not broken
+        // Act
+#pragma warning disable CS0618 // Type or member is obsolete
+        var result = OptionsToStringAttribute.Format(input, lengthOnly: true, asJson: asJson);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+        // Assert
+        result.ShouldBe(expected);
+    }
+
     [Theory]
     [InlineData(null, false, null)]
     [InlineData("", false, "Len = 0")]
