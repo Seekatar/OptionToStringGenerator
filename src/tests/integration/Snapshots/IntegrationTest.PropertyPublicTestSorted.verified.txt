@@ -1,0 +1,24 @@
+﻿Test.PropertyPublicOptionsSorted:
+  AMaskedObject                 : "AClass: ***"
+  AnObject                      : "AClass: maybe this is secret"
+  Color                         : Red
+  FirstAndLastThreeNotMasked    : "abc*******667"
+  FirstThreeNotMasked           : "abc**********"
+  FullyMasked                   : "*************"
+  LastThreeNotMasked            : "**********667"
+  LengthOnly                    : Len = 35
+  MaskUserAndPassword           : "Server=myServerAddress;Database=myDataBase;User Id=***;Password=***;"
+  MaskUserAndPasswordIgnoreCase : "Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+  NotMaskedSinceLongLength      : "abc1233435667"
+  NullItem                      : null
+  PlainDateTime                 : 01/02/2020 03:04:05
+  PlainDatOnly                  : 01/02/2020
+  PlainDecimal                  : 6.02
+  PlainDouble                   : 3.141
+  PlainInt                      : 42
+  PlainText                     : "hi mom"
+  PlainTimeOnly                 : 12:23
+  RegexNotMatched               : "***Regex no match***!"
+  TimeSpan                      : 1.02:03:04.0050000
+  UUID                          : 6536b25c-3a45-48d8-8ea3-756e19f5bad1
+  Why                           : "Y"

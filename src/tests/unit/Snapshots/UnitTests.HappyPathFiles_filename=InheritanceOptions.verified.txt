@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using static Seekatar.Mask;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
@@ -6,14 +7,14 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this Test.ChildOptions o)
         {
             return $@"Test.ChildOptions:
-  ChildSecret   : {OptionsToStringAttribute.Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
-  ParentSecret  : {OptionsToStringAttribute.Format(o?.ParentSecret,prefixLen:0,suffixLen:0)}
+  ChildSecret   : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+  ParentSecret  : {Format(o?.ParentSecret,prefixLen:0,suffixLen:0)}
 ";
         }
         internal static string OptionsToString(this Test.ChildOnlyOptions o)
         {
             return $@"Test.ChildOnlyOptions:
-  ChildSecret : {OptionsToStringAttribute.Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+  ChildSecret : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
 ";
         }
     }

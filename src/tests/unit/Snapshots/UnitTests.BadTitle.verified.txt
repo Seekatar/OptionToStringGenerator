@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using static Seekatar.Mask;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
@@ -6,7 +7,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this BadTitleOptions o)
         {
             return $@"HiThisdoesntexist:
-  Name : {OptionsToStringAttribute.Format(o?.Name)}
+  Name : {Format(o?.Name)}
 ";
         }
     }

@@ -27,16 +27,23 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>.net;core;configuration;tools</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>0.2.2</PackageValidationBaselineVersion>
+
+    <!-- added for source links  (also need PackageProjectUrl)-->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Recommended: Embed symbols containing Source Link in the main file (exe/dll) -->
+    <DebugType>embedded</DebugType>
+
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;NU5128</NoWarn>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;NU5128</NoWarn>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  <!-- added for source links  for deterministic builds -->
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,6 +85,5 @@
     <!-- Pack the attributes dll in the lib\netstandard2.0 path -->
     <None Include="$(OutputPath)\OptionToString.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
   </ItemGroup>
-
 
 </Project>

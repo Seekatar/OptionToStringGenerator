@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using static Seekatar.Mask;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
@@ -6,9 +7,9 @@ namespace Seekatar.OptionToStringGenerator
         internal static string OptionsToString(this Test.IOptionsSimple o)
         {
             return $@"Test.IOptionsSimple:
-  Secret           : {OptionsToStringAttribute.Format(o?.Secret,prefixLen:0,suffixLen:0)}
-  RetryLimit       : {OptionsToStringAttribute.Format(o?.RetryLimit)}
-  ConnectionString : {OptionsToStringAttribute.Format(o?.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+  Secret           : {Format(o?.Secret,prefixLen:0,suffixLen:0)}
+  RetryLimit       : {Format(o?.RetryLimit)}
+  ConnectionString : {Format(o?.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }
     }

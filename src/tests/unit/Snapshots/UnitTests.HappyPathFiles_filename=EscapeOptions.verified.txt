@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using static Seekatar.Mask;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
@@ -6,7 +7,7 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.EscapeOptions o)
         {
             return $@"Test.EscapeOptions:
-  Name : {OptionsToStringAttribute.Format(o?.Name,regex:".*{(\\w*)}.*")}
+  Name : {Format(o?.Name,regex:".*{(\\w*)}.*")}
 ";
         }
     }

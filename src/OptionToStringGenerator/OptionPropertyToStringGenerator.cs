@@ -28,7 +28,7 @@ public class PropertyToGenerate :  ItemToGenerate
 }
 
 [Generator]
-public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDeclarationSyntax, PropertyToGenerate> 
+public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDeclarationSyntax, PropertyToGenerate>
 {
     public const string FullAttributeName = "Seekatar.OptionToStringGenerator.OutputPropertyMaskAttribute";
 
@@ -107,8 +107,11 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             var excludeParent = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.ExcludeParents)
                                              && n.Value.Value is not null
                                              && (bool)n.Value.Value);
+            var sort = formatAttr?.NamedArguments.Any(n => n.Key == nameof(OptionsToStringAttribute.Sort)
+                                             && n.Value.Value is not null
+                                             && (bool)n.Value.Value);
 
-            var members = GetAllPublicProperties(typeSymbol, excludeParent);
+            var members = GetAllPublicProperties(typeSymbol, excludeParent, sort);
 
             foreach ( var a in attrs)
             {
