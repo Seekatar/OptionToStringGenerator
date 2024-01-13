@@ -65,7 +65,7 @@ jobs:
           Where-Object { $_ -notlike '`[!`[*' } |
           ForEach-Object { if ($_ -like '## Implementation*') {break;} else {$_} } |
           Out-File .\src\OptionToStringGenerator\README.md
-          Write-Output "Write out .\src\OptionToStringGenerator\README.md"
+          Write-Output "Wrote out .\src\OptionToStringGenerator\README.md"
 
     - name: Dump Environment
       run: |
@@ -114,20 +114,7 @@ jobs:
 
     - name: Do CI Build and Test
       run: |
-        "::group::FilesBefore"
-        "Current directory is $PWD"
-        gci ./ -r | select-object fullname | ft -wrap
-        "::endgroup::"
-        ./run.ps1 createLocalNuget, build, testUnit, testIntegration
-        "::group::FilesAfter"
-        "Current directory is $PWD"
-        gci ./ -r | select-object fullname | ft -wrap
-        "::endgroup::"
-        ./run.ps1 pack -Version $env:version
-        "::group::FilesAfterPack"
-        "Current directory is $PWD"
-        gci ./ -r | select-object fullname | ft -wrap
-        "::endgroup::"
+        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:version -SuppressApiCompat
       env:
        version: ${{ env.version }}
 
@@ -153,7 +140,7 @@ jobs:
         bash <(curl -s https://codecov.io/bash)
 
     - name: Create a GitHub release
-      if: startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
+      if: (github.ref_name == 'main') && matrix.os == 'ubuntu-latest'
       run: |
         "Creating release $env:version"
         "Creating notes $env:releaseNotes"
@@ -163,8 +150,8 @@ jobs:
         version: ${{ env.version }}
         releaseNotes: ${{ env.releaseNotes }}
 
-    - name: Publish to NuGet.org
-      if: startsWith(github.ref, 'refs/heads/main') && matrix.os == 'ubuntu-latest'
+    - name: Publish to NuGet.org # if push to main, or PR to main
+      if: (github.ref_name == 'main' || (github.base_ref == 'main' && github.event_name == 'pull_request')) && matrix.os == 'ubuntu-latest'
       run: |
        "Publishing ./packages/Seekatar.OptionToStringGenerator.$env:version.nupkg to Nuget.org"
        dotnet nuget push "./packages/Seekatar.OptionToStringGenerator.$env:version.nupkg" --api-key ${{ secrets.NUGET_ORG_PAT }} --source "https://api.nuget.org/v3/index.json"
