@@ -320,6 +320,26 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                 }
                             }
                         }
+                        if (attribute.AttributeClass?.Name.EndsWith("FormatAttribute") ?? false)
+                        {
+                            var formatMethod = "";
+                            var formatString = "";
+                            for (int k = 0; k < attribute.NamedArguments.Length; k++)
+                            {
+                                if (attribute.NamedArguments[k].Key == nameof(OutputFormatAttribute.FormatMethod))
+                                    formatMethod = attribute.NamedArguments[k].Value.Value?.ToString() ?? "";
+                                else if (attribute.NamedArguments[k].Key == nameof(OutputFormatAttribute.ToStringFormat))
+                                    formatString = attribute.NamedArguments[k].Value.Value?.ToString() ?? "";
+                            }
+                            if (formatMethod != "")
+                            {
+                                formatParameters += $",formatMethod:(o) => {formatMethod}(o)";
+                            }
+                            else if (formatString != "")
+                            {
+                                formatParameters += $",formatMethod:(o) => o?.ToString(\"{formatString.Replace("\\","\\\\")}\")";
+                            }
+                        }   
                     }
                 }
 

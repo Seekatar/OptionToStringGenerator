@@ -102,6 +102,9 @@
 	  <Content Include="..\integration\TestFiles\NamespaceTest.cs" Link="TestFiles\NamespaceTest.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="..\integration\TestFiles\FormatOptions.cs" Link="TestFiles\FormatOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>

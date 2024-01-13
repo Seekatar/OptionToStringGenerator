@@ -50,8 +50,6 @@ public class OutputMaskAttribute : Attribute
     public int SuffixLen { get; set; }
 }
 
-
-
 /// <summary>
 /// Marker attribute to should mask any captures of this regex
 /// </summary>
@@ -85,11 +83,23 @@ public class OutputIgnoreAttribute : Attribute
 {
 }
 
+/// <summary>
+/// Marker attribute for alternate formatting method
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public class OutputFormatAttribute : Attribute
+{
+    /// <summary>
+    /// Format code to run instead of ToString()
+    /// </summary>
+    public string ToStringFormat { get; set; } = "";
+    public string FormatMethod { get; set; } = "";
+}
+
 public interface IPropertyAttribute
 {
     string Name { get; set; }
 }
-
 
 /// <summary>
 /// Marker attribute for formatting the output
@@ -151,3 +161,4 @@ public class OutputPropertyIgnoreAttribute : OutputIgnoreAttribute, IPropertyAtt
     }
     public string Name { get; set; } = "";
 }
+
