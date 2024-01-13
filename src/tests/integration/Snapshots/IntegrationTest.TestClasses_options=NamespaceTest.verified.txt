@@ -1,0 +1,3 @@
+﻿Test.Next.Level.NamespaceTest:
+  StringProperty                          : "This is a string"
+  TheAnswerToLifeTheUniverseAndEverything : 42

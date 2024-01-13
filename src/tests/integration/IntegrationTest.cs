@@ -4,6 +4,7 @@ using Seekatar.OptionToStringGenerator;
 using System;
 using System.Globalization;
 using System.Reflection;
+using Test.Next.Level;
 
 [UsesVerify]
 public class IntegrationTest
@@ -29,9 +30,12 @@ public class IntegrationTest
         yield return new object[] { new MaskingOptions() };
         yield return new object[] { new ChildOptions() };
         yield return new object[] { new ChildOnlyOptions() };
+        yield return new object[] { new NamespaceTest() };
 
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
+        yield return new object[] { new PropertyNamespaceTestRecord() };
+
     }
 
     [Theory]
