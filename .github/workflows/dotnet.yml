@@ -59,6 +59,33 @@ jobs:
        Get-ChildItem env: | Select-Object key,value | Out-String -width 1000 | Sort-Object
        "::endgroup::"
 
+    - name: Copy README.md
+      run: |
+       Get-Content .\README.md |
+          Where-Object { $_ -notlike '`[!`[*' } |
+          ForEach-Object { if ($_ -like '## Implementation*') {break;} else {$_} } |
+          Out-File .\src\OptionToStringGenerator\README.md
+          Write-Output "Write out .\src\OptionToStringGenerator\README.md"
+
+    - name: Dump Environment
+      run: |
+       "::group::Pwsh Version"
+       $PSVersionTable
+       "::endgroup::"
+
+       if (Get-Command "dotnet") {
+           "::group::dotnet Version & SDKs"
+           dotnet --version
+           "::endgroup::"
+           "::group::dotnet SDKs"
+           dotnet --list-sdks
+           "::endgroup::"
+       }
+
+       "::group::Environment Variables"
+       Get-ChildItem env: | Select-Object key,value | Out-String -width 1000 | Sort-Object
+       "::endgroup::"
+
     - name: Get version and release notes
       run: |
         $inVersion = $false
@@ -87,14 +114,17 @@ jobs:
 
     - name: Do CI Build and Test
       run: |
-        Get-Content ./README.md |
-          Where-Object { $_ -notlike '`[!`[*' } |
-          ForEach-Object { if ($_ -like '## Implementation*') {break;} else {$_} } |
-          Out-File ./src/OptionToStringGenerator/README.md
-        "Copied README.md to src/OptionToStringGenerator/README.md"
-
-        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:version
-        "::group::Files"
+        "::group::FilesBefore"
+        "Current directory is $PWD"
+        gci ./ -r | select-object fullname | ft -wrap
+        "::endgroup::"
+        ./run.ps1 createLocalNuget, build, testUnit, testIntegration
+        "::group::FilesAfter"
+        "Current directory is $PWD"
+        gci ./ -r | select-object fullname | ft -wrap
+        "::endgroup::"
+        ./run.ps1 pack -Version $env:version
+        "::group::FilesAfterPack"
         "Current directory is $PWD"
         gci ./ -r | select-object fullname | ft -wrap
         "::endgroup::"
