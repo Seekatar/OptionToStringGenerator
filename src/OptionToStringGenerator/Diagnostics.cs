@@ -70,7 +70,7 @@ public static class DiagnosticTemplates
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek006-member-not-found-on-class"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek006-member-not-found-in-class"
                 ),
         new DiagnosticDescriptor(
                 id: Ids.SEEK007.ToString(),
@@ -97,7 +97,7 @@ public static class DiagnosticTemplates
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek009-missing-provider-method"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek009-missing-method-for-provider"
                 ),
         new DiagnosticDescriptor(
                 id: Ids.SEEK010.ToString(),
@@ -106,7 +106,7 @@ public static class DiagnosticTemplates
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
-                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek008-invalid-type-for-property"
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek010-invalid-provider-signature"
                 )
     };
 
