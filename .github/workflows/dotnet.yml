@@ -104,13 +104,14 @@ jobs:
         "EOF_EOF_EOF" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
         if ($env:branch -ne 'refs/heads/main') {
-            $version += '-prerelease'
+            $version += "$env:runNumber-prerelease" # prerelease is the run number since PR has save version
         }
         "version=$version written to $env:GITHUB_ENV"
         "version=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
       id: releaseNotes
       env:
         branch: ${{ github.ref }}
+        runNumber: ${{ github.run_number }}
 
     - name: Do CI Build and Test
       run: |
