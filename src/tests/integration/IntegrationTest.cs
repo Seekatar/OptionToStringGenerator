@@ -32,6 +32,7 @@ public class IntegrationTest
         yield return new object[] { new ChildOnlyOptions() };
         yield return new object[] { new NamespaceTest() };
         yield return new object[] { new FormatOptions() };
+        yield return new object[] { new FormatOptionsJson() };
 
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };

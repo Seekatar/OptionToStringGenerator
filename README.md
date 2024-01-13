@@ -224,32 +224,11 @@ public class PropertyTestOptions
 - Regex strings with back slashes need to use a verbatim string or escape the back slashes (e.g.  `@"\s+"`  or `"\\s+"`).
 - `OutputRegex` must have a `Regex` parameter, or you'll get a compile error.
 - If the regex doesn't match the value, the output will be `***Regex no match***!` to indicate it didn't match.
-
-### Collections
-
-Currently, you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
-
-```csharp
-public override string ToString()
-{
-    var sb = new StringBuilder(this.OptionsToString());
-    sb.AppendLine();
-    foreach (var c in Consumers ?? new Dictionary<string, ClientOptions>())
-    {
-        sb.AppendLine(c.Value.OptionsToString());
-    }
-    foreach (var p in Producers ?? new Dictionary<string, ClientOptions>())
-    {
-        sb.AppendLine(p.Value.OptionsToString());
-    }
-
-    return sb.ToString();
-}
-```
+- To customize the formatting of masked output see [below](#per-property-formatting-options)
 
 ### Formatting Options
 
-There are some properties on the `OptionsToStringAttribute` for classes and `OutputPropertyFormat` to control how the output is generated.
+There are properties on the `OptionsToStringAttribute` for classes and `OutputPropertyFormat` for properties to control how the output is generated.
 
 | Name        | Description                                | Default           |
 | ----------- | ------------------------------------------ | ----------------- |
@@ -286,17 +265,78 @@ TitleOptions_hi mom_42:
   StringProp : "hi mom"
 ```
 
+### Per-Property Formatting Options
+
+For types that take a format string to `ToString()` such as `DateTime`, numbers, etc., you can use the `OutputFormatToString` attribute. You can also supply a custom method to format a property. For example flattening an array and masking its values. The sample below shows a few examples:
+
+```csharp
+    # comma separate thousands
+    [OutputFormatToString("N0")]
+    public int PlainInt { get; set; } = 423433;
+
+    # two decimal places
+    [OutputFormatToString("0.00")]
+    public double PlainDouble { get; set; } = 3.141;
+
+    # use the U format for DateTime
+    [OutputFormatToString("U")]
+    public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
+
+    [OutputFormatProvider(typeof(FormatOptions), nameof(MyFormatter))]
+    public List<string> Secrets { get; set; } = new List<string> { "secret", "hushhush", "psssst" };
+
+    # mask each string in the array showing only the first 3 characters
+    public static string? MyFormatter(List<string> o)
+    {
+        if (o is null) return null;
+        return string.Join(",", o.Select(s => Mask.MaskSuffix(s, 3)));
+    }
+```
+
+Output:
+
+```text
+  PlainInt      : 423,433
+  PlainDouble   : 3.14
+  PlainDateTime : Thursday, 02 January 2020 08:04:05
+  Secrets       : "sec***,hus*****,pss***"
+```
+
+### Collections
+
+Instead of using `OutputFormatProvider`, you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
+
+```csharp
+public override string ToString()
+{
+    var sb = new StringBuilder(this.OptionsToString());
+    sb.AppendLine();
+    foreach (var c in Consumers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(c.Value.OptionsToString());
+    }
+    foreach (var p in Producers ?? new Dictionary<string, ClientOptions>())
+    {
+        sb.AppendLine(p.Value.OptionsToString());
+    }
+
+    return sb.ToString();
+}
+```
+
 ## Attributes
 
 For a class use these attributes.
 
-| Name             | On     | Description                                                          |
-| ---------------- | ------ | -------------------------------------------------------------------- |
-| OptionsToString  | Class  | Marker for the class, and has formatting options                     |
-| OutputMask       | Member | Mask the value with asterisks, with optional prefix and suffix clear |
-| OutputRegex      | Member | Mask the value with a regex                                          |
-| OutputLengthOnly | Member | Only output the length of the value                                  |
-| OutputIgnore     | Member | Ignore the property                                                  |
+| Name                 | On     | Description                                                          |
+| -------------------- | ------ | -------------------------------------------------------------------- |
+| OptionsToString      | Class  | Marker for the class, and has formatting options                     |
+| OutputMask           | Member | Mask the value with asterisks, with optional prefix and suffix clear |
+| OutputRegex          | Member | Mask the value with a regex                                          |
+| OutputLengthOnly     | Member | Only output the length of the value                                  |
+| OutputIgnore         | Member | Ignore the property                                                  |
+| OutputFormatToString | Member | Format the value using ToString() with a format string               |
+| OutputFormatProvider | Member | Format the value using a custom method                               |
 
 For a property, use these attributes on the property
 

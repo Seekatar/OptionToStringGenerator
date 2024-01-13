@@ -13,7 +13,9 @@ public static class DiagnosticTemplates
         SEEK005,
         SEEK006,
         SEEK007,
-        SEEK008
+        SEEK008,
+        SEEK009,
+        SEEK010
     }
     static List<DiagnosticDescriptor> _diagnostics = new() {
         new DiagnosticDescriptor(
@@ -83,6 +85,24 @@ public static class DiagnosticTemplates
                 id: Ids.SEEK008.ToString(),
                 title: "Invalid Type for Property",
                 messageFormat: "The Property '{0}' of {1} is {2}. Must be class, record, or interface",
+                category: "Usage",
+                defaultSeverity: DiagnosticSeverity.Error,
+                isEnabledByDefault: true,
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek008-invalid-type-for-property"
+                ),
+        new DiagnosticDescriptor(
+                id: Ids.SEEK009.ToString(),
+                title: "Missing method for provider",
+                messageFormat: "Could not find the method '{0}' on type {1}",
+                category: "Usage",
+                defaultSeverity: DiagnosticSeverity.Error,
+                isEnabledByDefault: true,
+                helpLinkUri: "https://github.com/Seekatar/OptionToStringGenerator/wiki/Error-Messages#seek009-missing-provider-method"
+                ),
+        new DiagnosticDescriptor(
+                id: Ids.SEEK010.ToString(),
+                title: "Invalid provider signature",
+                messageFormat: "The signature of '{0}.{1}' should be static string? {1}({2})",
                 category: "Usage",
                 defaultSeverity: DiagnosticSeverity.Error,
                 isEnabledByDefault: true,

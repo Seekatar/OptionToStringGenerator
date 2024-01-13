@@ -84,17 +84,53 @@ public class OutputIgnoreAttribute : Attribute
 }
 
 /// <summary>
+/// Marker attribute to supply a format string to ToString()
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class OutputFormatToStringAttribute : Attribute
+{
+    /// <summary>
+    /// Initialize with a format string pass ToString(), which depends on the type
+    /// </summary>
+    public OutputFormatToStringAttribute(string format)
+    {
+        Format = format;
+    }
+
+    /// <summary>
+    /// Format string pass ToString(), which depends on the type
+    /// </summary>
+    public string Format { get; set; }
+}
+
+/// <summary>
 /// Marker attribute for alternate formatting method
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class OutputFormatAttribute : Attribute
+public sealed class OutputFormatProviderAttribute : Attribute
 {
     /// <summary>
-    /// Format code to run instead of ToString()
+    /// Initialize with a type and method to format the item
     /// </summary>
-    public string ToStringFormat { get; set; } = "";
-    public string FormatMethod { get; set; } = "";
+    /// <param name="formatType"></param>
+    /// <param name="method"></param>
+    public OutputFormatProviderAttribute(Type formatType, string method)
+    {
+        FormatType = formatType;
+        FormatMethod = method;
+    }
+
+    /// <summary>
+    /// Class that has the method to format the item
+    /// </summary>
+    public Type FormatType { get; set; }
+
+    /// <summary>
+    /// Method to format the item, which must be static, return a string, and take a single parameter of the type of the property
+    /// </summary>
+    public string FormatMethod { get; set; }
 }
+
 
 public interface IPropertyAttribute
 {
@@ -105,7 +141,7 @@ public interface IPropertyAttribute
 /// Marker attribute for formatting the output
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class OutputPropertyFormatAttribute : OptionsToStringAttribute
+public sealed class OutputPropertyFormatAttribute : OptionsToStringAttribute
 {
     public OutputPropertyFormatAttribute() { }
 }
@@ -114,7 +150,7 @@ public class OutputPropertyFormatAttribute : OptionsToStringAttribute
 /// Marker attribute to should show only prefixLen or suffixLen characters and mask the rest
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribute
+public sealed class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribute
 {
     public OutputPropertyMaskAttribute(string name)
     {
@@ -127,7 +163,7 @@ public class OutputPropertyMaskAttribute : OutputMaskAttribute, IPropertyAttribu
 /// Marker attribute to should mask any captures of this regex
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttribute
+public sealed class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttribute
 {
     public OutputPropertyRegexAttribute(string name)
     {
@@ -140,7 +176,7 @@ public class OutputPropertyRegexAttribute : OutputRegexAttribute, IPropertyAttri
 /// Marker to only show the length of the string
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPropertyAttribute
+public sealed class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPropertyAttribute
 {
     public OutputPropertyLengthOnlyAttribute(string name)
     {
@@ -153,7 +189,7 @@ public class OutputPropertyLengthOnlyAttribute : OutputLengthOnlyAttribute, IPro
 /// Marker to totally ignore this property
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class OutputPropertyIgnoreAttribute : OutputIgnoreAttribute, IPropertyAttribute
+public sealed class OutputPropertyIgnoreAttribute : OutputIgnoreAttribute, IPropertyAttribute
 {
     public OutputPropertyIgnoreAttribute(string name)
     {

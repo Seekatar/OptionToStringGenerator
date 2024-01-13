@@ -27,6 +27,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\FormatOptionsJson.cs" Link="TestFiles\FormatOptionsJson.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="..\integration\TestFiles\PropertyNamespaceTest.cs" Link="PropertyTestFiles\PropertyNamespaceTest.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
