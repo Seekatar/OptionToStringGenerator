@@ -1,0 +1,20 @@
+﻿#nullable enable
+using static Seekatar.Mask;
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        public static string OptionsToString(this Test.FormatOptions o)
+        {
+            return $@"Test.FormatOptions:
+  PlainInt      : {Format(o?.PlainInt,formatMethod:(o) => o?.ToString("N0"))}
+  PlainDouble   : {Format(o?.PlainDouble,formatMethod:(o) => o?.ToString("0.00"))}
+  PlainDateTime : {Format(o?.PlainDateTime,formatMethod:(o) => o?.ToString("R"))}
+  PlainDateOnly : {Format(o?.PlainDateOnly,formatMethod:(o) => o?.ToString("r"))}
+  PlainTimeOnly : {Format(o?.PlainTimeOnly,formatMethod:(o) => o?.ToString("hh:mm:ss"))}
+  TimeSpan      : {Format(o?.TimeSpan,formatMethod:(o) => o?.ToString("hh\\:mm\\:ss"))}
+  Secrets       : {Format(o?.Secrets,formatMethod:(o) => Test.FormatOptions.MyFormatter(o))}
+";
+        }
+    }
+}

@@ -146,16 +146,23 @@ public static class Mask
     /// <param name="o">object to do ToString() on</param>
     /// <param name="lengthOnly">only show length</param>
     /// <param name="prefixLen">mask all but prefix</param>
+    /// <param name="suffixLen">mask all but suffix</param>
     /// <param name="regex">Regex to mask</param>
     /// <param name="ignoreCase">ignore case on regex</param>
-    /// <param name="maskChar">masking character</param>
     /// <param name="asJson">for lengthOnly, render as JSON</param>
+    /// <param name="maskChar">masking character</param>
+    /// <param name="formatMethod">method to call to format the object</param>
     /// <returns></returns>
-    public static string? Format(object? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*')
+    public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null)
     {
         if (o is null) return "null";
 
-        var value = o.ToString() ?? "";
+        string value;
+        if (formatMethod is not null)
+            value = formatMethod(o) ?? "";
+        else
+            value = o.ToString() ?? "";
+
         if (lengthOnly) return MaskLengthOnly(o, asJson);
 
         if (prefixLen >= 0 || suffixLen >= 0)

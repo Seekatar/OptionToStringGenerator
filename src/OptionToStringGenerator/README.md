@@ -1,7 +1,5 @@
 # OptionsToString Incremental Source Generator
 
-[![OptionToStringGenerator](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml)
-[![codecov](https://codecov.io/gh/Seekatar/OptionToStringGenerator/branch/main/graph/badge.svg?token=X3J5MU9T3C)](https://codecov.io/gh/Seekatar/OptionToStringGenerator)
 
 **Problem:** I have a configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime.
 
@@ -384,71 +382,3 @@ Methods are as follows. Each of these corresponds to an attribute as described [
 | MaskRegex        | Mask capture groups of a regex                                              |
 | MaskSuffix       | Mask the suffix of the string, showing only a few prefix characters         |
 
-## Implementation
-
-Big shout out to Andrew Lock and his [blog series](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/) on incremental source generators. I used that as a starting point for this project.
-
-His blog tells his story of building a source generator and you learn better ways to do things as you progress through the blog.
-
-In particular, in the last entry he breaks out the `Attributes` into their own assembly. In the initial generator, he injects the `Attributes` as code with these lines in the `Initialize` method of the generator, which is the typical method like this:
-
-```csharp
-context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-    "ClassExtensionsAttribute.g.cs",
-    SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
-```
-
-He says this works fine unless someone uses `InternalsVisibleTo` to expose the internals of one assembly to another. He tried several things to solve this before coming up with a robust solution in [part 8](https://andrewlock.net/creating-a-source-generator-part-8-solving-the-source-generator-marker-attribute-problem-part2/) of his series. There's quite a bit of advanced csproj editing that he covers to get it to work. I applied similar changes and everything but the unit tests worked. After viewing his [repo](https://github.com/andrewlock/StronglyTypedId), I found his original unit test helper methods to build the code on-the-fly for the unit tests was different. After picking up those changes, the unit tests worked.
-
-### Basic Logic of OptionsToStringGenerator.Initialize()
-
-This has the implementation of [IIncrementalGenerator](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.iincrementalgenerator).Initialize method. For this generator here's what I did:
-
-1. Look for classes with at least one attribute (predicate, which must be very fast)
-2. Look for ones with my `OptionToStringAttribute` (transform, which can be slower)
-3. Execute() generates the code
-    1. Take the syntax and get the semantic model of the class, extracting the name, accessibility, and list of properties with a `get`
-    2. Generate the code for the extension method
-
-## Branching Strategy
-
-1. Branch from `main` for new features
-2. Pushes will trigger a build and test run using GitHub Actions
-3. When ready, create a PR to `main`
-4. To push to the NuGet Gallery create a `releases/vX.X.X` branch and push to it.
-
-## Debugging and Testing
-
-To debug the generator, the `unit` test project calls `RunGeneratorsAndUpdateCompilation` to run the generator and get the output. The unit test output will be the C# code for the extension method of the objects.
-
-The `integration` test project runs the generator then calls the extension methods and gets the output from it.
-
-In both cases, the output is written to files and the Verify package is used to compare the output to a snapshot file.
-
-For integration tests, if you make changes to the generator, you often have to restart Visual Studio to get it to load the new one.
-
-## Links to Documentation
-
-These are links to the MS documentation for the items I used in the generator.
-
-[ISymbol](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.isymbol?view=roslyn-dotnet-4.6.0) -- Base class for all semantic symbols
-
-[IPropertySymbol](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.ipropertysymbol?view=roslyn-dotnet-4.6.0) -- Semantic for the property
-
-- [GetMethod](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.ipropertysymbol.getmethod?view=roslyn-dotnet-4.6.0) -- is it a {get}
-- [DeclaredAccessibility](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.isymbol.declaredaccessibility) -- is it public?
-
-[INamedTypeSymbol](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.inamedtypesymbol) -- More specific semantic for the class
-
-- [GetAttributes](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.isymbol.getattributes?view=roslyn-dotnet-4.6.0)
-- [ContainingNamespace](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.isymbol.containingnamespace?view=roslyn-dotnet-4.6.0)
-- [DeclaredAccessibility](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.isymbol.declaredaccessibility?view=roslyn-dotnet-4.6.0)
-- [GetMembers](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.inamespaceortypesymbol.getmembers) -- get all the members of the class
-
-## Links
-
-- [Andrew Lock's blog series on incremental generators (Part 1)](https://andrewlock.net/creating-a-source-generator-part-1-creating-an-incremental-source-generator/)
-- [Verify snapshot test tool](https://github.com/VerifyTests/Verify)
-- [MS Build (csproj) Pack Doc](https://learn.microsoft.com/en-us/nuget/reference/msbuild-targets) covers some of the less frequently used options
-- [MS LoggerMessage source generator source code](https://github.com/dotnet/runtime/tree/25c675ff78e0446fe596cea25c7e3969b0936a33/src/libraries/Microsoft.Extensions.Logging.Abstractions/gen) referenced by Andrew.
-- [MS .NET Generators' source code](https://github.com/dotnet/extensions/tree/f34d120d2654057a31dc96d7f86dc42629044472/src/Generators)

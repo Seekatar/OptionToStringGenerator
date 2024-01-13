@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.3.0] 2024-01-12
+
+### Added
+
+- OutputFormatToString attribute to allow custom formatting of an object in ToString()
+- OutputFormatProvider attribute to use a method to format an object
+
+### Fixed
+
+- Fix for property type not working for multi-level namespace #14
+
 ## [0.2.3] 2023-12-29
 
 ### Added

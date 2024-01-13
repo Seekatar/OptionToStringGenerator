@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System;
@@ -65,7 +66,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         if (propertiesToGenerate.Count > 0)
         {
             // generate the source code and add it to the output
-            string result = GenerateExtensionClass(propertiesToGenerate, context);
+            string result = GenerateExtensionClass(propertiesToGenerate, compilation, context);
             context.AddSource(sourceName+".g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
@@ -103,7 +104,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     }
 
 
-    protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, SourceProductionContext context)
+    protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, Compilation compilation, SourceProductionContext context)
     {
         var sb = new StringBuilder();
         sb.Append("""
@@ -320,6 +321,17 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                 }
                             }
                         }
+                        if (attribute.AttributeClass?.Name.EndsWith("ToStringAttribute") ?? false)
+                        {
+                            formatParameters += $",formatMethod:(o) => o?.ToString(\"{(attribute.ConstructorArguments[0].Value! as string)!.Replace("\\", "\\\\")}\")";
+                        }
+                        if (attribute.AttributeClass?.Name.EndsWith("FormatProviderAttribute") ?? false)
+                        {
+                            var formatProvider = (attribute.ConstructorArguments[0].Value! as ITypeSymbol)!;
+                            var formatMethod = (attribute.ConstructorArguments[1].Value! as string)!;
+                            ValidateTagProvider(formatProvider, formatMethod, member.Type, member.Type, member.Locations[0], compilation, context);   
+                            formatParameters += $",formatMethod:(o) => {formatProvider}.{formatMethod}(o)";
+                        }   
                     }
                 }
 
@@ -343,4 +355,118 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         return sb.ToString();
     }
 
+    // adapted from https://github.com/dotnet/extensions/blob/d58517b455f1182b555e5cc4ad48cb2936f0221b/src/Generators/Microsoft.Gen.Logging/Parsing/Parser.TagProvider.cs
+    private IMethodSymbol? ValidateTagProvider(
+            ITypeSymbol providerType,
+            string? providerMethodName,
+            ITypeSymbol tagCollectorType,
+            ITypeSymbol complexObjType,
+            Location? attrLocation,
+            Compilation compilation,
+            SourceProductionContext context)
+    {
+        if (providerType is IErrorTypeSymbol)
+        {
+            return null;
+        }
+
+        if (providerMethodName != null)
+        {
+            var methodSymbols = providerType.GetMembers(providerMethodName).Where(m => m.Kind == SymbolKind.Method).Cast<IMethodSymbol>();
+            bool visitedLoop = false;
+            foreach (var method in methodSymbols)
+            {
+                visitedLoop = true;
+
+#pragma warning disable S1067 // Expressions should not be too complex
+                if (method.IsStatic
+                    && method.ReturnType.OriginalDefinition.SpecialType == SpecialType.System_String
+                    && !method.IsGenericMethod
+                    && IsParameterCountValid(method)
+                    && method.Parameters[0].RefKind == RefKind.None
+                    && SymbolEqualityComparer.Default.Equals(tagCollectorType, method.Parameters[0].Type)
+                    && IsAssignableTo(complexObjType, method.Parameters[0].Type))
+#pragma warning restore S1067 // Expressions should not be too complex
+                {
+                    if (IsProviderMethodVisible(method))
+                    {
+                        return method;
+                    }
+
+                    context.Report(SEEK010, attrLocation, 
+                        providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                        providerMethodName, complexObjType.Name);
+                    return null;
+                }
+            }
+
+            if (visitedLoop)
+            {
+                context.Report(SEEK010, attrLocation,
+                    providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                    providerMethodName, complexObjType.Name);
+                return null;
+            }
+        }
+
+        context.Report(SEEK009, attrLocation, providerMethodName ?? "", providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+        return null;
+
+        static bool IsParameterCountValid(IMethodSymbol method) => method.Parameters.Length == 1;
+
+        bool IsAssignableTo(ITypeSymbol type, ITypeSymbol target)
+        {
+            if (type.NullableAnnotation == NullableAnnotation.Annotated)
+            {
+                if (target.NullableAnnotation == NullableAnnotation.NotAnnotated)
+                {
+                    return false;
+                }
+            }
+
+            if (target.TypeKind == TypeKind.Interface)
+            {
+                if (SymbolEqualityComparer.Default.Equals(type.WithNullableAnnotation(NullableAnnotation.None), target.WithNullableAnnotation(NullableAnnotation.None)))
+                {
+                    return true;
+                }
+
+                foreach (var iface in type.AllInterfaces)
+                {
+                    if (SymbolEqualityComparer.Default.Equals(target.WithNullableAnnotation(NullableAnnotation.None), iface.WithNullableAnnotation(NullableAnnotation.None)))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            return IsBaseOrIdentity(type, target, compilation);
+        }
+
+        static bool IsBaseOrIdentity(ITypeSymbol source, ITypeSymbol dest, Compilation comp)
+        {
+            var conversion = comp.ClassifyConversion(source, dest);
+            return conversion.IsIdentity || (conversion.IsReference && conversion.IsImplicit);
+        }
+
+        static bool IsProviderMethodVisible(ISymbol symbol)
+        {
+            while (symbol != null && symbol.Kind != SymbolKind.Namespace)
+            {
+                switch (symbol.DeclaredAccessibility)
+                {
+                    case Accessibility.NotApplicable:
+                    case Accessibility.Private:
+                    case Accessibility.Protected:
+                    return false;
+                }
+
+                symbol = symbol.ContainingSymbol;
+            }
+
+            return true;
+        }
+    }
 }

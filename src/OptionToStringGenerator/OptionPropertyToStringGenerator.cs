@@ -21,7 +21,7 @@ public class PropertyToGenerate :  ItemToGenerate
         var propertyType = PropertySymbol.Type;
         if (propertyType is INamedTypeSymbol typeSymbol)
         {
-            Name = (typeSymbol.ContainingNamespace.IsGlobalNamespace ? "global::" : typeSymbol.ContainingNamespace.Name + ".") + typeSymbol.Name;
+            Name = (typeSymbol.ContainingNamespace.IsGlobalNamespace ? "global::" : typeSymbol.ContainingNamespace.ToString() + ".") + typeSymbol.Name;
             Accessibility = typeSymbol.DeclaredAccessibility.ToString().ToLowerInvariant();
         }
     }

@@ -59,13 +59,6 @@ jobs:
        Get-ChildItem env: | Select-Object key,value | Out-String -width 1000 | Sort-Object
        "::endgroup::"
 
-    - name: Copy README.md
-      run: |
-       Get-Content .\README.md |
-          Where-Object { $_ -notlike '`[!`[*' } |
-          ForEach-Object { if ($_ -like '## Implementation*') {break;} else {$_} } |
-          Out-File .\src\OptionToStringGenerator\README.md
-
     - name: Get version and release notes
       run: |
         $inVersion = $false
@@ -94,6 +87,12 @@ jobs:
 
     - name: Do CI Build and Test
       run: |
+        Get-Content ./README.md |
+          Where-Object { $_ -notlike '`[!`[*' } |
+          ForEach-Object { if ($_ -like '## Implementation*') {break;} else {$_} } |
+          Out-File ./src/OptionToStringGenerator/README.md
+        "Copied README.md to src/OptionToStringGenerator/README.md"
+
         ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:version
         "::group::Files"
         "Current directory is $PWD"

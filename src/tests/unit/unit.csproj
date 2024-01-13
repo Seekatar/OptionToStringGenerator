@@ -27,6 +27,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\FormatOptionsJson.cs" Link="TestFiles\FormatOptionsJson.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\PropertyNamespaceTest.cs" Link="PropertyTestFiles\PropertyNamespaceTest.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Include="..\integration\TestFiles\PropertyInterface.cs" Link="PropertyTestFiles\PropertyInterface.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -91,6 +103,12 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="..\integration\TestFiles\InheritanceOptions.cs" Link="TestFiles\InheritanceOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\NamespaceTest.cs" Link="TestFiles\NamespaceTest.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="..\integration\TestFiles\FormatOptions.cs" Link="TestFiles\FormatOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
