@@ -304,3 +304,4 @@ obj/
 launchSettings.json
 *.received.*
 **/coverage.cobertura.xml
+src/OptionToStringGenerator/CompatibilitySuppressions.xml

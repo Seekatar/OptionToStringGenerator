@@ -48,7 +48,8 @@ param (
     [string] $Version,
     [switch] $Prerelease,
     [string] $appName = "OptionToStringGenerator",
-    [string] $BuildLogFolder
+    [string] $BuildLogFolder,
+    [switch] $SuppressApiCompat
 )
 
 $currentTask = ""
@@ -97,7 +98,7 @@ foreach ($currentTask in $Tasks) {
         switch ($currentTask) {
             'build' {
                 executeSB -RelativeDir "src/$appName" {
-                    dotnet build
+                    dotnet build /warnaserror
                 }
             }
             'testUnit' {
@@ -156,6 +157,9 @@ foreach ($currentTask in $Tasks) {
                                 $params += 'prerelease'
                                 $params += '--include-source'
                                 $params += '--include-symbols'
+                            }
+                            if ($SuppressApiCompat) {
+                                $params += "/p:ApiCompatGenerateSuppressionFile=true" `
                             }
                             executeSB -RelativeDir "src/$_" -Name "$currentTask $_" {
                                 $logFile = Join-Path $BuildLogFolder Build.log

@@ -52,6 +52,13 @@
     <None Remove="bin\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
   <!-- The following libraries include the source generator interfaces and types we need -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
