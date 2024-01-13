@@ -12,7 +12,7 @@ public class FormatOptions
     [OutputFormatToString("0.00")]
     public double PlainDouble { get; set; } = 3.141;
 
-    [OutputFormatToString("U")]
+    [OutputFormatToString("R")]
     public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
 
     [OutputFormatToString("r")]

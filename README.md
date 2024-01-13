@@ -279,7 +279,7 @@ For types that take a format string to `ToString()` such as `DateTime`, numbers,
     public double PlainDouble { get; set; } = 3.141;
 
     # use the U format for DateTime
-    [OutputFormatToString("U")]
+    [OutputFormatToString("R")]
     public DateTime PlainDateTime { get; set; } = new DateTime(2020, 1, 2, 3, 4, 5);
 
     [OutputFormatProvider(typeof(FormatOptions), nameof(MyFormatter))]
@@ -298,7 +298,7 @@ Output:
 ```text
   PlainInt      : 423,433
   PlainDouble   : 3.14
-  PlainDateTime : Thursday, 02 January 2020 08:04:05
+  PlainDateTime : Thu, 02 Jan 2020 03:04:05 GMT
   Secrets       : "sec***,hus*****,pss***"
 ```
 

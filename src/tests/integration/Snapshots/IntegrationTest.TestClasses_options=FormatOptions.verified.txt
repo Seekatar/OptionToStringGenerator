@@ -1,7 +1,7 @@
 ﻿Test.FormatOptions:
   PlainInt      : 423,433
   PlainDouble   : 3.14
-  PlainDateTime : Thursday, 02 January 2020 08:04:05
+  PlainDateTime : Thu, 02 Jan 2020 03:04:05 GMT
   PlainDateOnly : Thu, 02 Jan 2020
   PlainTimeOnly : 12:23:02
   TimeSpan      : 02:03:04

@@ -9,7 +9,7 @@ namespace Seekatar.OptionToStringGenerator
             return $@"Test.FormatOptions:
   PlainInt      : {Format(o?.PlainInt,formatMethod:(o) => o?.ToString("N0"))}
   PlainDouble   : {Format(o?.PlainDouble,formatMethod:(o) => o?.ToString("0.00"))}
-  PlainDateTime : {Format(o?.PlainDateTime,formatMethod:(o) => o?.ToString("U"))}
+  PlainDateTime : {Format(o?.PlainDateTime,formatMethod:(o) => o?.ToString("R"))}
   PlainDateOnly : {Format(o?.PlainDateOnly,formatMethod:(o) => o?.ToString("r"))}
   PlainTimeOnly : {Format(o?.PlainTimeOnly,formatMethod:(o) => o?.ToString("hh:mm:ss"))}
   TimeSpan      : {Format(o?.TimeSpan,formatMethod:(o) => o?.ToString("hh\\:mm\\:ss"))}
