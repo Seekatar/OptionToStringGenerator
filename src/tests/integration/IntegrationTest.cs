@@ -34,6 +34,7 @@ public class IntegrationTest
         yield return new object[] { new FormatOptions() };
         yield return new object[] { new FormatOptionsJson() };
         yield return new object[] { new OuterOptions() };
+        yield return new object[] { new ProviderOptions() };
 
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
@@ -44,13 +45,13 @@ public class IntegrationTest
     [OptionsToString]
     public record recordTest { }
 
-    [Fact(Skip ="Only for debugging")]
+    [Fact]
     public Task OneOffForDebugging()
     {
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();
-        var o = new OuterOptions();
+        var o = new ProviderOptions();
         var s = o.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }

@@ -379,6 +379,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             {
                 visitedLoop = true;
                 ITypeSymbol? underlyingType = null;
+
+                // parameter must be nullable since base object may be null
+                // type of member may or may not be nullable
                 if (method.IsStatic
                     && method.ReturnType.OriginalDefinition.SpecialType == SpecialType.System_String
                     && !method.IsGenericMethod
@@ -389,13 +392,20 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     var b = IsAssignableTo(complexObjType, method.Parameters[0].Type);
                     System.Diagnostics.Debug.WriteLine($"a: {a}, b: {b}");
                     System.Diagnostics.Debug.WriteLine($"Tag: {tagCollectorType}, Method: {method.Parameters[0].Type}");
+
                     underlyingType = method.Parameters[0].Type;
-                    if (method.Parameters[0].Type is INamedTypeSymbol namedTypeSymbol
-                        && namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+
+                    if (complexObjType is INamedTypeSymbol complexNamedTypeSymbol
+                         && complexNamedTypeSymbol.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T)
                     {
-                        underlyingType = namedTypeSymbol.TypeArguments[0];
-                        // Now underlyingType represents the underlying type of the nullable type.
+                        if (method.Parameters[0].Type is INamedTypeSymbol namedTypeSymbol
+                            && namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+                        {
+                            underlyingType = namedTypeSymbol.TypeArguments[0];
+                            // Now underlyingType represents the underlying type of the nullable type.
+                        }
                     }
+
                     var c = SymbolEqualityComparer.Default.Equals(tagCollectorType, underlyingType);
                     var d = IsAssignableTo(complexObjType, underlyingType);
                     System.Diagnostics.Debug.WriteLine($"c: {c}, d {d}");

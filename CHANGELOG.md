@@ -8,7 +8,8 @@
 
 ### Fixed
 
-- Display name of types for OutputFormatProvider error messages weren't CSharpErrorMessageFormat so displayed with `global::` prefix
+- Incorrect display name of types for OutputFormatProvider error messages since it wasn't using CSharpErrorMessageFormat. It would display with `global::` prefix
+- Issues with OutputFormatProvider for nullable types
 
 ## [0.3.0] 2024-01-12
 
