@@ -329,9 +329,10 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                         {
                             var formatProvider = (attribute.ConstructorArguments[0].Value! as ITypeSymbol)!;
                             var formatMethod = (attribute.ConstructorArguments[1].Value! as string)!;
-                            ValidateTagProvider(formatProvider, formatMethod, member.Type, member.Type, member.Locations[0], compilation, context);   
-                            formatParameters += $",formatMethod:(o) => {formatProvider}.{formatMethod}(o)";
-                        }   
+                            var noQuote = (attribute.ConstructorArguments[2].Value! as bool?) ?? false;
+                            ValidateTagProvider(formatProvider, formatMethod, member.Type, member.Type, member.Locations[0], compilation, context);
+                            formatParameters += $",formatMethod:(o) => {formatProvider}.{formatMethod}(o),noQuote:{noQuote.ToString().ToLowerInvariant()}";
+                        }
                     }
                 }
 
@@ -377,6 +378,30 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             foreach (var method in methodSymbols)
             {
                 visitedLoop = true;
+                ITypeSymbol? underlyingType = null;
+                if (method.IsStatic
+                    && method.ReturnType.OriginalDefinition.SpecialType == SpecialType.System_String
+                    && !method.IsGenericMethod
+                    && IsParameterCountValid(method)
+                    && method.Parameters[0].RefKind == RefKind.None)
+                {
+                    var a = SymbolEqualityComparer.Default.Equals(tagCollectorType, method.Parameters[0].Type);
+                    var b = IsAssignableTo(complexObjType, method.Parameters[0].Type);
+                    System.Diagnostics.Debug.WriteLine($"a: {a}, b: {b}");
+                    System.Diagnostics.Debug.WriteLine($"Tag: {tagCollectorType}, Method: {method.Parameters[0].Type}");
+                    underlyingType = method.Parameters[0].Type;
+                    if (method.Parameters[0].Type is INamedTypeSymbol namedTypeSymbol
+                        && namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+                    {
+                        underlyingType = namedTypeSymbol.TypeArguments[0];
+                        // Now underlyingType represents the underlying type of the nullable type.
+                    }
+                    var c = SymbolEqualityComparer.Default.Equals(tagCollectorType, underlyingType);
+                    var d = IsAssignableTo(complexObjType, underlyingType);
+                    System.Diagnostics.Debug.WriteLine($"c: {c}, d {d}");
+                    System.Diagnostics.Debug.WriteLine($"Tag: {tagCollectorType}, Method: {underlyingType}");
+                }
+
 
 #pragma warning disable S1067 // Expressions should not be too complex
                 if (method.IsStatic
@@ -384,8 +409,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     && !method.IsGenericMethod
                     && IsParameterCountValid(method)
                     && method.Parameters[0].RefKind == RefKind.None
-                    && SymbolEqualityComparer.Default.Equals(tagCollectorType, method.Parameters[0].Type)
-                    && IsAssignableTo(complexObjType, method.Parameters[0].Type))
+                    && underlyingType is not null
+                    && SymbolEqualityComparer.Default.Equals(tagCollectorType, underlyingType)
+                    && IsAssignableTo(complexObjType, underlyingType))
 #pragma warning restore S1067 // Expressions should not be too complex
                 {
                     if (IsProviderMethodVisible(method))
@@ -393,9 +419,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                         return method;
                     }
 
-                    context.Report(SEEK010, attrLocation, 
-                        providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                        providerMethodName, complexObjType.Name);
+                    context.Report(SEEK010, attrLocation,
+                        providerType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                        providerMethodName, complexObjType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat));
                     return null;
                 }
             }
@@ -403,13 +429,13 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             if (visitedLoop)
             {
                 context.Report(SEEK010, attrLocation,
-                    providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                    providerMethodName, complexObjType.Name);
+                    providerType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat),
+                    providerMethodName, complexObjType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat));
                 return null;
             }
         }
 
-        context.Report(SEEK009, attrLocation, providerMethodName ?? "", providerType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+        context.Report(SEEK009, attrLocation, providerMethodName ?? "", providerType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat));
         return null;
 
         static bool IsParameterCountValid(IMethodSymbol method) => method.Parameters.Length == 1;

@@ -33,12 +33,28 @@ public class IntegrationTest
         yield return new object[] { new NamespaceTest() };
         yield return new object[] { new FormatOptions() };
         yield return new object[] { new FormatOptionsJson() };
+        yield return new object[] { new OuterOptions() };
 
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
         yield return new object[] { new PropertyNamespaceTestRecord() };
 
     }
+
+    [OptionsToString]
+    public record recordTest { }
+
+    [Fact(Skip ="Only for debugging")]
+    public Task OneOffForDebugging()
+    {
+        var ss = new recordTest();
+        // records don't work???
+        // ss.OptionsToString();
+        var o = new OuterOptions();
+        var s = o.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+    }
+
 
     [Theory]
     [MemberData(nameof(TestObjects))]

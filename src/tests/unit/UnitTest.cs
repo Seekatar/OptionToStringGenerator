@@ -46,7 +46,7 @@ public class UnitTests
     [Fact]
     public Task OneOffTestForDebugging()
     {
-        return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/InheritanceOptions.cs");
+        return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/NestedOptionsToString.cs");
     }
     [Fact]
     public Task OneOffTestForDebuggingProperty()
@@ -61,7 +61,7 @@ public class UnitTests
         var source = @"
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToStringAttribute]
+                        [OptionsToString]
                         public class MyAppOptions
                         {
                             public string Name { get; set; } = ""hi mom"";
@@ -92,7 +92,7 @@ public class UnitTests
         var source = @"
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToStringAttribute]
+                        [OptionsToString]
                         public class MyAppOptions
                         {
                             public string Name { get; set; } = ""hi mom"";
@@ -311,7 +311,7 @@ public class UnitTests
             o.Count().ShouldBe(1);
             o.ShouldSatisfyAllConditions(
                 () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[0].GetMessage().ShouldBe("Could not find the method 'badName' on type global::BadProvider"),
+                () => o[0].GetMessage().ShouldBe("Could not find the method 'badName' on type BadProvider"),
                 () => o[0].Id.ShouldBe(SEEK009.ToString()),
                 () => GetLocationText(o[0].Location).ShouldStartWith("Something")
             );
@@ -365,37 +365,37 @@ public class UnitTests
             o.Count().ShouldBe(7);
             o.ShouldSatisfyAllConditions(
                 () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[0].GetMessage().ShouldBe("The signature of 'global::BadProvider.ProviderNoParam' should be static string? ProviderNoParam(String)"),
+                () => o[0].GetMessage().ShouldBe("The signature of 'BadProvider.ProviderNoParam' should be static string? ProviderNoParam(string)"),
                 () => o[0].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[0].Location).ShouldStartWith("SomethingA"),
 
                 () => o[1].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[1].GetMessage().ShouldBe("The signature of 'global::BadProvider.ProviderBadReturn' should be static string? ProviderBadReturn(String)"),
+                () => o[1].GetMessage().ShouldBe("The signature of 'BadProvider.ProviderBadReturn' should be static string? ProviderBadReturn(string)"),
                 () => o[1].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[1].Location).ShouldStartWith("SomethingB"),
 
                 () => o[2].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[2].GetMessage().ShouldBe("The signature of 'global::BadProvider.PrivateGood' should be static string? PrivateGood(String)"),
+                () => o[2].GetMessage().ShouldBe("The signature of 'BadProvider.PrivateGood' should be static string? PrivateGood(string)"),
                 () => o[2].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[2].Location).ShouldStartWith("SomethingC"),
 
                 () => o[3].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[3].GetMessage().ShouldBe("The signature of 'global::BadProvider.NotStatic' should be static string? NotStatic(String)"),
+                () => o[3].GetMessage().ShouldBe("The signature of 'BadProvider.NotStatic' should be static string? NotStatic(string)"),
                 () => o[3].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[3].Location).ShouldStartWith("SomethingD"),
 
                 () => o[4].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[4].GetMessage().ShouldBe("The signature of 'global::BadProvider.NotStringReturn' should be static string? NotStringReturn(String)"),
+                () => o[4].GetMessage().ShouldBe("The signature of 'BadProvider.NotStringReturn' should be static string? NotStringReturn(string)"),
                 () => o[4].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[4].Location).ShouldStartWith("SomethingE"),
 
                 () => o[5].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[5].GetMessage().ShouldBe("The signature of 'global::BadProvider.RefParam' should be static string? RefParam(String)"),
+                () => o[5].GetMessage().ShouldBe("The signature of 'BadProvider.RefParam' should be static string? RefParam(string)"),
                 () => o[5].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[5].Location).ShouldStartWith("SomethingF"),
 
                 () => o[6].Severity.ShouldBe(DiagnosticSeverity.Error),
-                () => o[6].GetMessage().ShouldBe("The signature of 'global::BadProvider.NotStringParam' should be static string? NotStringParam(String)"),
+                () => o[6].GetMessage().ShouldBe("The signature of 'BadProvider.NotStringParam' should be static string? NotStringParam(string)"),
                 () => o[6].Id.ShouldBe(SEEK010.ToString()),
                 () => GetLocationText(o[6].Location).ShouldStartWith("SomethingG")
             );

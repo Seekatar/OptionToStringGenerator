@@ -13,7 +13,7 @@ namespace Seekatar.OptionToStringGenerator
   PlainDateOnly : {Format(o?.PlainDateOnly,formatMethod:(o) => o?.ToString("r"))}
   PlainTimeOnly : {Format(o?.PlainTimeOnly,formatMethod:(o) => o?.ToString("hh:mm:ss"))}
   TimeSpan      : {Format(o?.TimeSpan,formatMethod:(o) => o?.ToString("hh\\:mm\\:ss"))}
-  Secrets       : {Format(o?.Secrets,formatMethod:(o) => Test.FormatOptions.MyFormatter(o))}
+  Secrets       : {Format(o?.Secrets,formatMethod:(o) => Test.FormatOptions.MyFormatter(o),noQuote:false)}
 ";
         }
     }

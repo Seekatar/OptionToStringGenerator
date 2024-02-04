@@ -1,0 +1,24 @@
+﻿Test.OuterOptions:
+  Secret       : "****************** outer"
+  InnerOption  : 
+  Test.InnerOption:
+    StringProp : "0in***"
+    IntProp    : 42
+    DoubleProp : 3.14
+
+  IntProp      : 42
+  InnerOptions : 
+    Test.InnerOptions:
+      StringProp : "1in***"
+      IntProp    : 42
+      DoubleProp : 6.022E+23
+      Test.InnerOptions:
+      StringProp : "2in***"
+      IntProp    : 42
+      DoubleProp : 6.022E+23
+      Test.InnerOptions:
+      StringProp : "3in***"
+      IntProp    : 42
+      DoubleProp : 6.022E+23
+
+  DoubleProp   : 3.14
