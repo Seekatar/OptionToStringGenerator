@@ -1,1 +1,6 @@
-﻿
+﻿Test.ProviderOptions:
+  DoubleProp             : 3.142
+  DoublePropNullable     : 3.142
+  DoublePropNullableNull : null
+  StringPropNullable     : "ThZZZs ZZZs a long strZZZng"
+  StringPropNullableNull : ThZZZs ZZZs a longer strZZZng
