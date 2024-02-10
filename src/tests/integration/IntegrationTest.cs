@@ -45,9 +45,20 @@ public class IntegrationTest
     [OptionsToString]
     public record recordTest { }
 
+    internal static string OptionsToString(Test.ProviderOptions o)
+    {
+        return $@"Test.ProviderOptions:
+  DoubleProp             : {Seekatar.Mask.Format(o?.DoubleProp, formatMethod: (o) => Test.ProviderOptions.MyDoubleNoQuotes(o), noQuote: true)}
+  DoublePropNullable     : {Seekatar.Mask.Format(o?.DoublePropNullable, formatMethod: (o) => Test.ProviderOptions.MyDoubleNoQuotes(o), noQuote: true)}
+  DoublePropNullableNull : {Seekatar.Mask.Format(o?.DoublePropNullableNull, formatMethod: (o) => Test.ProviderOptions.MyDoubleNoQuotes(o), noQuote: true)}
+  StringPropNullable     : {Seekatar.Mask.Format(o?.StringPropNullable, formatMethod: (o) => Test.ProviderOptions.MyStringQuotes(o), noQuote: false)}
+  StringPropNullableNull : {Seekatar.Mask.Format(o?.StringPropNullableNull, formatMethod: (o) => Test.ProviderOptions.MyStringQuotes(o), noQuote: true)}
+";
+    }
     [Fact]
     public Task OneOffForDebugging()
     {
+
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();

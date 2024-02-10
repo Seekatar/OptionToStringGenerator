@@ -68,7 +68,6 @@ class PropertyPublicTestSorted
     [OutputPropertyRegex(nameof(PropertyPublicOptions.MaskUserAndPasswordIgnoreCase), Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
     [OutputPropertyRegex(nameof(PropertyPublicOptions.RegexNotMatched), Regex = "User Id=([^;]+).*Password=([^;]+)")]
     [OutputPropertyIgnore(nameof(PropertyPublicOptions.IgnoreMe))]
-    [MemberNotNull(nameof(PublicOptions))]
     [OutputPropertyFormat(Sort = true)]
     public PropertyPublicOptionsSorted? PublicOptionsSorted { get; set; } = new PropertyPublicOptionsSorted();
 }
