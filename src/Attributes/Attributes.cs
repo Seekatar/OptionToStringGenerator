@@ -114,21 +114,28 @@ public sealed class OutputFormatProviderAttribute : Attribute
     /// </summary>
     /// <param name="formatType"></param>
     /// <param name="method"></param>
-    public OutputFormatProviderAttribute(Type formatType, string method)
+    /// <param name="noQuote">Do not quote the result</param>
+    public OutputFormatProviderAttribute(Type formatType, string method, bool noQuote = false)
     {
         FormatType = formatType;
         FormatMethod = method;
+        NoQuote = noQuote;
     }
 
     /// <summary>
     /// Class that has the method to format the item
     /// </summary>
-    public Type FormatType { get; set; }
+    public Type FormatType { get; }
 
     /// <summary>
     /// Method to format the item, which must be static, return a string, and take a single parameter of the type of the property
     /// </summary>
-    public string FormatMethod { get; set; }
+    public string FormatMethod { get; }
+
+    /// <summary>
+    /// Do not quote the result
+    /// </summary>
+    public bool NoQuote { get; }
 }
 
 

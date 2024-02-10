@@ -27,10 +27,5 @@
     <ProjectReference Include="..\..\OptionToStringGenerator\OptionToStringGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="TestFiles\PropertyTestRecord.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
 
 </Project>

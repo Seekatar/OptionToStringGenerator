@@ -1,0 +1,34 @@
+﻿#nullable enable
+using static Seekatar.Mask;
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        internal static string OptionsToString(this Test.InnerOption o)
+        {
+            return $@"Test.InnerOption:
+    StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
+    IntProp    : {Format(o?.IntProp)}
+    DoubleProp : {Format(o?.DoubleProp)}
+";
+        }
+        internal static string OptionsToString(this Test.InnerOptions o)
+        {
+            return $@"Test.InnerOptions:
+      StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
+      IntProp    : {Format(o?.IntProp)}
+      DoubleProp : {Format(o?.DoubleProp)}
+";
+        }
+        internal static string OptionsToString(this Test.OuterOptions o)
+        {
+            return $@"Test.OuterOptions:
+  Secret       : {Format(o?.Secret,prefixLen:0,suffixLen:6)}
+  InnerOption  : {Format(o?.InnerOption,formatMethod:(o) => Test.OuterOptions.MyFormatterOne(o),noQuote:true)}
+  IntProp      : {Format(o?.IntProp)}
+  InnerOptions : {Format(o?.InnerOptions,formatMethod:(o) => Test.OuterOptions.MyFormatter(o),noQuote:true)}
+  DoubleProp   : {Format(o?.DoubleProp,formatMethod:(o) => Test.OuterOptions.MyFormatterNoQuotes(o),noQuote:true)}
+";
+        }
+    }
+}

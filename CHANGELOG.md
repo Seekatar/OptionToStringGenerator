@@ -1,5 +1,16 @@
 # Change Log
 
+## [0.3.1] 2024-02-10
+
+### Added
+
+- `NoQuote` option for OutputFormatProvider, similar to [DebuggerDisplayAttribute](https://learn.microsoft.com/en-us/visualstudio/debugger/using-the-debuggerdisplay-attribute?view=vs-2022)
+
+### Fixed
+
+- Incorrect display name of types for OutputFormatProvider error messages since it wasn't using CSharpErrorMessageFormat. It would display with `global::` prefix
+- Issues with OutputFormatProvider for nullable types
+
 ## [0.3.0] 2024-01-12
 
 ### Added

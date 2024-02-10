@@ -27,6 +27,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\ProviderOptions.cs" Link="TestFiles\ProviderOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="..\integration\TestFiles\NestedOptionsToString.cs" Link="TestFiles\NestedOptionsToString.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="..\integration\TestFiles\FormatOptionsJson.cs" Link="TestFiles\FormatOptionsJson.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

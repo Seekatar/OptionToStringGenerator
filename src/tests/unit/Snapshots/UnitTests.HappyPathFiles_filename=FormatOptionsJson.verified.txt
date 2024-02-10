@@ -8,7 +8,7 @@ namespace Seekatar.OptionToStringGenerator
         {
             return $@"{{
   ""Test.FormatOptionsJson"" : {{
-  ""Secrets""  : {Format(o?.Secrets,asJson:true,formatMethod:(o) => Test.FormatOptionsJson.MyFormatter(o))}
+  ""Secrets""  : {Format(o?.Secrets,asJson:true,formatMethod:(o) => Test.FormatOptionsJson.MyFormatter(o),noQuote:false)}
   }}
 }}";
         }

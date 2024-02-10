@@ -133,10 +133,10 @@ public static class Mask
         return asJson ? JsonSerializer.Serialize(s) : s;
     }
 
-    private static string CheckNullQuote( string ?s, bool asJson)
+    private static string CheckNullQuote( string ?s, bool noQuote)
     {
         if (s is null) return "null";
-        if (asJson) return s;
+        if (noQuote) return s;
         return "\"" + s + "\"";
     }
 
@@ -152,8 +152,9 @@ public static class Mask
     /// <param name="asJson">for lengthOnly, render as JSON</param>
     /// <param name="maskChar">masking character</param>
     /// <param name="formatMethod">method to call to format the object</param>
+    /// <param name="noQuote">Don't quote the result if string</param>
     /// <returns></returns>
-    public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null)
+    public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null, bool noQuote = false)
     {
         if (o is null) return "null";
 
@@ -167,12 +168,12 @@ public static class Mask
 
         if (prefixLen >= 0 || suffixLen >= 0)
         {
-            return CheckNullQuote(MaskPrefixSuffix(o, prefixLen, suffixLen, maskChar, asJson), asJson);
+            return CheckNullQuote(MaskPrefixSuffix(o, prefixLen, suffixLen, maskChar, asJson), asJson || noQuote);
         }
 
         if (regex is not null)
         {
-            return CheckNullQuote(MaskRegex(o, regex, ignoreCase, asJson), asJson);
+            return CheckNullQuote(MaskRegex(o, regex, ignoreCase, asJson), asJson || noQuote);
         }
 
         if (o is bool)
@@ -185,7 +186,7 @@ public static class Mask
                   || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can't use nameof
                   || o.GetType().Name == "TimeOnly"))
            )
-            return asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"";
+            return noQuote ? value : (asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"");
 
         if (o.GetType().IsPrimitive)
         {
