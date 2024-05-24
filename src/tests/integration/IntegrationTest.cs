@@ -62,7 +62,7 @@ public class IntegrationTest
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();
-        var o = new ProviderOptions();
+        var o = new Parent();
         var s = o.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }

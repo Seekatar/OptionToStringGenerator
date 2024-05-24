@@ -46,7 +46,7 @@ public class UnitTests
     [Fact]
     public Task OneOffTestForDebugging()
     {
-        return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/ProviderOptions.cs");
+        return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/TripleNestedOptions.cs");
     }
 
     [Fact]
