@@ -4,10 +4,10 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.ObjectMasking o)
+        internal static string OptionsToString(this Test.ObjectMasking o, string extraIndent = "")
         {
             return $@"Test.ObjectMasking:
-  AnObject : {Format(o?.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+{extraIndent}  AnObject : {Format(o?.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }
     }

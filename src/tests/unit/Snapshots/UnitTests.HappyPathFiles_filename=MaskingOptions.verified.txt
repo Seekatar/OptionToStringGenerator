@@ -4,19 +4,19 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.MaskingOptions o)
+        internal static string OptionsToString(this Test.MaskingOptions o, string extraIndent = "")
         {
             return $@"Test.MaskingOptions:
-  Masked             : {Format(o?.Masked,prefixLen:0,suffixLen:0)}
-  MaskedPrefix       : {Format(o?.MaskedPrefix,prefixLen:3,suffixLen:0)}
-  MaskedSuffix       : {Format(o?.MaskedSuffix,prefixLen:0,suffixLen:3)}
-  MaskedPrefixSuffix : {Format(o?.MaskedPrefixSuffix,prefixLen:3,suffixLen:3)}
-  MaskedPrefixTooBig : {Format(o?.MaskedPrefixTooBig,prefixLen:100,suffixLen:0)}
-  MaskedSuffixTooBig : {Format(o?.MaskedSuffixTooBig,prefixLen:0,suffixLen:100)}
-  MaskedBothTooBig   : {Format(o?.MaskedBothTooBig,prefixLen:100,suffixLen:100)}
-  Empty              : {Format(o?.Empty,prefixLen:10,suffixLen:10)}
-  Negative           : {Format(o?.Negative,prefixLen:-10,suffixLen:-10)}
-  Zero               : {Format(o?.Zero,prefixLen:0,suffixLen:0)}
+{extraIndent}  Masked             : {Format(o?.Masked,prefixLen:0,suffixLen:0)}
+{extraIndent}  MaskedPrefix       : {Format(o?.MaskedPrefix,prefixLen:3,suffixLen:0)}
+{extraIndent}  MaskedSuffix       : {Format(o?.MaskedSuffix,prefixLen:0,suffixLen:3)}
+{extraIndent}  MaskedPrefixSuffix : {Format(o?.MaskedPrefixSuffix,prefixLen:3,suffixLen:3)}
+{extraIndent}  MaskedPrefixTooBig : {Format(o?.MaskedPrefixTooBig,prefixLen:100,suffixLen:0)}
+{extraIndent}  MaskedSuffixTooBig : {Format(o?.MaskedSuffixTooBig,prefixLen:0,suffixLen:100)}
+{extraIndent}  MaskedBothTooBig   : {Format(o?.MaskedBothTooBig,prefixLen:100,suffixLen:100)}
+{extraIndent}  Empty              : {Format(o?.Empty,prefixLen:10,suffixLen:10)}
+{extraIndent}  Negative           : {Format(o?.Negative,prefixLen:-10,suffixLen:-10)}
+{extraIndent}  Zero               : {Format(o?.Zero,prefixLen:0,suffixLen:0)}
 ";
         }
     }

@@ -4,10 +4,10 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this BadTitleOptions o)
+        public static string OptionsToString(this BadTitleOptions o, string extraIndent = "")
         {
             return $@"HiThisdoesntexist:
-  Name : {Format(o?.Name)}
+{extraIndent}  Name : {Format(o?.Name)}
 ";
         }
     }

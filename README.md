@@ -324,6 +324,37 @@ public override string ToString()
 }
 ```
 
+### Nested Classes
+
+If you have an option class that contains another option class, do not set any attributes the property, and the `OptionsToString` will be called on the nested class, with extra indent of the parent class.
+
+```csharp
+[OptionsToString] // use default indent of two spaces
+class NestedOptions
+{
+    [OutputMask(PrefixLen = 3)]
+    public string NestedSecret { get; set; } = "ChildSecret";
+}
+
+[OptionsToString]
+class ParentOfNested
+{
+    [OutputMask(PrefixLen = 3)]
+    public string Secret { get; set; } = "ParentSecret";
+
+    public NestedOptions Nested { get; set; } = new();
+}
+```
+
+Will produce this:
+
+```text
+Test.ParentOfNested:
+  Secret : "Par*********"
+  Nested : Test.NestedOptions:
+    NestedSecret : "Chi********" 👈 This line has 2x parent indent
+```
+
 ## Attributes
 
 For a class use these attributes.

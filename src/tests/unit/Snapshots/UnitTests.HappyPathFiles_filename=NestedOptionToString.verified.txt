@@ -4,30 +4,30 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.InnerOption o)
+        internal static string OptionsToString(this Test.InnerOption o, string extraIndent = "")
         {
             return $@"Test.InnerOption:
-    StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
-    IntProp    : {Format(o?.IntProp)}
-    DoubleProp : {Format(o?.DoubleProp)}
+{extraIndent}    StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
+{extraIndent}    IntProp    : {Format(o?.IntProp)}
+{extraIndent}    DoubleProp : {Format(o?.DoubleProp)}
 ";
         }
-        internal static string OptionsToString(this Test.InnerOptions o)
+        internal static string OptionsToString(this Test.InnerOptions o, string extraIndent = "")
         {
             return $@"Test.InnerOptions:
-      StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
-      IntProp    : {Format(o?.IntProp)}
-      DoubleProp : {Format(o?.DoubleProp)}
+{extraIndent}      StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
+{extraIndent}      IntProp    : {Format(o?.IntProp)}
+{extraIndent}      DoubleProp : {Format(o?.DoubleProp)}
 ";
         }
-        internal static string OptionsToString(this Test.OuterOptions o)
+        internal static string OptionsToString(this Test.OuterOptions o, string extraIndent = "")
         {
             return $@"Test.OuterOptions:
-  Secret       : {Format(o?.Secret,prefixLen:0,suffixLen:6)}
-  InnerOption  : {Format(o?.InnerOption,formatMethod:(o) => Test.OuterOptions.MyFormatterOne(o),noQuote:true)}
-  IntProp      : {Format(o?.IntProp)}
-  InnerOptions : {Format(o?.InnerOptions,formatMethod:(o) => Test.OuterOptions.MyFormatter(o),noQuote:true)}
-  DoubleProp   : {Format(o?.DoubleProp,formatMethod:(o) => Test.OuterOptions.MyFormatterNoQuotes(o),noQuote:true)}
+{extraIndent}  Secret       : {Format(o?.Secret,prefixLen:0,suffixLen:6)}
+{extraIndent}  InnerOption  : {Format(o?.InnerOption,formatMethod:(o) => Test.OuterOptions.MyFormatterOne(o),noQuote:true)}
+{extraIndent}  IntProp      : {Format(o?.IntProp)}
+{extraIndent}  InnerOptions : {Format(o?.InnerOptions,formatMethod:(o) => Test.OuterOptions.MyFormatter(o),noQuote:true)}
+{extraIndent}  DoubleProp   : {Format(o?.DoubleProp,formatMethod:(o) => Test.OuterOptions.MyFormatterNoQuotes(o),noQuote:true)}
 ";
         }
     }

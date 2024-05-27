@@ -4,12 +4,12 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.PropertyTestClass o)
+        internal static string OptionsToString(this Test.PropertyTestClass o, string extraIndent = "")
         {
             return $@"Test.PropertyTestClass:
-  Number   : {Format(o?.Number)}
-  Name     : {Format(o?.Name,prefixLen:0,suffixLen:0)}
-  SerialNo : {Format(o?.SerialNo,prefixLen:0,suffixLen:3)}
+{extraIndent}  Number   : {Format(o?.Number)}
+{extraIndent}  Name     : {Format(o?.Name,prefixLen:0,suffixLen:0)}
+{extraIndent}  SerialNo : {Format(o?.SerialNo,prefixLen:0,suffixLen:3)}
 ";
         }
     }

@@ -1,0 +1,5 @@
+﻿Test.ParentOfNested:
+  Secret : "Par*********"
+  Nested : Test.NestedOptions:
+    NestedSecret : "Chi********"
+

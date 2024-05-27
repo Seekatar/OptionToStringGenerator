@@ -4,17 +4,17 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.PropertyChildOptions o)
+        internal static string OptionsToString(this Test.PropertyChildOptions o, string extraIndent = "")
         {
             return $@"Test.PropertyChildOptions:
-  ChildSecret   : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
-  ParentSecret  : {Format(o?.ParentSecret,prefixLen:0,suffixLen:0)}
+{extraIndent}  ChildSecret   : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+{extraIndent}  ParentSecret  : {Format(o?.ParentSecret,prefixLen:0,suffixLen:0)}
 ";
         }
-        internal static string OptionsToString(this Test.PropertyChildOnlyOptions o)
+        internal static string OptionsToString(this Test.PropertyChildOnlyOptions o, string extraIndent = "")
         {
             return $@"Test.PropertyChildOnlyOptions:
-  ChildSecret : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
+{extraIndent}  ChildSecret : {Format(o?.ChildSecret,prefixLen:2,suffixLen:0)}
 ";
         }
     }

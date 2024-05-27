@@ -1,6 +1,12 @@
 # Change Log
 
-## [0.3.1] 2024-02-10
+## [0.3.2] 2024-05-27
+
+### Added
+
+- Inheritance supported without a formatter.
+
+[0.3.1] 2024-02-10
 
 ### Added
 

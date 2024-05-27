@@ -4,12 +4,12 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.IOptionsSimple o)
+        internal static string OptionsToString(this Test.IOptionsSimple o, string extraIndent = "")
         {
             return $@"Test.IOptionsSimple:
-  Secret           : {Format(o?.Secret,prefixLen:0,suffixLen:0)}
-  RetryLimit       : {Format(o?.RetryLimit)}
-  ConnectionString : {Format(o?.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
+{extraIndent}  Secret           : {Format(o?.Secret,prefixLen:0,suffixLen:0)}
+{extraIndent}  RetryLimit       : {Format(o?.RetryLimit)}
+{extraIndent}  ConnectionString : {Format(o?.ConnectionString,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }
     }
