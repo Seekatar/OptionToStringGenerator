@@ -4,14 +4,14 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.ProviderOptions o)
+        internal static string OptionsToString(this Test.ProviderOptions o, string extraIndent = "")
         {
             return $@"Test.ProviderOptions:
-  DoubleProp             : {Format(o?.DoubleProp,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
-  DoublePropNullable     : {Format(o?.DoublePropNullable,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
-  DoublePropNullableNull : {Format(o?.DoublePropNullableNull,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
-  StringPropNullable     : {Format(o?.StringPropNullable,formatMethod:(o) => Test.ProviderOptions.MyStringQuotes(o),noQuote:false)}
-  StringPropNullableNull : {Format(o?.StringPropNullableNull,formatMethod:(o) => Test.ProviderOptions.MyStringQuotes(o),noQuote:true)}
+{extraIndent}  DoubleProp             : {Format(o?.DoubleProp,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
+{extraIndent}  DoublePropNullable     : {Format(o?.DoublePropNullable,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
+{extraIndent}  DoublePropNullableNull : {Format(o?.DoublePropNullableNull,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
+{extraIndent}  StringPropNullable     : {Format(o?.StringPropNullable,formatMethod:(o) => Test.ProviderOptions.MyStringQuotes(o),noQuote:false)}
+{extraIndent}  StringPropNullableNull : {Format(o?.StringPropNullableNull,formatMethod:(o) => Test.ProviderOptions.MyStringQuotes(o),noQuote:true)}
 ";
         }
     }

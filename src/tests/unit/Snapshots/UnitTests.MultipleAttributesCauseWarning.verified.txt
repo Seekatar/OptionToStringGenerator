@@ -4,11 +4,11 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this MyAppOptions o)
+        public static string OptionsToString(this MyAppOptions o, string extraIndent = "")
         {
             return $@"MyAppOptions:
-  Name     : {Format(o?.Name)}
-  Password : {Format(o?.Password,prefixLen:3,suffixLen:0)}
+{extraIndent}  Name     : {Format(o?.Name)}
+{extraIndent}  Password : {Format(o?.Password,prefixLen:3,suffixLen:0)}
 ";
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -229,7 +230,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             // method signature
             sb.Append($"        {classAccessibility} static string OptionsToString(this ").Append(className).Append(
                       $$""""
-                       o)
+                       o, string extraIndent = "")
                               {
                                   return $@"
                       """");
@@ -239,11 +240,11 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             if (!members.Any())
             {
                 context.Report(SEEK003, itemToGenerate.Location);
-                sb.AppendLine($"{indent}No properties to display");
+                sb.AppendLine($"{{extraIndent}}{indent}No properties to display");
             }
 
             // each property
-            string format = $"{indent}{{0,-{maxLen}}} {separator} {{{{Format(o?.";
+            string format = $"{{{{extraIndent}}}}{indent}{{0,-{maxLen}}} {separator} {{{{Format(o?.";
             int j = 0;
             foreach (var member in members)
             {
@@ -334,6 +335,21 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                             formatParameters += $",formatMethod:(o) => {formatProvider}.{formatMethod}(o),noQuote:{noQuote.ToString().ToLowerInvariant()}";
                         }
                     }
+                }
+
+                //if (attributeCount == 0
+                //    && member.Type.TypeKind == TypeKind.Class
+                //    && member.Type.GetAttributes().FirstOrDefault(o => o.AttributeClass?.Name.Equals($"Seektar.OptionToStringGenerator.{nameof(OptionsToStringAttribute)}") ?? false) != null)
+
+                    // nested Options?
+                if (attributeCount == 0
+                    && member.Type.TypeKind == TypeKind.Class
+                    && member.Type.SpecialType != SpecialType.System_String
+                    && member.Type.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                   && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
+                {
+                    Debug.WriteLine("Found OptionsToStringAttribute");
+                    formatParameters += $",formatMethod:(o) => o.OptionsToString(\"{indent}\"),noQuote:true";
                 }
 
                 if (!ignored)

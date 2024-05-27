@@ -35,6 +35,8 @@ public class IntegrationTest
         yield return new object[] { new FormatOptionsJson() };
         yield return new object[] { new OuterOptions() };
         yield return new object[] { new ProviderOptions() };
+        yield return new object[] { new Parent() };
+        yield return new object[] { new ParentOfNested() };
 
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
@@ -62,7 +64,7 @@ public class IntegrationTest
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();
-        var o = new ProviderOptions();
+        var o = new Parent();
         var s = o.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
@@ -72,10 +74,10 @@ public class IntegrationTest
     [MemberData(nameof(TestObjects))]
     public Task TestClasses(object options)
     {
-        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType() });
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType(), typeof(string) });
 
         Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
-        var s = method.Invoke(options, new object[] { options });
+        var s = method.Invoke(options, new object[] { options, "" });
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
     }
 

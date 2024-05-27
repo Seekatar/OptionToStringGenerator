@@ -4,10 +4,10 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.EscapeOptions o)
+        public static string OptionsToString(this Test.EscapeOptions o, string extraIndent = "")
         {
             return $@"Test.EscapeOptions:
-  Name : {Format(o?.Name,regex:".*{(\\w*)}.*")}
+{extraIndent}  Name : {Format(o?.Name,regex:".*{(\\w*)}.*")}
 ";
         }
     }

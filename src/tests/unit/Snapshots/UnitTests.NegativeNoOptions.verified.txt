@@ -4,10 +4,10 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.NegativeNoOptions o)
+        internal static string OptionsToString(this Test.NegativeNoOptions o, string extraIndent = "")
         {
             return $@"Test.NegativeNoOptions:
-  No properties to display
+{extraIndent}  No properties to display
 ";
         }
     }
