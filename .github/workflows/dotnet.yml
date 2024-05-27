@@ -34,30 +34,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 6.0.x
 
     - name: Create GitHub NuGet Source
       run: |
        dotnet nuget add source --username $env:GITHUB_REPOSITORY_OWNER --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/$($env:GITHUB_REPOSITORY_OWNER.ToLower())/index.json"
-
-    - name: Dump Environment
-      run: |
-       "::group::Pwsh Version"
-       $PSVersionTable
-       "::endgroup::"
-
-       if (Get-Command "dotnet") {
-           "::group::dotnet Version & SDKs"
-           dotnet --version
-           "::endgroup::"
-           "::group::dotnet SDKs"
-           dotnet --list-sdks
-           "::endgroup::"
-       }
-
-       "::group::Environment Variables"
-       Get-ChildItem env: | Select-Object key,value | Out-String -width 1000 | Sort-Object
-       "::endgroup::"
 
     - name: Copy README.md
       run: |
