@@ -337,11 +337,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     }
                 }
 
-                //if (attributeCount == 0
-                //    && member.Type.TypeKind == TypeKind.Class
-                //    && member.Type.GetAttributes().FirstOrDefault(o => o.AttributeClass?.Name.Equals($"Seektar.OptionToStringGenerator.{nameof(OptionsToStringAttribute)}") ?? false) != null)
-
-                    // nested Options?
+                // nested Options?
                 if (attributeCount == 0
                     && member.Type.TypeKind == TypeKind.Class
                     && member.Type.SpecialType != SpecialType.System_String
@@ -349,7 +345,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                                                    && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
                 {
                     Debug.WriteLine("Found OptionsToStringAttribute");
-                    formatParameters += $",formatMethod:(o) => o.OptionsToString(\"{indent}\"),noQuote:true";
+                    formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
                 }
 
                 if (!ignored)
