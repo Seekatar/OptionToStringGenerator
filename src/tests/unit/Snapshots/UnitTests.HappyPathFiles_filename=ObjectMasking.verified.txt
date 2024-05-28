@@ -4,7 +4,7 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.ObjectMasking o, string extraIndent = "")
+        internal static string OptionsToString(this Test.ObjectMasking? o, string extraIndent = "")
         {
             return $@"Test.ObjectMasking:
 {extraIndent}  AnObject : {Format(o?.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}

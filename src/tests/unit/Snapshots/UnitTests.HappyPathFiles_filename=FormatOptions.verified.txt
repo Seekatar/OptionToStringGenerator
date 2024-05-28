@@ -4,7 +4,7 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.FormatOptions o, string extraIndent = "")
+        public static string OptionsToString(this Test.FormatOptions? o, string extraIndent = "")
         {
             return $@"Test.FormatOptions:
 {extraIndent}  PlainInt      : {Format(o?.PlainInt,formatMethod:(o) => o?.ToString("N0"))}

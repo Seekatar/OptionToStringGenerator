@@ -230,7 +230,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             // method signature
             sb.Append($"        {classAccessibility} static string OptionsToString(this ").Append(className).Append(
                       $$""""
-                       o, string extraIndent = "")
+                      ? o, string extraIndent = "")
                               {
                                   return $@"
                       """");

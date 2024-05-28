@@ -4,7 +4,7 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.PublicOptions o, string extraIndent = "")
+        public static string OptionsToString(this Test.PublicOptions? o, string extraIndent = "")
         {
             return $@"Test.PublicOptions:
 {extraIndent}  PlainText                     : {Format(o?.PlainText)}
@@ -32,7 +32,7 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}  Color                         : {Format(o?.Color)}
 ";
         }
-        public static string OptionsToString(this Test.PublicOptionsSorted o, string extraIndent = "")
+        public static string OptionsToString(this Test.PublicOptionsSorted? o, string extraIndent = "")
         {
             return $@"Test.PublicOptionsSorted:
 {extraIndent}  AMaskedObject                 : {Format(o?.AMaskedObject,regex:"AClass\\:\\s+(.*)")}

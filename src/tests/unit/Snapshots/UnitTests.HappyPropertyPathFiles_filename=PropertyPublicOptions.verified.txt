@@ -4,7 +4,7 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.PropertyPublicOptions o, string extraIndent = "")
+        public static string OptionsToString(this Test.PropertyPublicOptions? o, string extraIndent = "")
         {
             return $@"Test.PropertyPublicOptions:
 {extraIndent}  PlainText                     : {Format(o.PlainText)}
