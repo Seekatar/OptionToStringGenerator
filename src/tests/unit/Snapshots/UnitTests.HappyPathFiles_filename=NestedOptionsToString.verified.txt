@@ -4,7 +4,7 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.InnerOption o, string extraIndent = "")
+        internal static string OptionsToString(this Test.InnerOption? o, string extraIndent = "")
         {
             return $@"Test.InnerOption:
 {extraIndent}    StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
@@ -12,7 +12,7 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}    DoubleProp : {Format(o?.DoubleProp)}
 ";
         }
-        internal static string OptionsToString(this Test.InnerOptions o, string extraIndent = "")
+        internal static string OptionsToString(this Test.InnerOptions? o, string extraIndent = "")
         {
             return $@"Test.InnerOptions:
 {extraIndent}      StringProp : {Format(o?.StringProp,prefixLen:3,suffixLen:0)}
@@ -20,7 +20,7 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}      DoubleProp : {Format(o?.DoubleProp)}
 ";
         }
-        internal static string OptionsToString(this Test.OuterOptions o, string extraIndent = "")
+        internal static string OptionsToString(this Test.OuterOptions? o, string extraIndent = "")
         {
             return $@"Test.OuterOptions:
 {extraIndent}  Secret       : {Format(o?.Secret,prefixLen:0,suffixLen:6)}

@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.3] 2024-05-28
+
+### Fixed
+
+- Nullable syntax update for more picky Rider analyzer
+
 ## [0.3.2] 2024-05-27
 
 ### Added
