@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.4] 2024-11-02
+
+### Fixed
+
+- Vulnerable NuGet packages
+
 ## [0.3.3] 2024-05-28
 
 ### Fixed
