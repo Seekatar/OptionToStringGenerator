@@ -105,6 +105,25 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     }
 
 
+    ITypeSymbol GetIListTypeArgument(ITypeSymbol typeSymbol)
+    {
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
+            namedTypeSymbol!.OriginalDefinition.ToDisplayString().EndsWith("IList<>"))
+        {
+            return namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
+        }
+
+        var ienumerableInterface = typeSymbol.AllInterfaces
+            .FirstOrDefault(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>");
+
+        if (ienumerableInterface != null && ienumerableInterface is INamedTypeSymbol namedTypeSymbol2)
+        {
+            return namedTypeSymbol2.TypeArguments.FirstOrDefault();
+        }
+
+        return null;
+    }
+
     protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, Compilation compilation, SourceProductionContext context)
     {
         var sb = new StringBuilder();
@@ -224,13 +243,14 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             }
             else
             {
-                titleText = $"{title}{nameSuffix}";
+                titleText = $"{title}{{titleSuffix}}{nameSuffix}";
             }
 
             // method signature
-            sb.Append($"        {classAccessibility} static string OptionsToString(this ").Append(className).Append(
-                      $$""""
-                      ? o, string extraIndent = "")
+            sb.Append($"        {classAccessibility} static string OptionsToString(this ")
+              .Append(className)
+              .Append($$""""
+                      ? o, string extraIndent = "", string titleSuffix = "")
                               {
                                   return $@"
                       """");
@@ -344,8 +364,21 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     && member.Type.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
                                                                    && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
                 {
-                    Debug.WriteLine("Found OptionsToStringAttribute");
+                    Debug.WriteLine("Found OptionsToStringAttribute nested");
                     formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
+                }
+
+                // List<>
+                var listType = GetIListTypeArgument(member.Type);
+                if (listType is not null 
+                    && attributeCount == 0
+                    && listType.TypeKind == TypeKind.Class
+                    && listType.SpecialType != SpecialType.System_String
+                    && listType.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                   && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
+                {
+                    Debug.WriteLine("Found OptionsToStringAttribute nested");
+                    formatParameters += ",formatMethod:(o) => { int i = 0; return string.Join(\" \", o.Select( oo => oo?.OptionsToString(\""+indent+"\", titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
                 }
 
                 if (!ignored)

@@ -67,7 +67,16 @@ public class IntegrationTest
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();
-        var o = new Parent();
+        var o = new ArrayOptions() {
+            Profiles = new List<ArrayOptions.ArrayItem> {
+                new() {
+                    ProfileName = "ProfileName1"
+                },
+                new() {
+                    ProfileName = "ProfileName2"
+                }
+            }
+        };
         var s = o.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
