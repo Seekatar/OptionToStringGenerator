@@ -1,3 +1,5 @@
+using Seekatar;
+
 namespace Test;
 
 using Seekatar.OptionToStringGenerator;
@@ -57,6 +59,7 @@ public class IntegrationTest
   StringPropNullableNull : {Seekatar.Mask.Format(o?.StringPropNullableNull, formatMethod: (o) => Test.ProviderOptions.MyStringQuotes(o), noQuote: true)}
 ";
     }
+
     [Fact]
     public Task OneOffForDebugging()
     {
@@ -67,6 +70,28 @@ public class IntegrationTest
         var o = new Parent();
         var s = o.OptionsToString();
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+    }
+
+    [Fact]
+    public Task ArrayTest()
+    {
+
+        var a = new ArrayOptions()
+        {
+            Profiles = new List<ArrayOptions.ArrayItem>
+            {
+                new()
+                {
+                    ProfileName = "ProfileName1"
+                },
+                new()
+                {
+                ProfileName = "ProfileName2"
+                }
+            }
+        };
+        var f = Mask.Format(a.Profiles);
+        return Task.CompletedTask;
     }
 
 

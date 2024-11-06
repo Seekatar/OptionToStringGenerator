@@ -93,6 +93,9 @@
 	  <Content Include="..\integration\TestFiles\NegativeBadOptions.cs" Link="TestFiles\NegativeBadOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Include="..\integration\TestFiles\ArrayOfOptions.cs" Link="TestFiles\ArrayOfOptions.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="..\integration\TestFiles\EscapeOptions.cs" Link="TestFiles\EscapeOptions.cs">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

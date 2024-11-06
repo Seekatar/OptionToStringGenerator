@@ -1,0 +1,36 @@
+﻿#nullable enable
+using static Seekatar.Mask;
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        public static string OptionsToString(this Test.ArrayOptions? o, string extraIndent = "")
+        {
+            return $@"Test.ArrayOptions:
+{extraIndent}  Profiles          : {Format(o?.Profiles)}
+{extraIndent}  Retries           : {Format(o?.Retries)}
+{extraIndent}  RetryDelaySeconds : {Format(o?.RetryDelaySeconds)}
+";
+        }
+        public static string OptionsToString(this Test.ArrayOptions.ArrayItem? o, string extraIndent = "")
+        {
+            return $@"Test.ArrayOptions.ArrayItem:
+{extraIndent}  ProfileName           : {Format(o?.ProfileName)}
+{extraIndent}  OpenApiKey            : {Format(o?.OpenApiKey,prefixLen:2,suffixLen:2)}
+{extraIndent}  DeploymentName        : {Format(o?.DeploymentName)}
+{extraIndent}  Endpoint              : {Format(o?.Endpoint)}
+{extraIndent}  OpenAiVersion         : {Format(o?.OpenAiVersion)}
+{extraIndent}  OpenAiEnableLogging   : {Format(o?.OpenAiEnableLogging)}
+{extraIndent}  SystemMessage         : {Format(o?.SystemMessage,regex:".{1,80}(.*)")}
+{extraIndent}  MaxTokens             : {Format(o?.MaxTokens)}
+{extraIndent}  Temperature           : {Format(o?.Temperature)}
+{extraIndent}  NucleusSamplingFactor : {Format(o?.NucleusSamplingFactor)}
+{extraIndent}  FrequencyPenalty      : {Format(o?.FrequencyPenalty)}
+{extraIndent}  PresencePenalty       : {Format(o?.PresencePenalty)}
+{extraIndent}  DumpJson              : {Format(o?.DumpJson)}
+{extraIndent}  JsonMode              : {Format(o?.JsonMode)}
+{extraIndent}  TimingCsvFile         : {Format(o?.TimingCsvFile)}
+";
+        }
+    }
+}

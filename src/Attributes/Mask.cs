@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Text.Json;
 
 namespace Seekatar;
 
@@ -157,6 +158,17 @@ public static class Mask
     public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null, bool noQuote = false)
     {
         if (o is null) return "null";
+
+        if (o is IEnumerable)
+        {
+            foreach (var item in (IEnumerable)o)
+            {
+                if (item is not null)
+                {
+                    return Format(item);
+                }
+            }
+        }
 
         string value;
         if (formatMethod is not null)
