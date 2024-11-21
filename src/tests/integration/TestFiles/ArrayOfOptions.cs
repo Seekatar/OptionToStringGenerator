@@ -18,23 +18,18 @@ public class ArrayOptions
         public string DeploymentName { get; set; } = "";
         [Required]
         public string Endpoint { get; set; } = "";
-        public string? OpenAiVersion { get; set; }
-        public bool OpenAiEnableLogging { get; set; }
         [Required]
-        [OutputRegex(Regex = ".{1,80}(.*)")]
-        public string SystemMessage { get; set; } = "";
         public int MaxTokens { get; set; } = 800;
-        public float Temperature { get; set; } = 0.5f;
-        public float NucleusSamplingFactor { get; set; } = 0.95f;
-        public float FrequencyPenalty { get; set; } = 0;
-        public float PresencePenalty { get; set; } = 0;
-        public bool DumpJson { get; set; }
-        public bool JsonMode { get; set; }
-        public string? TimingCsvFile { get; set; }
     }
 
+
     [Required]
-    public IList<ArrayItem> Profiles { get; set; } = new List<ArrayItem>();
+    [OutputEnumerable]
+    public List<ArrayItem> Profiles { get; set; } = new List<ArrayItem>();
+
+    [Required]
+    [OutputEnumerable]
+    public ArrayItem[] ProfilesArray { get; set; } = Array.Empty<ArrayItem>();
 
     public int Retries { get; set; } = 3;
     public double RetryDelaySeconds { get; set; } = 3;

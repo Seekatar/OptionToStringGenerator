@@ -105,6 +105,7 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     }
 
 
+    // AllIntefaces work for strings, array, but not IList or List???
     ITypeSymbol GetIListTypeArgument(ITypeSymbol typeSymbol)
     {
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
@@ -368,17 +369,11 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
                 }
 
-                // List<>
-                var listType = GetIListTypeArgument(member.Type);
-                if (listType is not null 
-                    && attributeCount == 0
-                    && listType.TypeKind == TypeKind.Class
-                    && listType.SpecialType != SpecialType.System_String
-                    && listType.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
-                                                                   && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
+                if (IsEnumerableOfOptionToString(member))
                 {
+                    var doubleIndent = indent + indent;
                     Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += ",formatMethod:(o) => { int i = 0; return string.Join(\" \", o.Select( oo => oo?.OptionsToString(\""+indent+"\", titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
+                    formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\""+doubleIndent+"Count: {o.Count()}\" + Environment.NewLine + \""+doubleIndent+"\"+ string.Join(\""+doubleIndent+"\", o.Select( oo => oo?.OptionsToString(\""+doubleIndent+"\", titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
                 }
 
                 if (!ignored)
@@ -399,6 +394,33 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
 ");
 
         return sb.ToString();
+    }
+
+    private bool IsEnumerableOfOptionToString(IPropertySymbol member)
+    {
+        if (member.Type is IArrayTypeSymbol arrayTypeSymbol 
+            && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
+            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
+        {
+            var listType = arrayTypeSymbol!.ElementType;
+            return listType is not null
+                && listType.TypeKind == TypeKind.Class
+                && listType.SpecialType != SpecialType.System_String
+                && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
+        }
+        else if (member.Type is INamedTypeSymbol namedTypeSymbol 
+                 && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
+                                                            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
+        {
+            var listType = namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
+            return listType is not null
+                && listType.TypeKind == TypeKind.Class
+                && listType.SpecialType != SpecialType.System_String
+                && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
+        }
+        return false;
     }
 
     // adapted from https://github.com/dotnet/extensions/blob/d58517b455f1182b555e5cc4ad48cb2936f0221b/src/Generators/Microsoft.Gen.Logging/Parsing/Parser.TagProvider.cs

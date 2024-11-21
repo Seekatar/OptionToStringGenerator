@@ -4,32 +4,23 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.ArrayOptions? o, string extraIndent = "")
+        public static string OptionsToString(this Test.ArrayOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.ArrayOptions:
-{extraIndent}  Profiles          : {Format(o?.Profiles)}
+            return $@"Test.ArrayOptions{titleSuffix}:
+{extraIndent}  Profiles          : {Format(o?.Profiles,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"    Count: {o.Count()}" + Environment.NewLine + "    "+ string.Join("    ", o.Select( oo => oo?.OptionsToString("    ", titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
+{extraIndent}  ProfilesArray     : {Format(o?.ProfilesArray,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"    Count: {o.Count()}" + Environment.NewLine + "    "+ string.Join("    ", o.Select( oo => oo?.OptionsToString("    ", titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
 {extraIndent}  Retries           : {Format(o?.Retries)}
 {extraIndent}  RetryDelaySeconds : {Format(o?.RetryDelaySeconds)}
 ";
         }
-        public static string OptionsToString(this Test.ArrayOptions.ArrayItem? o, string extraIndent = "")
+        public static string OptionsToString(this Test.ArrayOptions.ArrayItem? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.ArrayOptions.ArrayItem:
-{extraIndent}  ProfileName           : {Format(o?.ProfileName)}
-{extraIndent}  OpenApiKey            : {Format(o?.OpenApiKey,prefixLen:2,suffixLen:2)}
-{extraIndent}  DeploymentName        : {Format(o?.DeploymentName)}
-{extraIndent}  Endpoint              : {Format(o?.Endpoint)}
-{extraIndent}  OpenAiVersion         : {Format(o?.OpenAiVersion)}
-{extraIndent}  OpenAiEnableLogging   : {Format(o?.OpenAiEnableLogging)}
-{extraIndent}  SystemMessage         : {Format(o?.SystemMessage,regex:".{1,80}(.*)")}
-{extraIndent}  MaxTokens             : {Format(o?.MaxTokens)}
-{extraIndent}  Temperature           : {Format(o?.Temperature)}
-{extraIndent}  NucleusSamplingFactor : {Format(o?.NucleusSamplingFactor)}
-{extraIndent}  FrequencyPenalty      : {Format(o?.FrequencyPenalty)}
-{extraIndent}  PresencePenalty       : {Format(o?.PresencePenalty)}
-{extraIndent}  DumpJson              : {Format(o?.DumpJson)}
-{extraIndent}  JsonMode              : {Format(o?.JsonMode)}
-{extraIndent}  TimingCsvFile         : {Format(o?.TimingCsvFile)}
+            return $@"Test.ArrayOptions.ArrayItem{titleSuffix}:
+{extraIndent}  ProfileName    : {Format(o?.ProfileName)}
+{extraIndent}  OpenApiKey     : {Format(o?.OpenApiKey,prefixLen:2,suffixLen:2)}
+{extraIndent}  DeploymentName : {Format(o?.DeploymentName)}
+{extraIndent}  Endpoint       : {Format(o?.Endpoint)}
+{extraIndent}  MaxTokens      : {Format(o?.MaxTokens)}
 ";
         }
     }

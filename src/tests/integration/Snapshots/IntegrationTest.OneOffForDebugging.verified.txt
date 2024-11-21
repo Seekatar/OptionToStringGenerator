@@ -1,11 +1,33 @@
-﻿Test.Parent:
-  Secret      : "*********parent"
-  Grandchild  : Test.GrandchildA:
-    GrandchildSecret : "*********grandchild"
-    ChildSecret      : "******** child"
+﻿Test.ArrayOptions:
+  Profiles          : 
+    Count: 2
+    Test.ArrayOptions.ArrayItem[0]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+    Test.ArrayOptions.ArrayItem[1]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
 
-  GrandchildB : Test.GrandchildB:
-    GrandchildSecret : "*********grandchild"
-    ChildSecret      : "******** child"
+  ProfilesArray     : 
+    Count: 2
+    Test.ArrayOptions.ArrayItem[0]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+    Test.ArrayOptions.ArrayItem[1]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
 
-  GrandchildC : null
+  Retries           : 3
+  RetryDelaySeconds : 3

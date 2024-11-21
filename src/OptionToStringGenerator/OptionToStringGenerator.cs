@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
+using System.Diagnostics;
 namespace Seekatar.OptionToStringGenerator;
 
 public class ClassToGenerate : ItemToGenerate
@@ -76,6 +77,29 @@ public class OptionToStringGenerator : OptionGeneratorBase<ClassDeclarationSynta
                 // something went wrong, bail out
                 continue;
             }
+
+            // <TEST>
+            //var propertyDeclarations = classDeclarationSyntax
+            //    .DescendantNodes()
+            //    .OfType<PropertyDeclarationSyntax>();
+
+            //foreach (var propertyDeclaration in propertyDeclarations)
+            //{
+            //    // Get the symbol for the property
+            //    var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration) as IPropertySymbol;
+            //    // Get the type of the property
+            //    var propertyType = propertySymbol.Type;
+            //    // Get all interfaces implemented by the property's type
+            //    var allInterfaces = propertyType.AllInterfaces;
+            //    if (allInterfaces.Any())
+            //    {
+            //        Debug.WriteLine($"got it for {propertySymbol.Name}");
+            //    } else
+            //    {
+            //        Debug.WriteLine($"nope for {propertySymbol.Name}"); // Get Here for IList<> other properties that aren't generic work.'
+            //    }
+            //}
+            // </TEST>
 
             var namedArguments = classSymbol.GetAttributes()
                     .Where(a => a.AttributeClass?.ContainingNamespace?.ToString() == "Seekatar.OptionToStringGenerator").FirstOrDefault()?

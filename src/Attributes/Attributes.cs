@@ -138,6 +138,19 @@ public sealed class OutputFormatProviderAttribute : Attribute
     public bool NoQuote { get; }
 }
 
+/// <summary>
+/// Marker attribute for an enumerable of OptionToString objects
+/// </summary>
+public sealed class OutputEnumerableAttribute : Attribute
+{
+}
+
+/// <summary>
+/// Marker attribute for an Dictionary&lt;T,OptionToString&gt;objects
+/// </summary>
+public sealed class OutputDictionaryAttribute : Attribute
+{
+}
 
 public interface IPropertyAttribute
 {
