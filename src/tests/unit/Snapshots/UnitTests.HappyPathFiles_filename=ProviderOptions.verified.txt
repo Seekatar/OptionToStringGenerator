@@ -4,9 +4,9 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.ProviderOptions? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.ProviderOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.ProviderOptions:
+            return $@"Test.ProviderOptions{titleSuffix}:
 {extraIndent}  DoubleProp             : {Format(o?.DoubleProp,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
 {extraIndent}  DoublePropNullable     : {Format(o?.DoublePropNullable,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}
 {extraIndent}  DoublePropNullableNull : {Format(o?.DoublePropNullableNull,formatMethod:(o) => Test.ProviderOptions.MyDoubleNoQuotes(o),noQuote:true)}

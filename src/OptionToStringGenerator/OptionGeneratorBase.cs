@@ -367,15 +367,19 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                 {
                     Debug.WriteLine("Found OptionsToStringAttribute nested");
                     formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
-                }
-
-                if (IsEnumerableOfOptionToString(member))
+                } 
+                else if (IsEnumerableOfOptionToString(member))
                 {
                     var doubleIndent = indent + indent;
                     Debug.WriteLine("Found OptionsToStringAttribute nested");
                     formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\""+doubleIndent+"Count: {o.Count()}\" + Environment.NewLine + \""+doubleIndent+"\"+ string.Join(\""+doubleIndent+"\", o.Select( oo => oo?.OptionsToString(\""+doubleIndent+"\", titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
                 }
-
+                else if (IsDictionaryOfOptionToString(member))
+                {
+                    var doubleIndent = indent + indent;
+                    Debug.WriteLine("Found OptionsToStringAttribute nested");
+                    formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + \"" + doubleIndent + "\"+ string.Join(\"" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\", titleSuffix:$\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
+                }
                 if (!ignored)
                     sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }
@@ -418,6 +422,23 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                 && listType.TypeKind == TypeKind.Class
                 && listType.SpecialType != SpecialType.System_String
                 && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
+        }
+        return false;
+    }
+
+    private bool IsDictionaryOfOptionToString(IPropertySymbol member)
+    {   
+        if (member.Type is INamedTypeSymbol namedTypeSymbol
+                 && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputDictionaryAttribute))
+                                                            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"))
+                 && namedTypeSymbol!.TypeArguments!.Length == 2)
+        {
+            var dictionaryType = namedTypeSymbol!.TypeArguments[1];
+            return dictionaryType is not null
+                && dictionaryType.TypeKind == TypeKind.Class
+                && dictionaryType.SpecialType != SpecialType.System_String
+                && dictionaryType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
                                                                 && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
         }
         return false;

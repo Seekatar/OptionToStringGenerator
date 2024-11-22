@@ -142,6 +142,28 @@ public static class Mask
     }
 
     /// <summary>
+    /// If the type something that usually needs quoting
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <returns>true if quotes should be added</returns>
+    public static bool IsQuotable<T>(T? o) => o is not null 
+            && (o is string or char
+            || o.GetType().IsClass
+            || (o is Guid or DateTime or TimeSpan
+            || o.GetType().IsEnum
+            || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can't use nameof
+            || o.GetType().Name == "TimeOnly"));
+
+    /// <summary>
+    /// Quote the object if it is a quotable type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <returns></returns>
+    public static string Quote<T>(T? o) => o is null ? "null" : IsQuotable(o) ? "\"" + o + "\"" : o?.ToString() ?? "";
+
+    /// <summary>
     /// Helper for formatting objects for output, called by generated code
     /// </summary>
     /// <param name="o">object to do ToString() on</param>
@@ -193,19 +215,11 @@ public static class Mask
         if (o is bool)
             return (value).ToLowerInvariant();
 
-        if (o is string or char
-            || o.GetType().IsClass
-            || (asJson && (o is Guid or DateTime or TimeSpan
-                  || o.GetType().IsEnum
-                  || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can't use nameof
-                  || o.GetType().Name == "TimeOnly"))
-           )
+        if (IsQuotable(o))
             return noQuote ? value : (asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"");
 
         if (o.GetType().IsPrimitive)
-        {
             return value;
-        }
 
         return asJson ? JsonSerializer.Serialize(value) : value;
     }

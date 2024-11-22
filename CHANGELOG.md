@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.5] 2024-11-22
+
+### Added
+
+- OutputEnumerableAttribute to allow formatting of enumerable of objects with OutputFormatToStringAttribute
+- OutputDictionaryAttribute to allow formatting of dictionaries of values that are objects with OutputFormatToStringAttribute
+
 ## [0.3.4] 2024-11-02
 
 ### Fixed

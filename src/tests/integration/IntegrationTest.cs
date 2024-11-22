@@ -85,6 +85,23 @@ public class IntegrationTest
     }
 
     [Fact]
+    public Task OneOffForDebuggingDictionary()
+    {
+        var o = new DictionaryOptions() {
+            StringToProfiles = new Dictionary<string, DictionaryOptions.DictionaryItem> {
+                { "A", new() { ProfileName = "ProfileNameA" } },
+                { "B", new() { ProfileName = "ProfileNameB" } }
+            },
+            IntToProfiles = new Dictionary<int, DictionaryOptions.DictionaryItem> {
+                { 1, new() { ProfileName = "ProfileName1" } },
+                { 2, new() { ProfileName = "ProfileName2" } }
+            }
+        };
+        var s = o.OptionsToString();
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+    }
+
+    [Fact]
     public Task ArrayTest()
     {
 
