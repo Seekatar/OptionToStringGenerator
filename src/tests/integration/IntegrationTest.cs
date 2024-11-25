@@ -39,7 +39,11 @@ public class IntegrationTest
         yield return new object[] { new ProviderOptions() };
         yield return new object[] { new Parent() };
         yield return new object[] { new ParentOfNested() };
+        yield return new object[] { new ArrayOptions() };
+        yield return new object[] { new DictionaryOptions() };
+        yield return new object[] { new MessagingOptions() };
 
+        // property tests
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
         yield return new object[] { new PropertyNamespaceTestRecord() };
@@ -68,61 +72,27 @@ public class IntegrationTest
         // records don't work???
         // ss.OptionsToString();
 
-        var items = new List<ArrayOptions.ArrayItem> {
-                new() {
-                    ProfileName = "ProfileName1"
-                },
-                new() {
-                    ProfileName = "ProfileName2"
-                }
-            };
-        var o = new ArrayOptions() {
-            Profiles = items,
-            ProfilesArray = items.ToArray()
-        };
-        var s = o.OptionsToString();
+
+        var o = new ArrayOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
     [Fact]
-    public Task OneOffForDebuggingDictionary()
+    public Task ArrayOfOptionsWithExtraIndent()
     {
-        var o = new DictionaryOptions() {
-            StringToProfiles = new Dictionary<string, DictionaryOptions.DictionaryItem> {
-                { "A", new() { ProfileName = "ProfileNameA" } },
-                { "B", new() { ProfileName = "ProfileNameB" } }
-            },
-            IntToProfiles = new Dictionary<int, DictionaryOptions.DictionaryItem> {
-                { 1, new() { ProfileName = "ProfileName1" } },
-                { 2, new() { ProfileName = "ProfileName2" } }
-            }
-        };
-        var s = o.OptionsToString();
+        var o = new ArrayOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
     [Fact]
-    public Task ArrayTest()
+    public Task DictionaryOfOptionsWithExtraIndent()
     {
-
-        var a = new ArrayOptions()
-        {
-            Profiles = new List<ArrayOptions.ArrayItem>
-            {
-                new()
-                {
-                    ProfileName = "ProfileName1"
-                },
-                new()
-                {
-                ProfileName = "ProfileName2"
-                }
-            }
-        };
-        var f = Mask.Format(a.Profiles);
-        return Task.CompletedTask;
+        var o = new DictionaryOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
-
 
     [Theory]
     [MemberData(nameof(TestObjects))]
@@ -202,7 +172,6 @@ public class IntegrationTest
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-
     [Fact]
     public Task NestedTest()
     {
@@ -210,57 +179,19 @@ public class IntegrationTest
         return Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-    [Fact]
-    public async Task MessagingTest()
-    {
-        var options = new Test.MessagingOptions() {
-            Producers = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
-                { "TestProducer1", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("1234567889"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } },
-                { "TestProducer2", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers2",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("2222222222222222222222"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } }
-            },
-            Consumers = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
-                { "TestConsumer", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("consumer_1test123"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } }
-            }
-        };
-        var s = options.ToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
-    }
+    //[Fact]
+    //public async Task MessagingTest()
+    //{
+    //    var options = new MessagingOptions();
+    //    var s = options.ToString();
+    //    await Verify(s).UseDirectory(SnapshotDirectory);
+    //}
 
     [Fact]
     public async Task MessagingClientTest()
     {
 
-        var options = new Test.MessagingOptions.ClientOptions() {
+        var options = new MessagingOptions.ClientOptions() {
             CA = new string('*', 10),
             CertBootstrapServers = "certBootstrapServers",
             CertPem = new string('*', 11),

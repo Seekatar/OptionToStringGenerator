@@ -12,24 +12,22 @@ public class DictionaryOptions
         [Required]
         public string ProfileName { get; set; } = "";
         [Required]
-        [OutputMask(PrefixLen = 2, SuffixLen = 2)]
-        public string OpenApiKey { get; set; } = "";
-        [Required]
         public string DeploymentName { get; set; } = "";
-        [Required]
-        public string Endpoint { get; set; } = "";
-        [Required]
-        public int MaxTokens { get; set; } = 800;
     }
 
+    [Required]
+    [OutputDictionary]
+    public Dictionary<string, DictionaryItem> StringToProfiles { get; set; } = new()  {
+                { "A", new () { ProfileName = "ProfileNameA" } },
+                { "B", new() { ProfileName = "ProfileNameB" } }
+            };
 
     [Required]
     [OutputDictionary]
-    public Dictionary<string, DictionaryItem> StringToProfiles { get; set; } = new();
-
-    [Required]
-    [OutputDictionary]
-    public Dictionary<int, DictionaryItem> IntToProfiles { get; set; } = new();
+    public Dictionary<int, DictionaryItem> IntToProfiles { get; set; } = new() {
+                { 1, new() { ProfileName = "ProfileName1" } },
+                { 2, new() { ProfileName = "ProfileName2" } }
+            };
 
     public int Retries { get; set; } = 3;
     public double RetryDelaySeconds { get; set; } = 3;

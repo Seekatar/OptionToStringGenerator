@@ -7,8 +7,8 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.ArrayOptions? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.ArrayOptions{titleSuffix}:
-{extraIndent}  Profiles          : {Format(o?.Profiles,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"    Count: {o.Count()}" + Environment.NewLine + "    "+ string.Join("    ", o.Select( oo => oo?.OptionsToString("    ", titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
-{extraIndent}  ProfilesArray     : {Format(o?.ProfilesArray,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"    Count: {o.Count()}" + Environment.NewLine + "    "+ string.Join("    ", o.Select( oo => oo?.OptionsToString("    ", titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
+{extraIndent}  Profiles          : {Format(o?.Profiles,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
+{extraIndent}  ProfilesArray     : {Format(o?.ProfilesArray,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
 {extraIndent}  Retries           : {Format(o?.Retries)}
 {extraIndent}  RetryDelaySeconds : {Format(o?.RetryDelaySeconds)}
 ";
@@ -17,7 +17,6 @@ namespace Seekatar.OptionToStringGenerator
         {
             return $@"Test.ArrayOptions.ArrayItem{titleSuffix}:
 {extraIndent}  ProfileName    : {Format(o?.ProfileName)}
-{extraIndent}  OpenApiKey     : {Format(o?.OpenApiKey,prefixLen:2,suffixLen:2)}
 {extraIndent}  DeploymentName : {Format(o?.DeploymentName)}
 {extraIndent}  Endpoint       : {Format(o?.Endpoint)}
 {extraIndent}  MaxTokens      : {Format(o?.MaxTokens)}

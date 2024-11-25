@@ -4,9 +4,9 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.PropertyPublicOptions? o, string extraIndent = "")
+        public static string OptionsToString(this Test.PropertyPublicOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.PropertyPublicOptions:
+            return $@"Test.PropertyPublicOptions{titleSuffix}:
 {extraIndent}  PlainText                     : {Format(o?.PlainText)}
 {extraIndent}  Why                           : {Format(o?.Why)}
 {extraIndent}  PlainInt                      : {Format(o?.PlainInt)}
@@ -32,9 +32,9 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}  Color                         : {Format(o?.Color)}
 ";
         }
-        public static string OptionsToString(this Test.PropertyPublicOptionsSorted? o, string extraIndent = "")
+        public static string OptionsToString(this Test.PropertyPublicOptionsSorted? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.PropertyPublicOptionsSorted:
+            return $@"Test.PropertyPublicOptionsSorted{titleSuffix}:
 {extraIndent}  AMaskedObject                 : {Format(o?.AMaskedObject,regex:"AClass\\:\\s+(.*)")}
 {extraIndent}  AnObject                      : {Format(o?.AnObject)}
 {extraIndent}  Color                         : {Format(o?.Color)}

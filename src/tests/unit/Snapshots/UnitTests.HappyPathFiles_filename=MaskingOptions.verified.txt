@@ -4,9 +4,9 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.MaskingOptions? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.MaskingOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.MaskingOptions:
+            return $@"Test.MaskingOptions{titleSuffix}:
 {extraIndent}  Masked             : {Format(o?.Masked,prefixLen:0,suffixLen:0)}
 {extraIndent}  MaskedPrefix       : {Format(o?.MaskedPrefix,prefixLen:3,suffixLen:0)}
 {extraIndent}  MaskedSuffix       : {Format(o?.MaskedSuffix,prefixLen:0,suffixLen:3)}

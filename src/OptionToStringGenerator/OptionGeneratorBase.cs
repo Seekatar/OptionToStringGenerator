@@ -372,13 +372,13 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                 {
                     var doubleIndent = indent + indent;
                     Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\""+doubleIndent+"Count: {o.Count()}\" + Environment.NewLine + \""+doubleIndent+"\"+ string.Join(\""+doubleIndent+"\", o.Select( oo => oo?.OptionsToString(\""+doubleIndent+"\", titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
+                    formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent+ "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent+ "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo?.OptionsToString(\""+doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
                 }
                 else if (IsDictionaryOfOptionToString(member))
                 {
                     var doubleIndent = indent + indent;
                     Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + \"" + doubleIndent + "\"+ string.Join(\"" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\", titleSuffix:$\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
+                    formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
                 }
                 if (!ignored)
                     sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");

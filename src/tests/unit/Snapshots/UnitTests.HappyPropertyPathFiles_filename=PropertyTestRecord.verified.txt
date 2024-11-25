@@ -4,9 +4,9 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.PropertyTestRecord? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.PropertyTestRecord? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Custom Title {o?.Name}:
+            return $@"Custom Title {o?.Name}{titleSuffix}:
 {extraIndent}>   Number   - {Format(o?.Number)}
 {extraIndent}>   Name     - {Format(o?.Name,prefixLen:0,suffixLen:0)}
 {extraIndent}>   SerialNo - {Format(o?.SerialNo,prefixLen:0,suffixLen:3)}

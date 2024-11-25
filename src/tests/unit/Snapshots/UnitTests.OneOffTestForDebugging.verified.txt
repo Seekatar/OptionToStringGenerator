@@ -4,45 +4,45 @@ namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.GrandchildA? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.GrandchildA? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.GrandchildA:
+            return $@"Test.GrandchildA{titleSuffix}:
 {extraIndent}  GrandchildSecret : {Format(o?.GrandchildSecret,prefixLen:0,suffixLen:10)}
 {extraIndent}  ChildSecret      : {Format(o?.ChildSecret,prefixLen:0,suffixLen:6)}
 ";
         }
-        internal static string OptionsToString(this Test.GrandchildB? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.GrandchildB? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.GrandchildB:
+            return $@"Test.GrandchildB{titleSuffix}:
 {extraIndent}  GrandchildSecret : {Format(o?.GrandchildSecret,prefixLen:0,suffixLen:10)}
 {extraIndent}  ChildSecret      : {Format(o?.ChildSecret,prefixLen:0,suffixLen:6)}
 ";
         }
-        internal static string OptionsToString(this Test.GrandchildC? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.GrandchildC? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.GrandchildC:
+            return $@"Test.GrandchildC{titleSuffix}:
 {extraIndent}  GrandchildSecret : {Format(o?.GrandchildSecret,prefixLen:0,suffixLen:10)}
 {extraIndent}  ChildSecret      : {Format(o?.ChildSecret,prefixLen:0,suffixLen:6)}
 ";
         }
-        internal static string OptionsToString(this Test.Parent? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.Parent? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.Parent:
+            return $@"Test.Parent{titleSuffix}:
 {extraIndent}  Secret      : {Format(o?.Secret,prefixLen:0,suffixLen:6)}
 {extraIndent}  Grandchild  : {Format(o?.Grandchild,formatMethod:(o) => o?.OptionsToString("  ") ?? "null",noQuote:true)}
 {extraIndent}  GrandchildB : {Format(o?.GrandchildB,formatMethod:(o) => o?.OptionsToString("  ") ?? "null",noQuote:true)}
 {extraIndent}  GrandchildC : {Format(o?.GrandchildC,formatMethod:(o) => o?.OptionsToString("  ") ?? "null",noQuote:true)}
 ";
         }
-        internal static string OptionsToString(this Test.NestedOptions? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.NestedOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.NestedOptions:
+            return $@"Test.NestedOptions{titleSuffix}:
 {extraIndent}  NestedSecret : {Format(o?.NestedSecret,prefixLen:3,suffixLen:0)}
 ";
         }
-        internal static string OptionsToString(this Test.ParentOfNested? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.ParentOfNested? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.ParentOfNested:
+            return $@"Test.ParentOfNested{titleSuffix}:
 {extraIndent}  Secret : {Format(o?.Secret,prefixLen:3,suffixLen:0)}
 {extraIndent}  Nested : {Format(o?.Nested,formatMethod:(o) => o?.OptionsToString("  ") ?? "null",noQuote:true)}
 ";

@@ -12,9 +12,6 @@ public class ArrayOptions
         [Required]
         public string ProfileName { get; set; } = "";
         [Required]
-        [OutputMask(PrefixLen = 2, SuffixLen = 2)]
-        public string OpenApiKey { get; set; } = "";
-        [Required]
         public string DeploymentName { get; set; } = "";
         [Required]
         public string Endpoint { get; set; } = "";
@@ -22,14 +19,33 @@ public class ArrayOptions
         public int MaxTokens { get; set; } = 800;
     }
 
+    [Required]
+    [OutputEnumerable]
+    public List<ArrayItem> Profiles { get; set; } = new List<ArrayItem>
+            {
+                new()
+                {
+                    ProfileName = "ProfileName1"
+                },
+                new()
+                {
+                    ProfileName = "ProfileName2"
+                }
+            };
 
     [Required]
     [OutputEnumerable]
-    public List<ArrayItem> Profiles { get; set; } = new List<ArrayItem>();
-
-    [Required]
-    [OutputEnumerable]
-    public ArrayItem[] ProfilesArray { get; set; } = Array.Empty<ArrayItem>();
+    public ArrayItem[] ProfilesArray { get; set; } = new ArrayItem[]
+            {
+                new()
+                {
+                    ProfileName = "ProfileName1"
+                },
+                new()
+                {
+                    ProfileName = "ProfileName2"
+                }
+            };
 
     public int Retries { get; set; } = 3;
     public double RetryDelaySeconds { get; set; } = 3;

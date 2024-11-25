@@ -18,8 +18,47 @@ public class MessagingOptions
     }
 
     public const string SectionName = "Messaging";
-    public IDictionary<string, ClientOptions>? Consumers { get; set; }
-    public IDictionary<string, ClientOptions>? Producers { get; set; }
+
+    [OutputDictionary]
+    public IDictionary<string, ClientOptions>? Consumers { get; set; } = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
+                { "TestConsumer", new Test.MessagingOptions.ClientOptions() {
+                    CA = new string('*', 10),
+                    CertBootstrapServers = "certBootstrapServers",
+                    CertPem = new string('*', 11),
+                    EncryptionKey = new string("consumer_1test123"),
+                    Prefix = "Event Hub",
+                    Name = "TestName",
+                    SaslBootstrapServers = "saslBootstrapServers",
+                    SaslMechanism = "saslMechanism",
+                    SaslPassword = new string('*', 12),
+                } }
+            };
+
+    [OutputDictionary]
+    public IDictionary<string, ClientOptions>? Producers { get; set; } = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
+                { "TestProducer1", new Test.MessagingOptions.ClientOptions() {
+                    CA = new string('*', 10),
+                    CertBootstrapServers = "certBootstrapServers",
+                    CertPem = new string('*', 11),
+                    EncryptionKey = new string("1234567889"),
+                    Prefix = "Event Hub",
+                    Name = "TestName",
+                    SaslBootstrapServers = "saslBootstrapServers",
+                    SaslMechanism = "saslMechanism",
+                    SaslPassword = new string('*', 12),
+                } },
+                { "TestProducer2", new Test.MessagingOptions.ClientOptions() {
+                    CA = new string('*', 10),
+                    CertBootstrapServers = "certBootstrapServers2",
+                    CertPem = new string('*', 11),
+                    EncryptionKey = new string("2222222222222222222222"),
+                    Prefix = "Event Hub",
+                    Name = "TestName",
+                    SaslBootstrapServers = "saslBootstrapServers",
+                    SaslMechanism = "saslMechanism",
+                    SaslPassword = new string('*', 12),
+                } }
+            };
 
     public const string DefaultConfigName = "Default";
 
