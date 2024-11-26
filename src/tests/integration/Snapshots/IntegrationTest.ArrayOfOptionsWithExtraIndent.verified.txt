@@ -1,5 +1,5 @@
 ﻿Test.ArrayOptions:
-    Profiles          : 
+    ProfilesList      : 
       Count: 2
       Test.ArrayOptions.ArrayItem[0]:
         ProfileName    : "ProfileName1"

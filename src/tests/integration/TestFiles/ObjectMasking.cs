@@ -1,6 +1,11 @@
 ﻿namespace Test;
 using Seekatar.OptionToStringGenerator;
 
+class OmClass
+{
+    public string Name { get; set; } = string.Empty;
+}
+
 [OptionsToString]
 class ObjectMasking
 {
@@ -10,5 +15,5 @@ class ObjectMasking
     }
 
     [OutputRegex(Regex = "User Id=([^;]+).*Password=([^;]+)", IgnoreCase = true)]
-    public PublicOptions.AClass AnObject { get; }
+    public OmClass AnObject { get; }
 }

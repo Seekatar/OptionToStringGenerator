@@ -358,28 +358,33 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     }
                 }
 
-                // nested Options?
-                if (attributeCount == 0
-                    && member.Type.TypeKind == TypeKind.Class
-                    && member.Type.SpecialType != SpecialType.System_String
-                    && member.Type.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
-                                                                   && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
+                if (formatParameters.Contains("formatMethod:"))
+                    Debug.WriteLine($"Already has formatMethods: on {member.Name}");
+                else
                 {
-                    Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
-                } 
-                else if (IsEnumerableOfOptionToString(member))
-                {
-                    var doubleIndent = indent + indent;
-                    Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent+ "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent+ "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo?.OptionsToString(\""+doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
+                    if (attributeCount == 0 // nested options
+                        && member.Type.TypeKind == TypeKind.Class
+                        && member.Type.SpecialType != SpecialType.System_String
+                        && member.Type.GetAttributes().FirstOrDefault(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                       && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
+                    {
+                        Debug.WriteLine("Found OptionsToStringAttribute nested");
+                        formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
+                    }
+                    else if (IsEnumerableOfOptionToString(member))
+                    {
+                        var doubleIndent = indent + indent;
+                        Debug.WriteLine("Found OptionsToStringAttribute nested");
+                        formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo?.OptionsToString(\"" + doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
+                    }
+                    else if (IsDictionaryOfOptionToString(member))
+                    {
+                        var doubleIndent = indent + indent;
+                        Debug.WriteLine("Found OptionsToStringAttribute nested");
+                        formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
+                    }
                 }
-                else if (IsDictionaryOfOptionToString(member))
-                {
-                    var doubleIndent = indent + indent;
-                    Debug.WriteLine("Found OptionsToStringAttribute nested");
-                    formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
-                }
+
                 if (!ignored)
                     sb.AppendFormat(format, $"{nameQuote}{member.Name}{nameQuote}").Append(member.Name).Append(formatParameters).AppendLine($")}}{trailingComma}");
             }
@@ -403,8 +408,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     private bool IsEnumerableOfOptionToString(IPropertySymbol member)
     {
         if (member.Type is IArrayTypeSymbol arrayTypeSymbol 
-            && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
-            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
+            //&& member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
+            //&& string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
+            && member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>"))        
         {
             var listType = arrayTypeSymbol!.ElementType;
             return listType is not null
@@ -413,11 +419,21 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                 && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
                                                                 && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
         }
-        else if (member.Type is INamedTypeSymbol namedTypeSymbol 
+        else if (member.Type is INamedTypeSymbol namedTypeSymbol
+            && member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>"))
+        {
+            var listType = namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
+            return listType is not null
+                && listType.TypeKind == TypeKind.Class
+                && listType.SpecialType != SpecialType.System_String
+                && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
+                                                                && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
+        }
+        else if (member.Type is INamedTypeSymbol namedTypeSymbol2 
                  && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
                                                             && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
         {
-            var listType = namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
+            var listType = namedTypeSymbol2!.TypeArguments!.FirstOrDefault()!;
             return listType is not null
                 && listType.TypeKind == TypeKind.Class
                 && listType.SpecialType != SpecialType.System_String

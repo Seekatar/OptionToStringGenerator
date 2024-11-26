@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Seekatar.OptionToStringGenerator;
+using System.Collections.Generic;
 
 namespace Test;
 
@@ -20,8 +21,7 @@ public class ArrayOptions
     }
 
     [Required]
-    [OutputEnumerable]
-    public List<ArrayItem> Profiles { get; set; } = new List<ArrayItem>
+    public List<ArrayItem> ProfilesList { get; set; } = new List<ArrayItem>
             {
                 new()
                 {
@@ -34,7 +34,6 @@ public class ArrayOptions
             };
 
     [Required]
-    [OutputEnumerable]
     public ArrayItem[] ProfilesArray { get; set; } = new ArrayItem[]
             {
                 new()

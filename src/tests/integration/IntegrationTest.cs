@@ -42,6 +42,7 @@ public class IntegrationTest
         yield return new object[] { new ArrayOptions() };
         yield return new object[] { new DictionaryOptions() };
         yield return new object[] { new MessagingOptions() };
+        yield return new object[] { new NestedOptions() };
 
         // property tests
         yield return new object[] { new PropertyTestClass() };

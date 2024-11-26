@@ -1,4 +1,5 @@
-﻿namespace Test;
+﻿#nullable enable
+namespace Test;
 
 using Seekatar.OptionToStringGenerator;
 using System.ComponentModel.DataAnnotations;
@@ -34,7 +35,7 @@ class GrandchildC : Child
     public string GrandchildSecret { get; set; } = "From the grandchild";
     public static string FormatterC(GrandchildC? grandchild)
     {
-        return grandchild?.OptionsToString() ?? string.Empty;
+        return "grandchild?.OptionsToString() ?? string.Empty"; // compiler can't find this yet
     }
 
 }

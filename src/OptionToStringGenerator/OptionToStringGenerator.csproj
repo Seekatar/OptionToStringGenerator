@@ -22,7 +22,7 @@
     <Description>
     This library contains an incremental source generator for formatting configuration objects.
     </Description>
-    <Copyright>Copyright (c) 2023</Copyright>
+    <Copyright>Copyright (c) 2024</Copyright>
     <PackageProjectUrl>https://github.com/Seekatar/OptionToStringGenerator</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>.net;core;configuration;tools</PackageTags>

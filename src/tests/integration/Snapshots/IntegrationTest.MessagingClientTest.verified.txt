@@ -3,7 +3,7 @@
   Name                 : "TestName"
   EncryptionKey        : "asd***********************"
   GroupId              : "testhost"
-  StartingOffset       : "Earliest"
+  StartingOffset       : Earliest
   MaxPollIntervalMs    : null
   CertBootstrapServers : "certBootstrapServers"
   CA                   : Len = 10
