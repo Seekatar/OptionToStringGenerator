@@ -44,6 +44,7 @@ public class ArrayOptions
                     ProfileName = "ProfileName2"
                 }
             };
+    public IList<ArrayItem>? NullProfilesIList { get; set; }
 
     [Required]
     public ArrayItem[] ProfilesArray { get; set; } = new ArrayItem[]
@@ -57,6 +58,7 @@ public class ArrayOptions
                     ProfileName = "ProfileName2"
                 }
             };
+    public ArrayItem[]? NullProfilesArray { get; set; }
 
     public int Retries { get; set; } = 3;
     public double RetryDelaySeconds { get; set; } = 3;

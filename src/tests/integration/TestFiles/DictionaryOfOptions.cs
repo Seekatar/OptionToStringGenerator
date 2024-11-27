@@ -27,6 +27,8 @@ public class DictionaryOptions
                 { "B", new() { ProfileName = "ProfileNameB" } }
             };
 
+    public IDictionary<string, DictionaryItem>? NullStringToProfilesInterface { get; set; }
+
     [Required]
     public Dictionary<int, DictionaryItem> IntToProfiles { get; set; } = new() {
                 { 1, new() { ProfileName = "ProfileName1" } },

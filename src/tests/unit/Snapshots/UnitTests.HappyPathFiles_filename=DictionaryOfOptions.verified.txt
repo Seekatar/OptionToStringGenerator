@@ -7,11 +7,12 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.DictionaryOptions? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.DictionaryOptions{titleSuffix}:
-{extraIndent}  StringToProfiles          : {Format(o?.StringToProfiles,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
-{extraIndent}  StringToProfilesInterface : {Format(o?.StringToProfilesInterface,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
-{extraIndent}  IntToProfiles             : {Format(o?.IntToProfiles,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
-{extraIndent}  Retries                   : {Format(o?.Retries)}
-{extraIndent}  RetryDelaySeconds         : {Format(o?.RetryDelaySeconds)}
+{extraIndent}  StringToProfiles              : {Format(o?.StringToProfiles,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  StringToProfilesInterface     : {Format(o?.StringToProfilesInterface,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  NullStringToProfilesInterface : {Format(o?.NullStringToProfilesInterface,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  IntToProfiles                 : {Format(o?.IntToProfiles,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  Retries                       : {Format(o?.Retries)}
+{extraIndent}  RetryDelaySeconds             : {Format(o?.RetryDelaySeconds)}
 ";
         }
         public static string OptionsToString(this Test.DictionaryOptions.DictionaryItem? o, string extraIndent = "", string titleSuffix = "")

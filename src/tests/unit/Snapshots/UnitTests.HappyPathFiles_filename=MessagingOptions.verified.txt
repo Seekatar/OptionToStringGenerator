@@ -7,8 +7,8 @@ namespace Seekatar.OptionToStringGenerator
         public static string OptionsToString(this Test.MessagingOptions? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.MessagingOptions{titleSuffix}:
-{extraIndent}  Consumers : {Format(o?.Consumers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
-{extraIndent}  Producers : {Format(o?.Producers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
+{extraIndent}  Consumers : {Format(o?.Consumers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  Producers : {Format(o?.Producers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
 ";
         }
         public static string OptionsToString(this Test.MessagingOptions.ClientOptions? o, string extraIndent = "", string titleSuffix = "")

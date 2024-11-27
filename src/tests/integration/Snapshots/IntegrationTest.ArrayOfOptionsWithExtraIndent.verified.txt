@@ -25,6 +25,7 @@
         Endpoint       : ""
         MaxTokens      : 800
 
+    NullProfilesIList : null
     ProfilesArray     : 
       Count: 2
       Test.ArrayOptions.ArrayItem[0]:
@@ -38,5 +39,6 @@
         Endpoint       : ""
         MaxTokens      : 800
 
+    NullProfilesArray : null
     Retries           : 3
     RetryDelaySeconds : 3
