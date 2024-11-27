@@ -12,6 +12,19 @@
         Endpoint       : ""
         MaxTokens      : 800
 
+    ProfilesIList     : 
+      Count: 2
+      Test.ArrayOptions.ArrayItem[0]:
+        ProfileName    : "ProfileName1"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+      Test.ArrayOptions.ArrayItem[1]:
+        ProfileName    : "ProfileName2"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+
     ProfilesArray     : 
       Count: 2
       Test.ArrayOptions.ArrayItem[0]:

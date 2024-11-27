@@ -1,11 +1,15 @@
 # Change Log
 
-## [0.3.5] 2024-11-22
+## [0.3.5] 2024-11-27
 
 ### Added
 
-- OutputEnumerableAttribute to allow formatting of enumerable of objects with OutputFormatToStringAttribute
-- OutputDictionaryAttribute to allow formatting of dictionaries of values that are objects with OutputFormatToStringAttribute
+- Now detect `IEnumerable` of `OptionsToString` objects and formats them without custom formatters
+- Now detect `IDictionary` of `<T,OptionsToString>` formats them without custom formatters
+
+### Fixed
+
+- Unit tests weren't checking for compiler errors.
 
 ## [0.3.4] 2024-11-02
 

@@ -35,7 +35,7 @@ class GrandchildC : Child
     public string GrandchildSecret { get; set; } = "From the grandchild";
     public static string FormatterC(GrandchildC? grandchild)
     {
-        return "grandchild?.OptionsToString() ?? string.Empty"; // compiler can't find this yet
+        return grandchild?.OptionsToString() ?? string.Empty;
     }
 
 }

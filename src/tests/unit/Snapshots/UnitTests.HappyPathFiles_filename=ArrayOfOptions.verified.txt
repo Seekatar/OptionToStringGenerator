@@ -8,6 +8,7 @@ namespace Seekatar.OptionToStringGenerator
         {
             return $@"Test.ArrayOptions{titleSuffix}:
 {extraIndent}  ProfilesList      : {Format(o?.ProfilesList,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
+{extraIndent}  ProfilesIList     : {Format(o?.ProfilesIList,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
 {extraIndent}  ProfilesArray     : {Format(o?.ProfilesArray,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
 {extraIndent}  Retries           : {Format(o?.Retries)}
 {extraIndent}  RetryDelaySeconds : {Format(o?.RetryDelaySeconds)}

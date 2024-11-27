@@ -17,14 +17,17 @@ public class DictionaryOptions
     }
 
     [Required]
-    [OutputDictionary]
     public Dictionary<string, DictionaryItem> StringToProfiles { get; set; } = new()  {
                 { "A", new () { ProfileName = "ProfileNameA" } },
                 { "B", new() { ProfileName = "ProfileNameB" } }
             };
 
+    public IDictionary<string, DictionaryItem> StringToProfilesInterface { get; set; } = new Dictionary<string, DictionaryItem>()  {
+                { "A", new () { ProfileName = "ProfileNameA" } },
+                { "B", new() { ProfileName = "ProfileNameB" } }
+            };
+
     [Required]
-    [OutputDictionary]
     public Dictionary<int, DictionaryItem> IntToProfiles { get; set; } = new() {
                 { 1, new() { ProfileName = "ProfileName1" } },
                 { 2, new() { ProfileName = "ProfileName2" } }

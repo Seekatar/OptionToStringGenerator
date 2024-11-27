@@ -9,13 +9,13 @@ namespace Seekatar.OptionToStringGenerator;
 [AttributeUsage(AttributeTargets.Class)]
 public class OptionsToStringAttribute : Attribute
 {
+    public bool ExcludeParents { get; set; } = false;
+    public bool Json { get; set; } = false;
+    public bool Sort { get; set; } = false;
     public const string NullLiteral = "null";
     public string Indent { get; set; } = "  ";
     public string Separator { get; set; } = ":";
-    public bool Json { get; set; } = false;
     public string? Title { get; set; }
-    public bool ExcludeParents { get; set; } = false;
-    public bool Sort { get; set; } = false;
 
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
@@ -136,20 +136,6 @@ public sealed class OutputFormatProviderAttribute : Attribute
     /// Do not quote the result
     /// </summary>
     public bool NoQuote { get; }
-}
-
-/// <summary>
-/// Marker attribute for an enumerable of OptionToString objects
-/// </summary>
-public sealed class OutputEnumerableAttribute : Attribute
-{
-}
-
-/// <summary>
-/// Marker attribute for an Dictionary&lt;T,OptionToString&gt;objects
-/// </summary>
-public sealed class OutputDictionaryAttribute : Attribute
-{
 }
 
 public interface IPropertyAttribute

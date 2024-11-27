@@ -1,5 +1,5 @@
 ﻿Test.DictionaryOptions:
-    StringToProfiles  : 
+    StringToProfiles          : 
       Count: 2
       Test.DictionaryOptions.DictionaryItem["A"]:
         ProfileName    : "ProfileNameA"
@@ -8,7 +8,16 @@
         ProfileName    : "ProfileNameB"
         DeploymentName : ""
 
-    IntToProfiles     : 
+    StringToProfilesInterface : 
+      Count: 2
+      Test.DictionaryOptions.DictionaryItem["A"]:
+        ProfileName    : "ProfileNameA"
+        DeploymentName : ""
+      Test.DictionaryOptions.DictionaryItem["B"]:
+        ProfileName    : "ProfileNameB"
+        DeploymentName : ""
+
+    IntToProfiles             : 
       Count: 2
       Test.DictionaryOptions.DictionaryItem[1]:
         ProfileName    : "ProfileName1"
@@ -17,5 +26,5 @@
         ProfileName    : "ProfileName2"
         DeploymentName : ""
 
-    Retries           : 3
-    RetryDelaySeconds : 3
+    Retries                   : 3
+    RetryDelaySeconds         : 3

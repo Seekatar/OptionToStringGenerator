@@ -33,6 +33,18 @@ public class ArrayOptions
                 }
             };
 
+    public IList<ArrayItem> ProfilesIList { get; set; } = new List<ArrayItem>
+            {
+                new()
+                {
+                    ProfileName = "ProfileName1"
+                },
+                new()
+                {
+                    ProfileName = "ProfileName2"
+                }
+            };
+
     [Required]
     public ArrayItem[] ProfilesArray { get; set; } = new ArrayItem[]
             {

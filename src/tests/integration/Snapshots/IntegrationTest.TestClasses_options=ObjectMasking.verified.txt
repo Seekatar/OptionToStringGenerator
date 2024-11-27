@@ -1,2 +1,2 @@
 ﻿Test.ObjectMasking:
-  AnObject : "AClass: Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"
+  AnObject : "OmClass: Server=myServerAddress;Database=myDataBase;user Id=***;Password=***;"

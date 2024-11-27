@@ -31,7 +31,7 @@ public static class TestHelper
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         var diagnostics = compilation.GetDiagnostics();
-        if (diagnostics.Any(o => o.Severity == DiagnosticSeverity.Error))
+        if (diagnostics.Any(o => o.Severity == DiagnosticSeverity.Error && !o.GetMessage().Contains("does not contain a definition for 'OptionsToString'")))
         {
             if (throwCompilerErrors)
                 throw new Exception(diagnostics.Select(o => o.ToString()).Aggregate((a, b) => a + "\n" + b));

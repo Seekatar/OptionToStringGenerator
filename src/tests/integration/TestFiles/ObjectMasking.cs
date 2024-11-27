@@ -4,6 +4,7 @@ using Seekatar.OptionToStringGenerator;
 class OmClass
 {
     public string Name { get; set; } = string.Empty;
+    public override string ToString() => $"{nameof(OmClass)}: {Name}";
 }
 
 [OptionsToString]

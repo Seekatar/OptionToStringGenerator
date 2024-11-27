@@ -1,14 +1,18 @@
-﻿using Seekatar.OptionToStringGenerator;
+﻿#nullable enable
+using Seekatar.OptionToStringGenerator;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Reflection;
+using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Test;
 
 
 // ReSharper disable CollectionNeverUpdated.Global
 [DebuggerDisplay(nameof(MessagingOptions))]
+[OptionsToString]
 public class MessagingOptions
 {
     public enum StartingOffset
@@ -19,7 +23,6 @@ public class MessagingOptions
 
     public const string SectionName = "Messaging";
 
-    [OutputDictionary]
     public IDictionary<string, ClientOptions>? Consumers { get; set; } = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
                 { "TestConsumer", new Test.MessagingOptions.ClientOptions() {
                     CA = new string('*', 10),
@@ -34,7 +37,6 @@ public class MessagingOptions
                 } }
             };
 
-    [OutputDictionary]
     public IDictionary<string, ClientOptions>? Producers { get; set; } = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
                 { "TestProducer1", new Test.MessagingOptions.ClientOptions() {
                     CA = new string('*', 10),

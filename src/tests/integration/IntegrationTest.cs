@@ -42,7 +42,7 @@ public class IntegrationTest
         yield return new object[] { new ArrayOptions() };
         yield return new object[] { new DictionaryOptions() };
         yield return new object[] { new MessagingOptions() };
-        yield return new object[] { new NestedOptions() };
+        yield return new object[] { new ArrayAndDictionaryOfOptions() };
 
         // property tests
         yield return new object[] { new PropertyTestClass() };
@@ -73,8 +73,7 @@ public class IntegrationTest
         // records don't work???
         // ss.OptionsToString();
 
-
-        var o = new ArrayOptions();
+        var o = new MessagingOptions();
         var s = o.OptionsToString(extraIndent:"  ");
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
@@ -99,10 +98,10 @@ public class IntegrationTest
     [MemberData(nameof(TestObjects))]
     public Task TestClasses(object options)
     {
-        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType(), typeof(string) });
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType(), typeof(string), typeof(string) });
 
-        Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
-        var s = method.Invoke(options, new object[] { options, "" });
+        Assert.True(method != null, $"IntegrationTests.cs could not find OptionsToString method on {options.GetType().Name}");
+        var s = method.Invoke(options, new object[] { options, "", "" });
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
     }
 

@@ -1,0 +1,21 @@
+﻿#nullable enable
+using static Seekatar.Mask;
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        public static string OptionsToString(this Test.ArrayAndDictionaryOfOptions? o, string extraIndent = "", string titleSuffix = "")
+        {
+            return $@"Test.ArrayAndDictionaryOfOptions{titleSuffix}:
+{extraIndent}  List       : {Format(o?.List,formatMethod:(o) => { int i = 0; return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo?.OptionsToString("    "+extraIndent, titleSuffix:$"[{i++}]") ?? "null"));},noQuote:true)}
+{extraIndent}  Dictionary : {Format(o?.Dictionary,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o.Count()}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null"));},noQuote:true)}
+";
+        }
+        public static string OptionsToString(this Test.ArrayAndDictionaryOfOptions.NestedItem? o, string extraIndent = "", string titleSuffix = "")
+        {
+            return $@"Test.ArrayAndDictionaryOfOptions.NestedItem{titleSuffix}:
+{extraIndent}  Name : {Format(o?.Name)}
+";
+        }
+    }
+}

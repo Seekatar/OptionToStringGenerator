@@ -104,27 +104,6 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         return members;
     }
 
-
-    // AllIntefaces work for strings, array, but not IList or List???
-    ITypeSymbol GetIListTypeArgument(ITypeSymbol typeSymbol)
-    {
-        if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
-            namedTypeSymbol!.OriginalDefinition.ToDisplayString().EndsWith("IList<>"))
-        {
-            return namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
-        }
-
-        var ienumerableInterface = typeSymbol.AllInterfaces
-            .FirstOrDefault(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>");
-
-        if (ienumerableInterface != null && ienumerableInterface is INamedTypeSymbol namedTypeSymbol2)
-        {
-            return namedTypeSymbol2.TypeArguments.FirstOrDefault();
-        }
-
-        return null;
-    }
-
     protected string GenerateExtensionClass(List<TGeneratedItem> itemsToGenerate, Compilation compilation, SourceProductionContext context)
     {
         var sb = new StringBuilder();
@@ -371,17 +350,17 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                         Debug.WriteLine("Found OptionsToStringAttribute nested");
                         formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
                     }
-                    else if (IsEnumerableOfOptionToString(member))
-                    {
-                        var doubleIndent = indent + indent;
-                        Debug.WriteLine("Found OptionsToStringAttribute nested");
-                        formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo?.OptionsToString(\"" + doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
-                    }
                     else if (IsDictionaryOfOptionToString(member))
                     {
                         var doubleIndent = indent + indent;
                         Debug.WriteLine("Found OptionsToStringAttribute nested");
                         formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \"null\"));},noQuote:true";
+                    }
+                    else if (IsEnumerableOfOptionToString(member))
+                    {
+                        var doubleIndent = indent + indent;
+                        Debug.WriteLine("Found OptionsToStringAttribute nested");
+                        formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o.Count()}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o.Select( oo => oo?.OptionsToString(\"" + doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\"));},noQuote:true";
                     }
                 }
 
@@ -408,8 +387,6 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     private bool IsEnumerableOfOptionToString(IPropertySymbol member)
     {
         if (member.Type is IArrayTypeSymbol arrayTypeSymbol 
-            //&& member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
-            //&& string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
             && member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>"))        
         {
             var listType = arrayTypeSymbol!.ElementType;
@@ -420,20 +397,10 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                                                 && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
         }
         else if (member.Type is INamedTypeSymbol namedTypeSymbol
-            && member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>"))
+            && (member.Type.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>" ||
+                member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IEnumerable<T>")))
         {
             var listType = namedTypeSymbol!.TypeArguments!.FirstOrDefault()!;
-            return listType is not null
-                && listType.TypeKind == TypeKind.Class
-                && listType.SpecialType != SpecialType.System_String
-                && listType.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OptionsToStringAttribute))
-                                                                && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"));
-        }
-        else if (member.Type is INamedTypeSymbol namedTypeSymbol2 
-                 && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputEnumerableAttribute))
-                                                            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")))
-        {
-            var listType = namedTypeSymbol2!.TypeArguments!.FirstOrDefault()!;
             return listType is not null
                 && listType.TypeKind == TypeKind.Class
                 && listType.SpecialType != SpecialType.System_String
@@ -446,9 +413,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
     private bool IsDictionaryOfOptionToString(IPropertySymbol member)
     {   
         if (member.Type is INamedTypeSymbol namedTypeSymbol
-                 && member.GetAttributes().Any(o => string.Equals(o.AttributeClass?.Name, nameof(OutputDictionaryAttribute))
-                                                            && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator"))
-                 && namedTypeSymbol!.TypeArguments!.Length == 2)
+            && (member.Type.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IDictionary<TKey, TValue>" ||
+                member.Type.AllInterfaces.Any(i => i.OriginalDefinition.ToDisplayString() == "System.Collections.Generic.IDictionary<TKey, TValue>"))
+            && namedTypeSymbol!.TypeArguments!.Length == 2)
         {
             var dictionaryType = namedTypeSymbol!.TypeArguments[1];
             return dictionaryType is not null

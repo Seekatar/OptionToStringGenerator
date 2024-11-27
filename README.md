@@ -3,7 +3,7 @@
 [![OptionToStringGenerator](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Seekatar/OptionToStringGenerator/actions/workflows/dotnet.yml)
 [![codecov](https://codecov.io/gh/Seekatar/OptionToStringGenerator/branch/main/graph/badge.svg?token=X3J5MU9T3C)](https://codecov.io/gh/Seekatar/OptionToStringGenerator)
 
-**Problem:** I have a configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime.
+**Problem:** I have a configuration class for use with [IOptions](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options) and I want to safely log out its values at runtime, masking any sensitive values.
 
 **Solution:** Use an incremental source generator to generate an extension method to get a string with masked values for the properties.
 
@@ -18,6 +18,7 @@ Edit the source of your configuration class and decorate it with attributes.
 
 ```csharp
 namespace Test;
+using Seekatar.OptionToStringGenerator;
 
 [OptionsToString]
 internal class PropertySimple
@@ -65,7 +66,7 @@ _logger.LogInformation(new PropertyConfig().PropertySimple.OptionsToString());
     1. Decorate a class with the `OptionsToString` attribute.
     1. Optionally decorate properties with an `Output*` attribute to specify how you want them to be masked. If you don't decorate a property, its full text is dumped out.
 3. If you don't want to or can't update the class
-    1. Add a property to your class of the Type you want to dump out.
+    1. Add a property to your class of the `Type` you want to dump out.
     2. Decorate the property with multiple `OutputProperty*` attributes to control how the properties are masked.
 
 ### Example of Editing a Class
@@ -210,7 +211,6 @@ public class PropertyTestOptions
     [OutputPropertyIgnore(nameof(PropertyPublicClass.IgnoreMe) )]
     public PropertyPublicClass? PublicClass { get; set; }
 }
-
 ```
 
 ### Notes
@@ -219,24 +219,25 @@ public class PropertyTestOptions
 - Properties will be in the order they are defined in the class, unless `Sort=true` is set on the `OptionsToString` attribute.
 - Parent class properties are included by default. Use `ExcludeParents = true` on the `OptionsToString` attribute to exclude them.
 - Use the `OutputIgnore` attribute to exclude a property.
-- `ToString()` is called on the property's value, then the mask is applied. You can have a custom `ToString()` method on a class to format its output then it will be masked as the `AClass` example above.
+- `ToString()` is called on the property's value, then the mask is applied. You can have a custom `ToString()` method on a class to format its output then it will be masked as the `AClass` example above. Or you can use custom formatting, see [below](#per-property-formatting-options)
 - When editing the class, only one `Output*` attribute is allowed per property. If more than one is set, you'll get a compile warning, and the last attribute set will be used.
 - Regex strings with back slashes need to use a verbatim string or escape the back slashes (e.g.  `@"\s+"`  or `"\\s+"`).
 - `OutputRegex` must have a `Regex` parameter, or you'll get a compile error.
 - If the regex doesn't match the value, the output will be `***Regex no match***!` to indicate it didn't match.
-- To customize the formatting of masked output see [below](#per-property-formatting-options)
 
 ### Formatting Options
 
 There are properties on the `OptionsToStringAttribute` for classes and `OutputPropertyFormat` for properties to control how the output is generated.
 
-| Name        | Description                                | Default           |
-| ----------- | ------------------------------------------ | ----------------- |
-| `Indent`    | The indenting string                       | "  " (Two spaces) |
-| `Separator` | The name-value separator                   | ":"               |
-| `Title`     | The title to use for the output. See below | Class name        |
-| `Json`      | Format the output as JSON                  | false             |
-| `Sort`      | Sort the properties                        | false             |
+| Name             | Description                                | Default           |
+| ---------------- | ------------------------------------------ | ----------------- |
+| `ExcludeParents` | Exclude parent class properties            | false             |
+| `Indent`         | The indenting string                       | "  " (Two spaces) |
+| `Json`           | Format the output as JSON                  | false             |
+| `NullLiteral`    | The string to use for null values          | "null"            |
+| `Separator`      | The name-value separator                   | ":"               |
+| `Sort`           | Sort the properties                        | false             |
+| `Title`          | The title to use for the output. See below | Class name        |
 
 In addition to literal text, the `Title` parameter can include property names in braces. For example
 
@@ -302,26 +303,59 @@ Output:
   Secrets       : "sec***,hus*****,pss***"
 ```
 
-### Collections
+### IEnumerable and IDictionary Properties
 
-Instead of using `OutputFormatProvider`, you can create your own method to handle collections. The `MessagingOptions` test class does so by overriding `ToString` to get its options and all the children.
+If you have a property that is an `IEnumerable` of objects marked with the `OptionsToString` attribute, it will be formatted as a list of the objects. Similarly, if you have a property that is a `IDictionary` with values marked with the `OptionsToString` attribute, it will be formatted as a list of the key-value pairs.
+
+For a class like this:
 
 ```csharp
-public override string ToString()
+using Seekatar.OptionToStringGenerator;
+using System.Collections.Generic;
+
+namespace Test;
+
+[OptionsToString]
+public class ArrayAndDictionaryOfOptions
 {
-    var sb = new StringBuilder(this.OptionsToString());
-    sb.AppendLine();
-    foreach (var c in Consumers ?? new Dictionary<string, ClientOptions>())
+    [OptionsToString]
+    public class NestedItem
     {
-        sb.AppendLine(c.Value.OptionsToString());
-    }
-    foreach (var p in Producers ?? new Dictionary<string, ClientOptions>())
-    {
-        sb.AppendLine(p.Value.OptionsToString());
+        public string Name { get; set; } = "";
     }
 
-    return sb.ToString();
+    public IEnumerable<NestedItem> List { get; set; } = new List<NestedItem>
+            {
+                new() { Name = "Name1" },
+                new() { Name = "Name2" }
+            };
+
+    public IDictionary<string, NestedItem> Dictionary { get; set; } = new Dictionary<string, NestedItem>
+        {
+                { "A", new () { Name = "NameA" } },
+                { "B", new() { Name = "NameB" } }
+        };
 }
+```
+
+The output will be:
+
+```text
+Test.ArrayAndDictionaryOfOptions:
+  List       :
+    Count: 2
+    Test.ArrayAndDictionaryOfOptions.NestedItem[0]:
+      Name : "Name1"
+    Test.ArrayAndDictionaryOfOptions.NestedItem[1]:
+      Name : "Name2"
+
+  Dictionary :
+    Count: 2
+    Test.ArrayAndDictionaryOfOptions.NestedItem["A"]:
+      Name : "NameA"
+    Test.ArrayAndDictionaryOfOptions.NestedItem["B"]:
+      Name : "NameB"
+
 ```
 
 ### Nested Classes
