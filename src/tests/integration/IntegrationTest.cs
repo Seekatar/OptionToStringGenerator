@@ -78,6 +78,19 @@ public class IntegrationTest
         return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("NULLL")]
+    [InlineData("not set")]
+    public Task NullLiteralTest(string? nullLiteral)
+    {
+        Mask.NullLiteral = nullLiteral;
+        var o = new NullOptions();
+        var s = o.OptionsToString();
+        Mask.NullLiteral = null;
+        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(nullLiteral);
+    }
+
     [Fact]
     public Task ArrayOfOptionsWithExtraIndent()
     {

@@ -10,6 +10,7 @@
 ### Fixed
 
 - Unit tests weren't checking for compiler errors.
+- `Mask.NullLiteral` value on honored
 
 ## [0.3.4] 2024-11-02
 

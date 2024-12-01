@@ -234,12 +234,13 @@ There are properties on the `OptionsToStringAttribute` for classes and `OutputPr
 | `ExcludeParents` | Exclude parent class properties            | false             |
 | `Indent`         | The indenting string                       | "  " (Two spaces) |
 | `Json`           | Format the output as JSON                  | false             |
-| `NullLiteral`    | The string to use for null values          | "null"            |
 | `Separator`      | The name-value separator                   | ":"               |
 | `Sort`           | Sort the properties                        | false             |
 | `Title`          | The title to use for the output. See below | Class name        |
 
 In addition to literal text, the `Title` parameter can include property names in braces. For example
+
+`Mask.NullLiteral` can be used to use a different value for null. The default is `null`.
 
 ```csharp
 // for a class

@@ -211,13 +211,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                         {
                             separator = n.Value.Value.ToString();
                         }
-                        else if (n.Key == nameof(OptionsToStringAttribute.NullLiteral) && n.Value.Value is not null)
-                        {
-                            nullLiteral = n.Value.Value.ToString();
-                        }
-                    }
                     }
                 }
+            }
 
             if (haveJson)
             {
@@ -353,19 +349,19 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                                                                        && string.Equals(o.AttributeClass?.ContainingNamespace?.ToString(), "Seekatar.OptionToStringGenerator")) != null)
                     {
                         Debug.WriteLine("Found OptionsToStringAttribute nested");
-                        formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"null\",noQuote:true";
+                        formatParameters += $",formatMethod:(o) => o?.OptionsToString(\"{indent}\") ?? \"{nullLiteral}\",noQuote:true";
                     }
                     else if (IsDictionaryOfOptionToString(member))
                     {
                         var doubleIndent = indent + indent;
                         Debug.WriteLine("Found OptionsToStringAttribute nested");
-                        formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o?.Count() ?? 0}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o?.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \"null\") ?? Enumerable.Empty<string>());},noQuote:true";
+                        formatParameters += ",formatMethod:(o) => { return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o?.Count() ?? 0}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o?.Select( oo => oo.Value.OptionsToString(\"" + doubleIndent + "\"+ extraIndent, $\"[{Mask.Quote(oo.Key)}]\") ?? \""+nullLiteral+"\") ?? Enumerable.Empty<string>());},noQuote:true";
                     }
                     else if (IsEnumerableOfOptionToString(member))
                     {
                         var doubleIndent = indent + indent;
                         Debug.WriteLine("Found OptionsToStringAttribute nested");
-                        formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o?.Count() ?? 0}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o?.Select( oo => oo?.OptionsToString(\"" + doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \"null\") ?? Enumerable.Empty<string>());},noQuote:true";
+                        formatParameters += ",formatMethod:(o) => { int i = 0; return Environment.NewLine + $\"{extraIndent}" + doubleIndent + "Count: {o?.Count() ?? 0}\" + Environment.NewLine + $\"{extraIndent}" + doubleIndent + "\"+ string.Join($\"{extraIndent}" + doubleIndent + "\", o?.Select( oo => oo?.OptionsToString(\"" + doubleIndent + "\"+extraIndent, titleSuffix:$\"[{i++}]\") ?? \""+nullLiteral+"\") ?? Enumerable.Empty<string>());},noQuote:true";
                     }
                 }
 

@@ -136,7 +136,7 @@ public static class Mask
 
     private static string CheckNullQuote( string ?s, bool noQuote)
     {
-        if (s is null) return "null";
+        if (s is null) return Mask.NullLiteral ?? "null"; 
         if (noQuote) return s;
         return "\"" + s + "\"";
     }
@@ -165,7 +165,7 @@ public static class Mask
     /// <param name="o"></param>
     /// <param name="asJson"></param>
     /// <returns></returns>
-    public static string Quote<T>(T? o, bool asJson = false) => o is null ? "null" : IsQuotable(o, asJson) ? "\"" + o + "\"" : o?.ToString() ?? "";
+    public static string Quote<T>(T? o, bool asJson = false) => o is null ? (Mask.NullLiteral ?? "null") : IsQuotable(o, asJson) ? "\"" + o + "\"" : o?.ToString() ?? "";
 
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
@@ -183,7 +183,7 @@ public static class Mask
     /// <returns></returns>
     public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null, bool noQuote = false)
     {
-        if (o is null) return "null";
+        if (o is null) return Mask.NullLiteral ?? "null";
 
         string value;
         if (formatMethod is not null)
