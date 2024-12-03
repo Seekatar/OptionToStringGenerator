@@ -2,6 +2,6 @@
   ProfilesList        : null
   ProfilesIList       : null
   ProfilesIDictionary : null
-  name                : null
+  Name                : null
   Retries             : null
   RetryDelaySeconds   : null

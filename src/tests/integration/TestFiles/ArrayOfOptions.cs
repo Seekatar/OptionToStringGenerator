@@ -1,12 +1,19 @@
+#nullable enable
 using System.ComponentModel.DataAnnotations;
 using Seekatar.OptionToStringGenerator;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Test;
 
 [OptionsToString]
 public class ArrayOptions
 {
+    public class NotAnOption
+    {
+        public string Name { get; set; } = "";
+    }
+
     [OptionsToString]
     public class ArrayItem
     {
@@ -33,33 +40,31 @@ public class ArrayOptions
                 }
             };
 
-    public IList<ArrayItem> ProfilesIList { get; set; } = new List<ArrayItem>
-            {
-                new()
-                {
-                    ProfileName = "ProfileName1"
-                },
-                new()
-                {
-                    ProfileName = "ProfileName2"
-                }
-            };
+    public IList<ArrayItem> ProfilesIList { get => ProfilesList; }
     public IList<ArrayItem>? NullProfilesIList { get; set; }
 
+    public ICollection<ArrayItem>? ArrayItemCollection { get => ProfilesList; }
+
     [Required]
-    public ArrayItem[] ProfilesArray { get; set; } = new ArrayItem[]
+    public ArrayItem[] ProfilesArray { get => ProfilesIList.ToArray(); }
+    public ArrayItem[]? NullProfilesArray { get; set; }
+
+    public ICollection<NotAnOption>? NotAnOptionCollection = new List<NotAnOption>
             {
                 new()
                 {
-                    ProfileName = "ProfileName1"
+                    Name = "Name1"
                 },
                 new()
                 {
-                    ProfileName = "ProfileName2"
+                    Name = "Name2"
                 }
             };
-    public ArrayItem[]? NullProfilesArray { get; set; }
-
+    public IDictionary<string, NotAnOption>? NotAnOptionDictionary { get; set; } = new Dictionary<string, NotAnOption>
+            {
+                { "Key1", new NotAnOption { Name = "Name1" } },
+                { "Key2", new NotAnOption { Name = "Name2" } }
+            };
     public int Retries { get; set; } = 3;
     public double RetryDelaySeconds { get; set; } = 3;
 }

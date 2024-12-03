@@ -110,6 +110,8 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
         sb.Append("""
                     #nullable enable
                     using static Seekatar.Mask;
+                    using System.Linq;
+                    using System;
                     namespace Seekatar.OptionToStringGenerator
                     {
                         public static partial class ClassExtensions

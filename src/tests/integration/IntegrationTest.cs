@@ -4,9 +4,12 @@ namespace Test;
 
 using Seekatar.OptionToStringGenerator;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using Test.Next.Level;
+using VerifyXunit;
 
 [UsesVerify]
 public class IntegrationTest
@@ -75,7 +78,7 @@ public class IntegrationTest
 
         var o = new MessagingOptions();
         var s = o.OptionsToString(extraIndent:"  ");
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
     [Theory]
@@ -88,7 +91,7 @@ public class IntegrationTest
         var o = new NullOptions();
         var s = o.OptionsToString();
         Mask.NullLiteral = null;
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(nullLiteral);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(nullLiteral);
     }
 
     [Fact]
@@ -96,7 +99,7 @@ public class IntegrationTest
     {
         var o = new ArrayOptions();
         var s = o.OptionsToString(extraIndent:"  ");
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
     [Fact]
@@ -104,7 +107,7 @@ public class IntegrationTest
     {
         var o = new DictionaryOptions();
         var s = o.OptionsToString(extraIndent:"  ");
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
     [Theory]
@@ -115,7 +118,7 @@ public class IntegrationTest
 
         Assert.True(method != null, $"IntegrationTests.cs could not find OptionsToString method on {options.GetType().Name}");
         var s = method.Invoke(options, new object[] { options, "", "" });
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
     }
 
     [Fact]
@@ -124,7 +127,7 @@ public class IntegrationTest
         var o = new JsonOptions();
         var s = o.OptionsToString();
         System.Text.Json.JsonSerializer.Deserialize<JsonOptions>(s);
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -132,7 +135,7 @@ public class IntegrationTest
     {
         var o = new PropertyTestSimple();
         var s = o.MyExtClassProperty.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -142,7 +145,7 @@ public class IntegrationTest
         var s = o.ChildOptions.OptionsToString();
         s += Environment.NewLine;
         s += o.ChildOnlyOptions.OptionsToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -154,7 +157,7 @@ public class IntegrationTest
             throw new Exception("PublicOptions is null");
         }
         var s = o.PublicOptions.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -166,7 +169,7 @@ public class IntegrationTest
             throw new Exception("PublicOptions is null");
         }
         var s = o.PublicOptionsSorted.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -174,7 +177,7 @@ public class IntegrationTest
     {
         var o = new PropertyInterface();
         var s = o.PropertySimple!.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -182,14 +185,14 @@ public class IntegrationTest
     {
         var o = new PropertyInterface() { PropertySimple = new PropertySimple() };
         var s = o.PropertySimple!.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
     public Task NestedTest()
     {
         var s = Wrapper.GetOptionsString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     //[Fact]
@@ -197,7 +200,7 @@ public class IntegrationTest
     //{
     //    var options = new MessagingOptions();
     //    var s = options.ToString();
-    //    await Verify(s).UseDirectory(SnapshotDirectory);
+    //    await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     //}
 
     [Fact]
@@ -216,6 +219,6 @@ public class IntegrationTest
             SaslPassword = new string('*', 12),
         };
         var s = options.OptionsToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 }
