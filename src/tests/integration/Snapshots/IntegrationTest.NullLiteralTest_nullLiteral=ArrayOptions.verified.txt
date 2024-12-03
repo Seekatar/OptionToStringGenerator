@@ -1,1 +1,7 @@
-﻿
+﻿Test.NullOptions:
+  ProfilesList        : null
+  ProfilesIList       : null
+  ProfilesIDictionary : null
+  Name                : null
+  Retries             : null
+  RetryDelaySeconds   : null
