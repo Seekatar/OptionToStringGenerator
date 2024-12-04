@@ -33,11 +33,21 @@
     <Compile Include="..\integration\TestFiles\PropertyTestClass.cs" Link="TestFiles\PropertyTestClass.cs" />
     <Compile Include="..\integration\TestFiles\PropertyTestRecord.cs" Link="TestFiles\PropertyTestRecord.cs" />
     <Compile Include="..\integration\TestFiles\PublicOptions.cs" Link="TestFiles\PublicOptions.cs" />
-    <Compile Include="..\integration\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />  </ItemGroup>
+    <Compile Include="..\integration\TestFiles\TitleOptions.cs" Link="TestFiles\TitleOptions.cs" />
+    <Compile Include="..\integration\TestFiles\NestedOptionsToString.cs" Link="TestFiles\NestedOptionsToString.cs" />
+    <Compile Include="..\integration\TestFiles\ProviderOptions.cs" Link="TestFiles\ProviderOptions.cs" />
+    <Compile Include="..\integration\TestFiles\TripleNestedOptions.cs" Link="TestFiles\TripleNestedOptions.cs" />
+    <Compile Include="..\integration\TestFiles\ArrayAndDictionaryOfOptions.cs" Link="TestFiles\ArrayAndDictionaryOfOptions.cs" />
+    <Compile Include="..\integration\TestFiles\DictionaryOfOptions.cs" Link="TestFiles\DictionaryOfOptions.cs" />
+    <Compile Include="..\integration\TestFiles\ArrayOfOptions.cs" Link="TestFiles\ArrayOfOptions.cs" />
+    <Compile Include="..\integration\TestFiles\NullOptions.cs" Link="TestFiles\NullOptions.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="0.3.0-prerelease" />
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="0.3.5.88-prerelease" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 		<PackageReference Include="Verify.XUnit" Version="20.8.0" />
 		<PackageReference Include="xunit" Version="2.5.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
