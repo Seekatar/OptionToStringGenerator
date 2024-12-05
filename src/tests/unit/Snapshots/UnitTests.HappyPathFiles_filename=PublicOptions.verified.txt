@@ -1,12 +1,14 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.PublicOptions? o, string extraIndent = "")
+        public static string OptionsToString(this Test.PublicOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.PublicOptions:
+            return $@"Test.PublicOptions{titleSuffix}:
 {extraIndent}  PlainText                     : {Format(o?.PlainText)}
 {extraIndent}  Why                           : {Format(o?.Why)}
 {extraIndent}  PlainInt                      : {Format(o?.PlainInt)}
@@ -32,9 +34,9 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}  Color                         : {Format(o?.Color)}
 ";
         }
-        public static string OptionsToString(this Test.PublicOptionsSorted? o, string extraIndent = "")
+        public static string OptionsToString(this Test.PublicOptionsSorted? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.PublicOptionsSorted:
+            return $@"Test.PublicOptionsSorted{titleSuffix}:
 {extraIndent}  AMaskedObject                 : {Format(o?.AMaskedObject,regex:"AClass\\:\\s+(.*)")}
 {extraIndent}  AnObject                      : {Format(o?.AnObject)}
 {extraIndent}  cLittleC                      : {Format(o?.cLittleC)}

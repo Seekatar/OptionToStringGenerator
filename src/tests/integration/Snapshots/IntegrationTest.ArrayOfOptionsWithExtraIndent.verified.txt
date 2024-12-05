@@ -1,0 +1,58 @@
+﻿Test.ArrayOptions:
+    ProfilesList          : 
+      Count: 2
+      Test.ArrayOptions.ArrayItem[0]:
+        ProfileName    : "ProfileName1"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+      Test.ArrayOptions.ArrayItem[1]:
+        ProfileName    : "ProfileName2"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+
+    ProfilesIList         : 
+      Count: 2
+      Test.ArrayOptions.ArrayItem[0]:
+        ProfileName    : "ProfileName1"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+      Test.ArrayOptions.ArrayItem[1]:
+        ProfileName    : "ProfileName2"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+
+    NullProfilesIList     : null
+    ArrayItemCollection   : 
+      Count: 2
+      Test.ArrayOptions.ArrayItem[0]:
+        ProfileName    : "ProfileName1"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+      Test.ArrayOptions.ArrayItem[1]:
+        ProfileName    : "ProfileName2"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+
+    ProfilesArray         : 
+      Count: 2
+      Test.ArrayOptions.ArrayItem[0]:
+        ProfileName    : "ProfileName1"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+      Test.ArrayOptions.ArrayItem[1]:
+        ProfileName    : "ProfileName2"
+        DeploymentName : ""
+        Endpoint       : ""
+        MaxTokens      : 800
+
+    NullProfilesArray     : null
+    NotAnOptionDictionary : "System.Collections.Generic.Dictionary`2[System.String,Test.ArrayOptions+NotAnOption]"
+    Retries               : 3
+    RetryDelaySeconds     : 3

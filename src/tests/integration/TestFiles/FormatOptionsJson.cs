@@ -1,7 +1,10 @@
-﻿namespace Test;
+﻿#nullable enable
+namespace Test;
 
 using Seekatar;
 using Seekatar.OptionToStringGenerator;
+using System.Collections.Generic;
+using System.Linq;
 
 [OptionsToString(Json = true)]
 public class FormatOptionsJson

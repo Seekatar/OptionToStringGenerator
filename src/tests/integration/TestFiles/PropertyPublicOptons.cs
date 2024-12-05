@@ -1,4 +1,5 @@
-﻿using Seekatar.OptionToStringGenerator;
+﻿#nullable enable
+using Seekatar.OptionToStringGenerator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,6 +12,12 @@ namespace Test;
 // mimic the PublicOptions
 public class PropertyPublicOptions
 {
+    public class AClass
+    {
+        public string Name { get; set; } = "maybe this is secret";
+        public override string ToString() => $"{nameof(AClass)}: {Name}";
+    }
+
     public string PlainText { get; set; } = "hi mom";
     public char Why { get; set; } = 'Y';
     public int PlainInt { get; set; } = 42;
@@ -22,8 +29,8 @@ public class PropertyPublicOptions
     public TimeSpan TimeSpan { get; set; } = new TimeSpan(1, 2, 3, 4, 5);
     public Guid UUID { get; set; } = Guid.Parse("6536b25c-3a45-48d8-8ea3-756e19f5bad1");
     public string? NullItem { get; set; }
-    public PublicOptions.AClass AnObject { get; set; } = new();
-    public PublicOptions.AClass AMaskedObject { get; set; } = new();
+    public AClass AnObject { get; set; } = new();
+    public AClass AMaskedObject { get; set; } = new();
     public string FullyMasked { get; set; } = "thisisasecret";
     public string FirstThreeNotMasked { get; set; } = "abc1233435667";
     public string LastThreeNotMasked { get; set; } = "abc1233435667";

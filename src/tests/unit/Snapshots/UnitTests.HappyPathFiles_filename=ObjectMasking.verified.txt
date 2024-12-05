@@ -1,12 +1,14 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.ObjectMasking? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.ObjectMasking? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.ObjectMasking:
+            return $@"Test.ObjectMasking{titleSuffix}:
 {extraIndent}  AnObject : {Format(o?.AnObject,regex:"User Id=([^;]+).*Password=([^;]+)",ignoreCase:true)}
 ";
         }

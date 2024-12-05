@@ -1,6 +1,8 @@
-﻿namespace Test;
+﻿#nullable enable
+namespace Test;
 
 using Seekatar.OptionToStringGenerator;
+using System;
 
 [OptionsToString]
 class ProviderOptions

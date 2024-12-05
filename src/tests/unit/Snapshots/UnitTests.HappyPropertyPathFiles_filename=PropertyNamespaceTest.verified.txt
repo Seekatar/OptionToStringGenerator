@@ -1,12 +1,14 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.Next.Level.PropertyNamespaceTestRecord? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.Next.Level.PropertyNamespaceTestRecord? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Custom Title {o?.NameA}:
+            return $@"Custom Title {o?.NameA}{titleSuffix}:
 {extraIndent}>   NumberA   - {Format(o?.NumberA)}
 {extraIndent}>   NameA     - {Format(o?.NameA,prefixLen:0,suffixLen:0)}
 {extraIndent}>   SerialNum - {Format(o?.SerialNum,prefixLen:0,suffixLen:3)}

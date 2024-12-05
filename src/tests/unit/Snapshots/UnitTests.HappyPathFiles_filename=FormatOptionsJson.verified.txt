@@ -1,10 +1,12 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.FormatOptionsJson? o, string extraIndent = "")
+        public static string OptionsToString(this Test.FormatOptionsJson? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"{{
   ""Test.FormatOptionsJson"" : {{

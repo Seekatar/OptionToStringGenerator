@@ -1,0 +1,33 @@
+﻿Test.DictionaryOptions:
+  StringToProfiles  : 
+    Count: 2
+    Test.DictionaryOptions.DictionaryItem["A"]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+    Test.DictionaryOptions.DictionaryItem["B"]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+
+  IntToProfiles     : 
+    Count: 2
+    Test.DictionaryOptions.DictionaryItem[1]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+    Test.DictionaryOptions.DictionaryItem[2]:
+      ProfileName    : "P"
+      OpenApiKey     : ""
+      DeploymentName : ""
+      Endpoint       : ""
+      MaxTokens      : 800
+
+  Retries           : 3
+  RetryDelaySeconds : 3

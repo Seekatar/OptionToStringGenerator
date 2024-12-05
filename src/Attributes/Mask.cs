@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections;
+using System.Text.Json;
 
 namespace Seekatar;
 
@@ -135,10 +136,36 @@ public static class Mask
 
     private static string CheckNullQuote( string ?s, bool noQuote)
     {
-        if (s is null) return "null";
+        if (s is null) return Mask.NullLiteral ?? "null"; 
         if (noQuote) return s;
         return "\"" + s + "\"";
     }
+
+    /// <summary>
+    /// If the type something that usually needs quoting
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <param name="asJson"></param>
+    /// <returns>true if quotes should be added</returns>
+    public static bool IsQuotable<T>(T? o, bool asJson) => o is not null 
+            && (o is string or char
+            || o.GetType().IsClass
+            || (asJson && 
+                (o is Guid or DateTime or TimeSpan
+                    || o.GetType().IsEnum
+                    || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can't use nameof
+                    || o.GetType().Name == "TimeOnly"
+                )));
+
+    /// <summary>
+    /// Quote the object if it is a quotable type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <param name="asJson"></param>
+    /// <returns></returns>
+    public static string Quote<T>(T? o, bool asJson = false) => o is null ? (Mask.NullLiteral ?? "null") : IsQuotable(o, asJson) ? "\"" + o + "\"" : o?.ToString() ?? "";
 
     /// <summary>
     /// Helper for formatting objects for output, called by generated code
@@ -156,7 +183,7 @@ public static class Mask
     /// <returns></returns>
     public static string? Format<T>(T? o, bool lengthOnly = false, int prefixLen = -1, int suffixLen = -1, string? regex = null, bool ignoreCase = false, bool asJson = false, char maskChar = '*', Func<T?, string?>? formatMethod = null, bool noQuote = false)
     {
-        if (o is null) return "null";
+        if (o is null) return Mask.NullLiteral ?? "null";
 
         string value;
         if (formatMethod is not null)
@@ -179,19 +206,11 @@ public static class Mask
         if (o is bool)
             return (value).ToLowerInvariant();
 
-        if (o is string or char
-            || o.GetType().IsClass
-            || (asJson && (o is Guid or DateTime or TimeSpan
-                  || o.GetType().IsEnum
-                  || o.GetType().Name == "DateOnly" // .NET Standard 2.0 doesn't have these types, so can't use nameof
-                  || o.GetType().Name == "TimeOnly"))
-           )
+        if (IsQuotable(o, asJson))
             return noQuote ? value : (asJson ? JsonSerializer.Serialize(value) : "\"" + value + "\"");
 
         if (o.GetType().IsPrimitive)
-        {
             return value;
-        }
 
         return asJson ? JsonSerializer.Serialize(value) : value;
     }

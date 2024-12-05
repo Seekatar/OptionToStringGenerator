@@ -1,10 +1,15 @@
+using Seekatar;
+
 namespace Test;
 
 using Seekatar.OptionToStringGenerator;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using Test.Next.Level;
+using VerifyXunit;
 
 [UsesVerify]
 public class IntegrationTest
@@ -37,7 +42,12 @@ public class IntegrationTest
         yield return new object[] { new ProviderOptions() };
         yield return new object[] { new Parent() };
         yield return new object[] { new ParentOfNested() };
+        yield return new object[] { new ArrayOptions() };
+        yield return new object[] { new DictionaryOptions() };
+        yield return new object[] { new MessagingOptions() };
+        yield return new object[] { new ArrayAndDictionaryOfOptions() };
 
+        // property tests
         yield return new object[] { new PropertyTestClass() };
         yield return new object[] { new PropertySimple() };
         yield return new object[] { new PropertyNamespaceTestRecord() };
@@ -57,6 +67,7 @@ public class IntegrationTest
   StringPropNullableNull : {Seekatar.Mask.Format(o?.StringPropNullableNull, formatMethod: (o) => Test.ProviderOptions.MyStringQuotes(o), noQuote: true)}
 ";
     }
+
     [Fact]
     public Task OneOffForDebugging()
     {
@@ -64,21 +75,50 @@ public class IntegrationTest
         var ss = new recordTest();
         // records don't work???
         // ss.OptionsToString();
-        var o = new Parent();
-        var s = o.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+
+        var o = new MessagingOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("NULLL")]
+    [InlineData("not set")]
+    public Task NullLiteralTest(string? nullLiteral)
+    {
+        Mask.NullLiteral = nullLiteral;
+        var o = new NullOptions();
+        var s = o.OptionsToString();
+        Mask.NullLiteral = null;
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(nullLiteral);
+    }
+
+    [Fact]
+    public Task ArrayOfOptionsWithExtraIndent()
+    {
+        var o = new ArrayOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+    }
+
+    [Fact]
+    public Task DictionaryOfOptionsWithExtraIndent()
+    {
+        var o = new DictionaryOptions();
+        var s = o.OptionsToString(extraIndent:"  ");
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(o.GetType().Name);
+    }
 
     [Theory]
     [MemberData(nameof(TestObjects))]
     public Task TestClasses(object options)
     {
-        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType(), typeof(string) });
+        var method = typeof(ClassExtensions).GetMethod("OptionsToString", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, new Type[] { options.GetType(), typeof(string), typeof(string) });
 
-        Assert.True(method != null, $"Could not find OptionsToString method on {options.GetType().Name}");
-        var s = method.Invoke(options, new object[] { options, "" });
-        return Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
+        Assert.True(method != null, $"IntegrationTests.cs could not find OptionsToString method on {options.GetType().Name}");
+        var s = method.Invoke(options, new object[] { options, "", "" });
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory).UseParameters(options.GetType().Name);
     }
 
     [Fact]
@@ -87,7 +127,7 @@ public class IntegrationTest
         var o = new JsonOptions();
         var s = o.OptionsToString();
         System.Text.Json.JsonSerializer.Deserialize<JsonOptions>(s);
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -95,7 +135,7 @@ public class IntegrationTest
     {
         var o = new PropertyTestSimple();
         var s = o.MyExtClassProperty.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -105,7 +145,7 @@ public class IntegrationTest
         var s = o.ChildOptions.OptionsToString();
         s += Environment.NewLine;
         s += o.ChildOnlyOptions.OptionsToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -117,7 +157,7 @@ public class IntegrationTest
             throw new Exception("PublicOptions is null");
         }
         var s = o.PublicOptions.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -129,7 +169,7 @@ public class IntegrationTest
             throw new Exception("PublicOptions is null");
         }
         var s = o.PublicOptionsSorted.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -137,7 +177,7 @@ public class IntegrationTest
     {
         var o = new PropertyInterface();
         var s = o.PropertySimple!.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
     [Fact]
@@ -145,68 +185,29 @@ public class IntegrationTest
     {
         var o = new PropertyInterface() { PropertySimple = new PropertySimple() };
         var s = o.PropertySimple!.OptionsToString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
-
 
     [Fact]
     public Task NestedTest()
     {
         var s = Wrapper.GetOptionsString();
-        return Verify(s).UseDirectory(SnapshotDirectory);
+        return Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 
-    [Fact]
-    public async Task MessagingTest()
-    {
-        var options = new Test.MessagingOptions() {
-            Producers = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
-                { "TestProducer1", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("1234567889"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } },
-                { "TestProducer2", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers2",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("2222222222222222222222"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } }
-            },
-            Consumers = new Dictionary<string, Test.MessagingOptions.ClientOptions>() {
-                { "TestConsumer", new Test.MessagingOptions.ClientOptions() {
-                    CA = new string('*', 10),
-                    CertBootstrapServers = "certBootstrapServers",
-                    CertPem = new string('*', 11),
-                    EncryptionKey = new string("consumer_1test123"),
-                    Prefix = "Event Hub",
-                    Name = "TestName",
-                    SaslBootstrapServers = "saslBootstrapServers",
-                    SaslMechanism = "saslMechanism",
-                    SaslPassword = new string('*', 12),
-                } }
-            }
-        };
-        var s = options.ToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
-    }
+    //[Fact]
+    //public async Task MessagingTest()
+    //{
+    //    var options = new MessagingOptions();
+    //    var s = options.ToString();
+    //    await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
+    //}
 
     [Fact]
     public async Task MessagingClientTest()
     {
 
-        var options = new Test.MessagingOptions.ClientOptions() {
+        var options = new MessagingOptions.ClientOptions() {
             CA = new string('*', 10),
             CertBootstrapServers = "certBootstrapServers",
             CertPem = new string('*', 11),
@@ -218,6 +219,6 @@ public class IntegrationTest
             SaslPassword = new string('*', 12),
         };
         var s = options.OptionsToString();
-        await Verify(s).UseDirectory(SnapshotDirectory);
+        await Verifier.Verify(s).UseDirectory(SnapshotDirectory);
     }
 }

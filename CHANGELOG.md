@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.3.5] 2024-11-27
+
+### Added
+
+- Now detect `IEnumerable` of `OptionsToString` objects and formats them without custom formatters
+- Now detect `IDictionary` of `<T,OptionsToString>` formats them without custom formatters
+
+### Fixed
+
+- Unit tests weren't checking for compiler errors.
+- `Mask.NullLiteral` value on honored
+
 ## [0.3.4] 2024-11-02
 
 ### Fixed

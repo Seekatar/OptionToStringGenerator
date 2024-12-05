@@ -92,7 +92,7 @@ public class OptionPropertyToStringGenerator : OptionGeneratorBase<PropertyDecla
             {
                 continue;
             }
-            if (propertyType.TypeKind is not (TypeKind.Class or TypeKind.Interface or TypeKind.Struct))
+            if (propertyType.TypeKind is not (TypeKind.Class or TypeKind.Interface))
             {
                 context.Report(SEEK008, propertySymbol.Locations[0], propertySymbol.Name, propertyType.Name, propertyType.TypeKind.ToString());
                 continue; // int is struct, string is class

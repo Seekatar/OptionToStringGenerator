@@ -1,7 +1,11 @@
-﻿namespace Test;
+﻿#nullable enable
+namespace Test;
 
+using System;
 using Seekatar;
 using Seekatar.OptionToStringGenerator;
+using System.Collections.Generic;
+using System.Linq;
 
 [OptionsToString]
 public class FormatOptions

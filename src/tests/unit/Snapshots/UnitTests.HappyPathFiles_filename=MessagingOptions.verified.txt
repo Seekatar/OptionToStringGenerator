@@ -1,0 +1,39 @@
+﻿#nullable enable
+using static Seekatar.Mask;
+using System.Linq;
+using System;
+namespace Seekatar.OptionToStringGenerator
+{
+    public static partial class ClassExtensions
+    {
+        public static string OptionsToString(this Test.MessagingOptions? o, string extraIndent = "", string titleSuffix = "")
+        {
+            return $@"Test.MessagingOptions{titleSuffix}:
+{extraIndent}  Consumers : {Format(o?.Consumers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+{extraIndent}  Producers : {Format(o?.Producers,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
+";
+        }
+        public static string OptionsToString(this Test.MessagingOptions.ClientOptions? o, string extraIndent = "", string titleSuffix = "")
+        {
+            return $@"ClientOptions {o?.Prefix} {o?.Name}{titleSuffix}:
+{extraIndent}  Prefix               : {Format(o?.Prefix)}
+{extraIndent}  Name                 : {Format(o?.Name)}
+{extraIndent}  EncryptionKey        : {Format(o?.EncryptionKey,prefixLen:3,suffixLen:0)}
+{extraIndent}  GroupId              : {Format(o?.GroupId)}
+{extraIndent}  StartingOffset       : {Format(o?.StartingOffset)}
+{extraIndent}  MaxPollIntervalMs    : {Format(o?.MaxPollIntervalMs)}
+{extraIndent}  CertBootstrapServers : {Format(o?.CertBootstrapServers)}
+{extraIndent}  CA                   : {Format(o?.CA,lengthOnly:true)}
+{extraIndent}  CertPem              : {Format(o?.CertPem,lengthOnly:true)}
+{extraIndent}  KeyPem               : {Format(o?.KeyPem,lengthOnly:true)}
+{extraIndent}  SaslBootstrapServers : {Format(o?.SaslBootstrapServers)}
+{extraIndent}  SaslPassword         : {Format(o?.SaslPassword,prefixLen:3,suffixLen:0)}
+{extraIndent}  SaslMechanism        : {Format(o?.SaslMechanism)}
+{extraIndent}  SaslUsername         : {Format(o?.SaslUsername)}
+{extraIndent}  LocalhostBootstrap   : {Format(o?.LocalhostBootstrap)}
+{extraIndent}  ConfiguredWithCerts  : {Format(o?.ConfiguredWithCerts)}
+{extraIndent}  ConfiguredWithSasl   : {Format(o?.ConfiguredWithSasl)}
+";
+        }
+    }
+}

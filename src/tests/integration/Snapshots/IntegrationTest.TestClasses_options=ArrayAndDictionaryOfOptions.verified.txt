@@ -1,0 +1,15 @@
+﻿Test.ArrayAndDictionaryOfOptions:
+  List       : 
+    Count: 2
+    Test.ArrayAndDictionaryOfOptions.NestedItem[0]:
+      Name : "Name1"
+    Test.ArrayAndDictionaryOfOptions.NestedItem[1]:
+      Name : "Name2"
+
+  Dictionary : 
+    Count: 2
+    Test.ArrayAndDictionaryOfOptions.NestedItem["A"]:
+      Name : "NameA"
+    Test.ArrayAndDictionaryOfOptions.NestedItem["B"]:
+      Name : "NameB"
+

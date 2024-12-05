@@ -1,12 +1,14 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        public static string OptionsToString(this Test.FormattingOptions? o, string extraIndent = "")
+        public static string OptionsToString(this Test.FormattingOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.FormattingOptions:
+            return $@"Test.FormattingOptions{titleSuffix}:
 {extraIndent}    IntProp    - {Format(o?.IntProp)}
 {extraIndent}    StringProp - {Format(o?.StringProp)}
 ";

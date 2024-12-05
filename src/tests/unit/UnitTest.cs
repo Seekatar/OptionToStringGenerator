@@ -1,5 +1,8 @@
+#nullable enable
 using Microsoft.CodeAnalysis;
 using Shouldly;
+using System;
+using System.Collections.Generic;
 
 namespace Seekatar.OptionToStringGenerator.Tests;
 using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
@@ -46,6 +49,8 @@ public class UnitTests
     [Fact]
     public Task OneOffTestForDebugging()
     {
+        // return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/ArrayOfOptions.cs");
+
         return TestHelper.VerifyFile<OptionToStringGenerator>("TestFiles/TripleNestedOptions.cs");
     }
 
@@ -150,12 +155,12 @@ public class UnitTests
         return TestHelper.Verify<OptionToStringGenerator>(source, (o) => {
             o.Count().ShouldBe(1);
             o.ShouldSatisfyAllConditions(
-                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Warning),
-                () => o[0].GetMessage().ShouldBe("The class 'MyAppOptions' is private"),
-                () => o[0].Id.ShouldBe(SEEK005.ToString()),
+                () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
+                () => o[0].GetMessage().ShouldBe("Elements defined in a namespace cannot be explicitly declared as private, protected, protected internal, or private protected"),
+                () => o[0].Id.ShouldBe("CS1527"),
                 () => GetLocationText(o[0].Location).ShouldStartWith("MyAppOptions")
             );
-        });
+        }, throwCompilerErrors:false);
     }
 
     [Fact]
@@ -181,7 +186,7 @@ public class UnitTests
         var source = @"
                         using Seekatar.OptionToStringGenerator;
 
-                        [OptionsToString(Title=""Hi{Thisdoesntexist}""]
+                        [OptionsToString(Title=""Hi{Thisdoesntexist}"")]
                         public class BadTitleOptions
                         {
                             public string Name { get; set; } = ""hi mom"";
@@ -206,12 +211,13 @@ public class UnitTests
         // The source code to test
         var source = @"
                         using Seekatar.OptionToStringGenerator;
+                        using System;
 
                         public class BadType
                         {
-                            [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
+                            [OutputPropertyMask(nameof(string.Length))]
                             public Guid BadGuid { get; set; }
-                            [OutputPropertyMask(nameof(ExternalClass.SerialNo))]
+                            [OutputPropertyMask(nameof(string.Length))]
                             public DateTime Name { get; set; }
                         }
                     ";
@@ -221,11 +227,11 @@ public class UnitTests
             o.Count().ShouldBe(2);
             o.ShouldSatisfyAllConditions(
                     () => o[0].Severity.ShouldBe(DiagnosticSeverity.Error),
-                    () => o[0].GetMessage().ShouldBe("The Property 'BadGuid' of Guid is Error. Must be class, record, or interface"),
+                    () => o[0].GetMessage().ShouldBe("The Property 'BadGuid' of type 'Guid' is type 'Struct'. It must be class, record, or interface"),
                     () => o[0].Id.ShouldBe(SEEK008.ToString()),
                     () => GetLocationText(o[0].Location).ShouldBe("BadGuid"),
                     () => o[1].Severity.ShouldBe(DiagnosticSeverity.Error),
-                    () => o[1].GetMessage().ShouldBe("The Property 'Name' of DateTime is Error. Must be class, record, or interface"),
+                    () => o[1].GetMessage().ShouldBe("The Property 'Name' of type 'DateTime' is type 'Struct'. It must be class, record, or interface"),
                     () => o[1].Id.ShouldBe(SEEK008.ToString()),
                     () => GetLocationText(o[1].Location).ShouldBe("Name")
                 );
@@ -331,12 +337,12 @@ public class UnitTests
                         {
 
                             public static string ProviderNoParam() => ""badName"";
-                            public static void ProviderBadReturn(string _) => ""badName"";
-                            private static string PrivateGood(string x) => x;
+                            public static void ProviderBadReturn(string _) { return; }
+                            private static string PrivateGood(string x) => ""x"";
                             public string NotStatic(string x) => x;
-                            public static int NotStringReturn(string x) => x;
+                            public static int NotStringReturn(string x) => 1;
                             public static string RefParam(ref string x) => x;
-                            public static string NotStringParam(int x) => x;
+                            public static string NotStringParam(int x) => """";
 
                             [OutputFormatProvider(typeof(BadProvider), nameof(ProviderNoParam))]
                             public string SomethingA { get; set; }

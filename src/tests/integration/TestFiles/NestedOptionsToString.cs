@@ -1,5 +1,9 @@
-﻿namespace Test;
+﻿#nullable enable
+namespace Test;
 
+using System.Collections.Generic;
+using System;
+using System.Linq;
 using Seekatar.OptionToStringGenerator;
 
 [OptionsToString(Indent = "    ")]

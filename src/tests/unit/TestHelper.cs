@@ -16,7 +16,7 @@ public static class ModuleInitializer
 
 public static class TestHelper
 {
-    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(string source)
+    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(string source, bool throwCompilerErrors = true)
         where T : IIncrementalGenerator, new()
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
@@ -30,19 +30,26 @@ public static class TestHelper
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
+        var diagnostics = compilation.GetDiagnostics();
+        if (diagnostics.Any(o => o.Severity == DiagnosticSeverity.Error && !o.GetMessage().Contains("does not contain a definition for 'OptionsToString'")))
+        {
+            if (throwCompilerErrors)
+                throw new Exception(diagnostics.Select(o => o.ToString()).Aggregate((a, b) => a + "\n" + b));
+            return (diagnostics, string.Empty);
+        }
         var originalTreeCount = compilation.SyntaxTrees.Length;
 
         CSharpGeneratorDriver
             .Create(new T())
-            .RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
+            .RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out diagnostics);
         var output = string.Join("\n", outputCompilation.SyntaxTrees.Skip(originalTreeCount).Select(t => t.ToString()));
 
         return (diagnostics, output);
     }
 
-    public static Task Verify<T>(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null ) where T : IIncrementalGenerator, new()
+    public static Task Verify<T>(string source, Action<ImmutableArray<Diagnostic>>? assertDiag = null, bool throwCompilerErrors = true ) where T : IIncrementalGenerator, new()
     {
-        var (diag, output) = GetGeneratedOutput<T>(source);
+        var (diag, output) = GetGeneratedOutput<T>(source, throwCompilerErrors);
         if (assertDiag != null)
         {
             assertDiag(diag);
@@ -58,10 +65,10 @@ public static class TestHelper
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
 
-    public static Task VerifyFile<T>(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null) where T : IIncrementalGenerator, new()
+    public static Task VerifyFile<T>(string filename, Action<ImmutableArray<Diagnostic>>? assertDiag = null, bool throwCompilerErrors = true) where T : IIncrementalGenerator, new()
     {
         var source = File.ReadAllText(filename);
-        var (diag, output) = GetGeneratedOutput<T>(source);
+        var (diag, output) = GetGeneratedOutput<T>(source, throwCompilerErrors);
         if (assertDiag != null)
         {
             assertDiag(diag);

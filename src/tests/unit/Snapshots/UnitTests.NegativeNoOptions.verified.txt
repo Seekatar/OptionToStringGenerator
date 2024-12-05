@@ -1,12 +1,14 @@
 ﻿#nullable enable
 using static Seekatar.Mask;
+using System.Linq;
+using System;
 namespace Seekatar.OptionToStringGenerator
 {
     public static partial class ClassExtensions
     {
-        internal static string OptionsToString(this Test.NegativeNoOptions? o, string extraIndent = "")
+        internal static string OptionsToString(this Test.NegativeNoOptions? o, string extraIndent = "", string titleSuffix = "")
         {
-            return $@"Test.NegativeNoOptions:
+            return $@"Test.NegativeNoOptions{titleSuffix}:
 {extraIndent}  No properties to display
 ";
         }

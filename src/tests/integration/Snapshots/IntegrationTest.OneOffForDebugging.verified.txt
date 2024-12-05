@@ -1,11 +1,61 @@
-﻿Test.Parent:
-  Secret      : "*********parent"
-  Grandchild  : Test.GrandchildA:
-    GrandchildSecret : "*********grandchild"
-    ChildSecret      : "******** child"
+﻿Test.MessagingOptions:
+    Consumers : 
+      Count: 1
+      ClientOptions Event Hub TestName["TestConsumer"]:
+        Prefix               : "Event Hub"
+        Name                 : "TestName"
+        EncryptionKey        : "con**************"
+        GroupId              : "testhost"
+        StartingOffset       : Earliest
+        MaxPollIntervalMs    : null
+        CertBootstrapServers : "certBootstrapServers"
+        CA                   : Len = 10
+        CertPem              : Len = 11
+        KeyPem               : Len = 0
+        SaslBootstrapServers : "saslBootstrapServers"
+        SaslPassword         : "************"
+        SaslMechanism        : "saslMechanism"
+        SaslUsername         : "$ConnectionString"
+        LocalhostBootstrap   : false
+        ConfiguredWithCerts  : false
+        ConfiguredWithSasl   : true
 
-  GrandchildB : Test.GrandchildB:
-    GrandchildSecret : "*********grandchild"
-    ChildSecret      : "******** child"
+    Producers : 
+      Count: 2
+      ClientOptions Event Hub TestName["TestProducer1"]:
+        Prefix               : "Event Hub"
+        Name                 : "TestName"
+        EncryptionKey        : "123*******"
+        GroupId              : "testhost"
+        StartingOffset       : Earliest
+        MaxPollIntervalMs    : null
+        CertBootstrapServers : "certBootstrapServers"
+        CA                   : Len = 10
+        CertPem              : Len = 11
+        KeyPem               : Len = 0
+        SaslBootstrapServers : "saslBootstrapServers"
+        SaslPassword         : "************"
+        SaslMechanism        : "saslMechanism"
+        SaslUsername         : "$ConnectionString"
+        LocalhostBootstrap   : false
+        ConfiguredWithCerts  : false
+        ConfiguredWithSasl   : true
+      ClientOptions Event Hub TestName["TestProducer2"]:
+        Prefix               : "Event Hub"
+        Name                 : "TestName"
+        EncryptionKey        : "222*******************"
+        GroupId              : "testhost"
+        StartingOffset       : Earliest
+        MaxPollIntervalMs    : null
+        CertBootstrapServers : "certBootstrapServers2"
+        CA                   : Len = 10
+        CertPem              : Len = 11
+        KeyPem               : Len = 0
+        SaslBootstrapServers : "saslBootstrapServers"
+        SaslPassword         : "************"
+        SaslMechanism        : "saslMechanism"
+        SaslUsername         : "$ConnectionString"
+        LocalhostBootstrap   : false
+        ConfiguredWithCerts  : false
+        ConfiguredWithSasl   : true
 
-  GrandchildC : null
