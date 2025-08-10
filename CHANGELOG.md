@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.6] 2025-08-10
+
+### Updated
+
+- Tests to use the latest .NET SDKs
+- Added comments to generated class and methods since some linters require documentation comments for public members
+
 ## [0.3.5] 2024-11-27
 
 ### Added

@@ -114,6 +114,9 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
                     using System;
                     namespace Seekatar.OptionToStringGenerator
                     {
+                        /// <summary>
+                        /// Class for OptionsToString extension methods.
+                        /// </summary>
                         public static partial class ClassExtensions
                         {
 
@@ -230,6 +233,16 @@ public abstract class OptionGeneratorBase<TSyntax,TGeneratedItem> : IIncremental
             }
 
             // method signature
+            sb.Append("""
+                              /// <summary>
+                              /// Converts the options to a string representation.
+                              /// </summary>
+                              /// <param name="o">object</param>
+                              /// <param name="extraIndent">any extra indent</param>
+                              /// <param name="titleSuffix">suffix for the title of the object</param>
+                              /// <returns>string representation of values, redacted as configured</returns>
+
+                      """);
             sb.Append($"        {classAccessibility} static string OptionsToString(this ")
               .Append(className)
               .Append($$""""

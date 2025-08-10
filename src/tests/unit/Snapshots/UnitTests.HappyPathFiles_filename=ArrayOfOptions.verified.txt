@@ -4,8 +4,18 @@ using System.Linq;
 using System;
 namespace Seekatar.OptionToStringGenerator
 {
+    /// <summary>
+    /// Class for OptionsToString extension methods.
+    /// </summary>
     public static partial class ClassExtensions
     {
+        /// <summary>
+        /// Converts the options to a string representation.
+        /// </summary>
+        /// <param name="o">object</param>
+        /// <param name="extraIndent">any extra indent</param>
+        /// <param name="titleSuffix">suffix for the title of the object</param>
+        /// <returns>string representation of values, redacted as configured</returns>
         public static string OptionsToString(this Test.ArrayOptions? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.ArrayOptions{titleSuffix}:
@@ -20,6 +30,13 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}  RetryDelaySeconds     : {Format(o?.RetryDelaySeconds)}
 ";
         }
+        /// <summary>
+        /// Converts the options to a string representation.
+        /// </summary>
+        /// <param name="o">object</param>
+        /// <param name="extraIndent">any extra indent</param>
+        /// <param name="titleSuffix">suffix for the title of the object</param>
+        /// <returns>string representation of values, redacted as configured</returns>
         public static string OptionsToString(this Test.ArrayOptions.ArrayItem? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.ArrayOptions.ArrayItem{titleSuffix}:
