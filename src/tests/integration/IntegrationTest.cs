@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Test.Next.Level;
 using VerifyXunit;
 
-[UsesVerify]
 public class IntegrationTest
 {
     const string SnapshotDirectory = "Snapshots";

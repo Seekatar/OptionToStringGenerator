@@ -4,6 +4,9 @@ using System.Linq;
 using System;
 namespace Seekatar.OptionToStringGenerator
 {
+    /// <summary>
+    /// Class for OptionsToString extension methods.
+    /// </summary>
     public static partial class ClassExtensions
     {
     }

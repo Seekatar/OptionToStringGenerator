@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.3.6] 2025-08-10
+
+### Updated
+
+- Tests to use the latest .NET SDKs
+- Added comments to generated class and methods since some linters require documentation comments for public members
+- Update NuGet packages to latest versions. Tweaked TestHelper.cs since some modules weren't getting loaded after updating NuGet packages
+
 ## [0.3.5] 2024-11-27
 
 ### Added

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 namespace Seekatar.OptionToStringGenerator.Tests;
 using static Seekatar.OptionToStringGenerator.DiagnosticTemplates.Ids;
 
-[UsesVerify] // Adds hooks for Verify into XUnit
 public class UnitTests
 {
     public static IEnumerable<object[]> TestFileData()

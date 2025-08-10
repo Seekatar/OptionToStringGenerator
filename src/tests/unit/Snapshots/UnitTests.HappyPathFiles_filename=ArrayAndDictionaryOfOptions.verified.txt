@@ -4,8 +4,18 @@ using System.Linq;
 using System;
 namespace Seekatar.OptionToStringGenerator
 {
+    /// <summary>
+    /// Class for OptionsToString extension methods.
+    /// </summary>
     public static partial class ClassExtensions
     {
+        /// <summary>
+        /// Converts the options to a string representation.
+        /// </summary>
+        /// <param name="o">object</param>
+        /// <param name="extraIndent">any extra indent</param>
+        /// <param name="titleSuffix">suffix for the title of the object</param>
+        /// <returns>string representation of values, redacted as configured</returns>
         public static string OptionsToString(this Test.ArrayAndDictionaryOfOptions? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.ArrayAndDictionaryOfOptions{titleSuffix}:
@@ -13,6 +23,13 @@ namespace Seekatar.OptionToStringGenerator
 {extraIndent}  Dictionary : {Format(o?.Dictionary,formatMethod:(o) => { return Environment.NewLine + $"{extraIndent}    Count: {o?.Count() ?? 0}" + Environment.NewLine + $"{extraIndent}    "+ string.Join($"{extraIndent}    ", o?.Select( oo => oo.Value.OptionsToString("    "+ extraIndent, $"[{Mask.Quote(oo.Key)}]") ?? "null") ?? Enumerable.Empty<string>());},noQuote:true)}
 ";
         }
+        /// <summary>
+        /// Converts the options to a string representation.
+        /// </summary>
+        /// <param name="o">object</param>
+        /// <param name="extraIndent">any extra indent</param>
+        /// <param name="titleSuffix">suffix for the title of the object</param>
+        /// <returns>string representation of values, redacted as configured</returns>
         public static string OptionsToString(this Test.ArrayAndDictionaryOfOptions.NestedItem? o, string extraIndent = "", string titleSuffix = "")
         {
             return $@"Test.ArrayAndDictionaryOfOptions.NestedItem{titleSuffix}:
