@@ -184,7 +184,7 @@ public class MaskTests
     [InlineData(TestRegexString, TestRegex, false, true, "\"Server=localhost;User Id=admin;Password=***;Packet Size = 4096;\"")]
     [InlineData(TestRegexString, TestRegex, true, true, "\"Server=localhost;User Id=admin;Password=***;Packet Size = 4096;\"")]
     [InlineData(TestRegexString, @"User Id=(\w+);Password=(.*?)(?<!\\);", true, true, "\"Server=localhost;User Id=***;Password=***;Packet Size = 4096;\"")]
-    public void MaskRegex_MultipleInputs_ReturnsExpectedResults(object? input, string regex, bool ignoreCase, bool asJson, string expected)
+    public void MaskRegex_MultipleInputs_ReturnsExpectedResults(object? input, string regex, bool ignoreCase, bool asJson, string? expected)
     {
         // Act
         var result = Mask.MaskRegex(input, regex, ignoreCase, asJson);

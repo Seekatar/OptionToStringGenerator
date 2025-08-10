@@ -28,6 +28,8 @@ public static class TestHelper
 
         // what the heck? After upgrading NuGets, these modules don't get loaded into the test domain automatically, event though unit test
         // has them. I tried adding references in unit.cs, but that didn't work either.
+        // This may be due to using .NET 10 SDK to build the tests, not sure. NU1510 a warning about one of the modules, which is .NET 10 SDK marking
+        // assys for pruning.
         var dataAnnotationAssy = MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute).Assembly.Location);
         references.Add(dataAnnotationAssy);
         var seekatarAssy = MetadataReference.CreateFromFile(typeof(OptionsToStringAttribute).Assembly.Location);
