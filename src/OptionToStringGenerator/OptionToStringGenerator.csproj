@@ -59,10 +59,11 @@
     </None>
   </ItemGroup>
 
-  <!-- The following libraries include the source generator interfaces and types we need -->
+  <!-- The following libraries include the source generator interfaces and types we need
+       3.3.4 is the standard stable version for source generator projects.  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,7 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="bin\Debug\netstandard2.0\\OptionToStringGenerator.dll" />
+    <None Remove="bin\Debug\netstandard2.0\OptionToStringGenerator.dll" />
   </ItemGroup>
 
   <!-- csproj magic from https://andrewlock.net/creating-a-source-generator-part-8-solving-the-source-generator-marker-attribute-problem-part2/ -->

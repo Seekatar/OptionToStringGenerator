@@ -305,3 +305,5 @@ launchSettings.json
 *.received.*
 **/coverage.cobertura.xml
 src/OptionToStringGenerator/CompatibilitySuppressions.xml
+**/.DS_Store
+**/*.lscache

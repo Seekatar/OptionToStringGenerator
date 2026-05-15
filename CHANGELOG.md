@@ -1,5 +1,11 @@
 # Change Log
 
+## [0.3.7] 2026-05-15
+
+### Updated
+
+- NuGet packages to use 3.3.4 of Microsoft.CodeAnalysis.Analyzers since that's the correct version for source generators.
+
 ## [0.3.6] 2025-08-10
 
 ### Updated
