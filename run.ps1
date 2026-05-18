@@ -128,7 +128,7 @@ foreach ($currentTask in $Tasks) {
                 if ($localNuGet) {
                     $localNuGet = $localNuGet.Context.PostContext.Trim()
                     executeSB -RelativeDir "test-container" {
-                        $localDIr = "packages"
+                        $localDir = "packages"
                         if (!(Test-Path "$localDir")) {
                             New-Item $localDir -ItemType Directory | Out-Null
                         }
@@ -138,12 +138,26 @@ foreach ($currentTask in $Tasks) {
                             Copy-Item $_.FullName -Destination $localDir
                         }
 
-                        docker build --tag testapi --build-arg sdkTag=8.0.421 --build-arg aspNetTag=8.0 .
-                        docker run --rm -d -p  7175:8080 --name testapi testapi
-                        Invoke-RestMethod http://localhost:7175/weatherforecast
-                        Invoke-RestMethod http://localhost:7175/options
-                        docker stop testapi
+                        # Run Pester tests for Docker API with parameters
+                        ('8.0.421', '9.0.314', '10.0.300') | ForEach-Object {
+                            $sdkTag = $_
+                            $aspNetTag = $_.Split('.')[0] + ".0"
+                            $buildProps = @"
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net$aspNetTag</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="$Version" />
+  </ItemGroup>
+</Project>
+"@
+                            Set-Content -Path "Directory.Build.props" -Value $buildProps
 
+                            Invoke-Pester -Container (
+                                New-PesterContainer -Data @{ sdkTag = $sdkTag; aspNetTag = $aspNetTag } `
+                                -Path .)
+                        }
                     }
                 } else {
                     throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget add source /tmp/packages --name Local"

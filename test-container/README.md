@@ -14,8 +14,9 @@ docker run --rm -p -d 7175:8080 -n testapi testapi
 irm http://localhost:7175/weatherforecast
 ```
 
-The TFM is `net6.0` in the csproj
+The TFM is `net8.0` in the csproj
 
-| SDK Version in Dockerfile | Status                                                                   |
-| ------------------------- | ------------------------------------------------------------------------ |
-| 8.0.421                   | builds                                                                   |
+| SDK Version in Dockerfile | Status       |
+| ------------------------- | ------------ |
+| 8.0.421                   | builds, runs |
+| 9.0.314                   | builds, runs |
