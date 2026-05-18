@@ -123,6 +123,32 @@ foreach ($currentTask in $Tasks) {
                     }
                 }
             }
+            'testBuilds'{
+                $localNuGet = dotnet nuget list source | Select-String "Local \[Enabled" -Context 0,1
+                if ($localNuGet) {
+                    $localNuGet = $localNuGet.Context.PostContext.Trim()
+                    executeSB -RelativeDir "test-container" {
+                        $localDIr = "packages"
+                        if (!(Test-Path "$localDir")) {
+                            New-Item $localDir -ItemType Directory | Out-Null
+                        }
+
+                        # copy from the Local NuGet to local directory so can be in docker context
+                        Get-ChildItem $localNuget "*OptionToString*" | ForEach-Object {
+                            Copy-Item $_.FullName -Destination $localDir
+                        }
+
+                        docker build --tag testapi --build-arg sdkTag=8.0.421 --build-arg aspNetTag=8.0 .
+                        docker run --rm -d -p  7175:8080 --name testapi testapi
+                        Invoke-RestMethod http://localhost:7175/weatherforecast
+                        Invoke-RestMethod http://localhost:7175/options
+                        docker stop testapi
+
+                    }
+                } else {
+                    throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget add source /tmp/packages --name Local"
+                }
+            }
             'run' {
                 executeSB -RelativeDir "src/${appName}" {
                     dotnet run
@@ -178,7 +204,7 @@ foreach ($currentTask in $Tasks) {
                             }
                         }
                     } else {
-                        throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget sources add -name Local -source c:\nupkgs"
+                        throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget add source /tmp/packages --name Local"
                     }
                 } else {
                     throw "Must supply Version for pack"

@@ -10,7 +10,7 @@ To fix these, I changed generator csproj to use `Microsoft.CodeAnalysis.CSharp` 
 
 ```powershell
 docker build --tag testapi --build-arg sdk=6.0.202 .
-docker run --rm -p 7175:80 testapi
+docker run --rm -p -d 7175:8080 -n testapi testapi
 irm http://localhost:7175/weatherforecast
 ```
 
@@ -18,8 +18,4 @@ The TFM is `net6.0` in the csproj
 
 | SDK Version in Dockerfile | Status                                                                   |
 | ------------------------- | ------------------------------------------------------------------------ |
-| 6.0.202                   | Could not load file or assembly 'Microsoft.CodeAnalysis, Version=4.3.0.0 |
-| 6.0.416                   | Builds
-| 7.0.201                   | builds if use 4.4.0 of analyzer nupkg                                                      |
-| 7.0.306                   | builds                                                                   |
-| 7.0.403                   | builds                                                                   |
+| 8.0.421                   | builds                                                                   |
