@@ -15,7 +15,7 @@ Later I found if the versions of these were too high, then you'd get errors abou
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
 ```
 
-See [test-container/InvokeApi.Tests.ps1](InvokeApi.Tests.ps1) for details about how the tests are run. `./run.ps1 testBuilds` will run the tests. Best to do pack first `./run.ps1 pack,testBuilds -Vers 0.3.7.3` Current GH Action doesn't support running docker.
+See [test-container/InvokeApi.Tests.ps1](InvokeApi.Tests.ps1) for details about how the tests are run. `./run.ps1 testBuilds` will run the tests. Best to do pack first `./run.ps1 pack,testBuilds -Vers 0.3.7.3`
 
 The TFM is `net8.0` in the csproj for the minimal app.
 
