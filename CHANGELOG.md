@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.3.7] 2026-05-15
+
+### Updated
+
+- NuGet packages to use 3.3.4 of Microsoft.CodeAnalysis.Analyzers since that's the correct version for source generators.
+- System.Text.Json in Attributes.csproj bumped down to 8.0.6 since a runtime error would occur saying the 9.0 version was not found
+
 ## [0.3.6] 2025-08-10
 
 ### Updated

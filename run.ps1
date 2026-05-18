@@ -123,6 +123,46 @@ foreach ($currentTask in $Tasks) {
                     }
                 }
             }
+            'testBuilds'{
+                $localNuGet = dotnet nuget list source | Select-String "Local \[Enabled" -Context 0,1
+                if ($localNuGet) {
+                    $localNuGet = $localNuGet.Context.PostContext.Trim()
+                    executeSB -RelativeDir "test-container" {
+                        $localDir = "packages"
+                        if (!(Test-Path "$localDir")) {
+                            New-Item $localDir -ItemType Directory | Out-Null
+                        }
+
+                        # copy from the Local NuGet to local directory so can be in docker context
+                        Get-ChildItem $localNuget "*OptionToString*" | ForEach-Object {
+                            Copy-Item $_.FullName -Destination $localDir
+                        }
+
+                        # Run Pester tests for Docker API with parameters
+                        ('8.0.421', '9.0.314', '10.0.300') | ForEach-Object {
+                            $sdkTag = $_
+                            $aspNetTag = $_.Split('.')[0] + ".0"
+                            $buildProps = @"
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net$aspNetTag</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Seekatar.OptionToStringGenerator" Version="$Version" />
+  </ItemGroup>
+</Project>
+"@
+                            Set-Content -Path "Directory.Build.props" -Value $buildProps
+
+                            Invoke-Pester -Container (
+                                New-PesterContainer -Data @{ sdkTag = $sdkTag; aspNetTag = $aspNetTag } `
+                                -Path .)
+                        }
+                    }
+                } else {
+                    throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget add source /tmp/packages --name Local"
+                }
+            }
             'run' {
                 executeSB -RelativeDir "src/${appName}" {
                     dotnet run
@@ -178,7 +218,7 @@ foreach ($currentTask in $Tasks) {
                             }
                         }
                     } else {
-                        throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget sources add -name Local -source c:\nupkgs"
+                        throw "Must have a 'Local' NuGet source for testing. e.g. dotnet nuget add source /tmp/packages --name Local"
                     }
                 } else {
                     throw "Must supply Version for pack"
