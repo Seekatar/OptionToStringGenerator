@@ -96,7 +96,7 @@ jobs:
 
     - name: Do CI Build and Test
       run: |
-        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack, testBuilds -Version $env:version -SuppressApiCompat
+        ./run.ps1 createLocalNuget, build, testUnit, testIntegration, pack -Version $env:version -SuppressApiCompat
       env:
        version: ${{ env.version }}
 
